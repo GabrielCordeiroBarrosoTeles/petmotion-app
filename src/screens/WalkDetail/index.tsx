@@ -1,11 +1,13 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { Camera, ChevronLeft, Clock, Droplet, Droplets, Footprints, Gauge, Leaf, Route, Share2, Thermometer, Trash2 } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
+import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import { useWindowDimensions } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
 import { Button } from '@/components/Button';
+import { StatusBarScrim } from '@/components/StatusBarScrim';
 import { PressableScale } from '@/components/PressableScale';
 import { RouteMap } from '@/components/RouteMap';
 import { StatTile } from '@/components/StatTile';
@@ -25,6 +27,9 @@ import type { WalkDetailParams } from './types';
 
 const countEvents = (events: WalkEvent[], type: WalkEvent['type']) => events.filter((e) => e.type === type).length;
 
+/** A partir daqui (px rolados) o fundo da barra de status aparece. */
+const SCRIM_AFTER = 120;
+
 export function WalkDetailScreen() {
   const theme = useTheme();
   const insets = useSafeInsets();
@@ -34,6 +39,8 @@ export function WalkDetailScreen() {
   const isPremium = useAuth((s) => !!s.user?.is_premium);
   const { ref, share, sharing } = useShareView();
   const [deleting, setDeleting] = useState(false);
+  // o mapa passa por baixo da barra de status; rolou, o fundo fixo entra para o texto não passar por baixo do relógio
+  const [scrolled, setScrolled] = useState(false);
   const mapHeight = height * 0.42;
 
   const { data: walk, loading, error } = useFetch(() => api.walk(Number(id)), { deps: [id] });
@@ -68,7 +75,11 @@ export function WalkDetailScreen() {
       {loading || !walk || !cardPet ? (
         <WalkDetailSkeleton mapHeight={mapHeight} />
       ) : (
-        <Scroll>
+        <Scroll
+          testID="walk-detail-scroll"
+          scrollEventThrottle={16}
+          onScroll={(e: NativeSyntheticEvent<NativeScrollEvent>) => setScrolled(e.nativeEvent.contentOffset.y > SCRIM_AFTER)}
+        >
           <MapBox $height={mapHeight}>
             <RouteMap points={walk.points} events={walk.events} edgePadding={{ top: insets.top + 60, right: 40, bottom: 60, left: 40 }} />
           </MapBox>
@@ -109,6 +120,7 @@ export function WalkDetailScreen() {
         </Scroll>
       )}
 
+      {scrolled ? <StatusBarScrim tone="background" /> : null}
       <BackWrap $top={insets.top}>
         <PressableScale onPress={() => router.back()} accessibilityLabel="Voltar">
           <BackButton>

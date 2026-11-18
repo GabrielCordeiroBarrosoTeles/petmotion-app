@@ -143,6 +143,18 @@ describe('Detalhe do passeio', () => {
     expect(global.__router.back).toHaveBeenCalled();
   });
 
+  it('rolou para baixo do mapa: o fundo da barra de status aparece; voltou ao topo, some', async () => {
+    api.walk.mockResolvedValue(makeWalk());
+    await renderWithTheme(<WalkDetailScreen />);
+    await screen.findByText('3,42 km com Thor');
+    expect(screen.queryByTestId('status-bar-scrim')).toBeNull(); // o mapa passa por baixo do relógio
+    const scroll = screen.getByTestId('walk-detail-scroll');
+    await fireEvent.scroll(scroll, { nativeEvent: { contentOffset: { y: 300 } } });
+    expect(screen.getByTestId('status-bar-scrim')).toBeOnTheScreen();
+    await fireEvent.scroll(scroll, { nativeEvent: { contentOffset: { y: 0 } } });
+    expect(screen.queryByTestId('status-bar-scrim')).toBeNull();
+  });
+
   it('exclui depois de confirmar', async () => {
     api.walk.mockResolvedValue(makeWalk());
     api.deleteWalk.mockResolvedValueOnce({} as never);
