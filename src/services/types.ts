@@ -58,6 +58,17 @@ export interface Walk {
   companions?: Pick<Pet, 'id' | 'name' | 'species' | 'photo_url'>[];
 }
 
+/** Registro de um pet no passeio salvo. */
+export interface GroupWalk {
+  pet_id: number;
+  walk_id: number;
+}
+
+/** Resposta de POST /walks: o passeio do primeiro pet + o registro de cada pet do grupo (o principal primeiro). */
+export interface CreatedWalk extends Walk {
+  group_walks?: GroupWalk[];
+}
+
 export interface NewWalkPayload extends Omit<Walk, 'id' | 'pet' | 'walker' | 'companions'> {
   /** Demais pets do passeio em grupo (pet_id é o primeiro). */
   companion_ids?: number[];

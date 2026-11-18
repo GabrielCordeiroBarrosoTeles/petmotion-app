@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { api } from '@/services/api';
-import type { NewWalkPayload, Walk, WalkEventType } from '@/services/types';
-import { useAuth } from '@/store/auth';
+import type { CreatedWalk, WalkEventType } from '@/services/types';
 import { usePets } from '@/store/pets';
 import { elapsedMs, useWalk } from '@/store/walk';
 import type { LiveBroadcast } from './types';
@@ -86,29 +85,16 @@ function start(walkPetIds: number[]) {
   tick();
 }
 
-/** Registro salvo de cada pet do grupo (a API devolve só o do primeiro; os outros vêm do histórico). */
-async function walkIdFor(petId: number, saved: Walk, payload: NewWalkPayload): Promise<number | null> {
-  if (petId === saved.pet_id) return saved.id;
-  const me = useAuth.getState().user?.id;
-  const { data } = await api.walks(petId);
-  const match = data.find(
-    (w) => w.walker?.id === me && w.duration_seconds === payload.duration_seconds && w.distance_meters === payload.distance_meters,
-  );
-  return match?.id ?? null;
-}
-
-async function finish(saved: Walk, payload: NewWalkPayload) {
+/** Passeio salvo: fecha o ao vivo de cada pet transmitido com o registro dele (pet sem registro fica de fora). */
+async function finish(saved: CreatedWalk) {
   const ids = petIds;
   const current = session;
   stop();
   if (!current) return;
-  try {
-    const found = await Promise.all(ids.map(async (petId) => ({ pet_id: petId, walk_id: await walkIdFor(petId, saved, payload) })));
-    const walks = found.filter((w): w is { pet_id: number; walk_id: number } => w.walk_id !== null);
-    if (walks.length) await api.liveFinish(current, walks);
-  } catch {
-    // sem rede: o estado ao vivo expira sozinho no servidor
-  }
+  const walks = (saved.group_walks ?? []).filter((w) => ids.includes(w.pet_id));
+  if (!walks.length) return;
+  // sem rede: o estado ao vivo expira sozinho no servidor
+  await api.liveFinish(current, walks).catch(() => undefined);
 }
 
 function cancel() {

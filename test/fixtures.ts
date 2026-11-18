@@ -1,4 +1,4 @@
-import type { HealthRecord, Pet, PetStats, User, Walk, Weather } from '@/services/types';
+import type { CreatedWalk, HealthRecord, Pet, PetStats, User, Weather } from '@/services/types';
 
 export const user: User = {
   id: 1, name: 'Gabriel Cordeiro', email: 'gabriel@petmotion.app', is_premium: false, premium_until: null, trial_available: true,
@@ -11,7 +11,7 @@ export const makePet = (overrides: Partial<Pet> = {}): Pet => ({
   daily_goal_minutes: 40, photo_url: null, role: 'owner', ...overrides,
 });
 
-export const makeWalk = (overrides: Partial<Walk> = {}): Walk => ({
+export const makeWalk = (overrides: Partial<CreatedWalk> = {}): CreatedWalk => ({
   id: 10, pet_id: 1, started_at: '2026-11-17T18:00:00', ended_at: '2026-11-17T18:40:00', duration_seconds: 2460,
   distance_meters: 3420, steps: 4617, temperature_c: 22, points: [[0, 0], [0.001, 0.002]],
   events: [{ type: 'pee', lat: 0, lng: 0, occurred_at: '2026-11-17T18:10:00' }],

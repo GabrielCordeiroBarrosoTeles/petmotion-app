@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import Constants from 'expo-constants';
 import type {
-  AuthResponse, HealthRecord, Invite, InvitePreview, LiveProgressPayload, LiveWalk, NewWalkPayload, Paginated, Pet, PetFormPayload, PetStats, User, Walk, Walker, Weather,
+  AuthResponse, CreatedWalk, HealthRecord, Invite, InvitePreview, LiveProgressPayload, LiveWalk, NewWalkPayload, Paginated, Pet, PetFormPayload, PetStats, User, Walk, Walker, Weather,
 } from './types';
 
 /**
@@ -90,7 +90,7 @@ export const api = {
   walks: (petId: number, page = 1) =>
     http.get<Paginated<Walk>>('/walks', { params: { pet_id: petId, page } }).then((r) => r.data),
   walk: (id: number) => http.get<Walk>(`/walks/${id}`).then((r) => r.data),
-  createWalk: (payload: NewWalkPayload) => http.post<Walk>('/walks', payload).then((r) => r.data),
+  createWalk: (payload: NewWalkPayload) => http.post<CreatedWalk>('/walks', payload).then((r) => r.data),
   deleteWalk: (id: number) => http.delete(`/walks/${id}`),
 
   health: (petId: number) => http.get<HealthRecord[]>(`/pets/${petId}/health-records`).then((r) => r.data),

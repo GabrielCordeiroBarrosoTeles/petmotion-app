@@ -12,7 +12,7 @@ import { WalkScreen } from '../Walk';
 
 jest.mock('@/services/api', () => ({
   ...jest.requireActual('@/services/api'),
-  api: { stats: jest.fn(), createWalk: jest.fn(), weather: jest.fn(), liveStart: jest.fn(), liveProgress: jest.fn(), liveFinish: jest.fn(), liveCancel: jest.fn(), walks: jest.fn() },
+  api: { stats: jest.fn(), createWalk: jest.fn(), weather: jest.fn(), liveStart: jest.fn(), liveProgress: jest.fn(), liveFinish: jest.fn(), liveCancel: jest.fn() },
 }));
 const { api } = jest.mocked(apiModule);
 // respostas "Once" não podem vazar de um teste para o outro
@@ -357,7 +357,7 @@ describe('Passeio em grupo', () => {
     await waitFor(() => expect(api.liveStart).toHaveBeenCalledWith([3]));
     await walk(-23.5, -46.6);
     await walk(-23.5, -46.601);
-    api.createWalk.mockResolvedValueOnce({ id: 90, pet_id: 3 } as never);
+    api.createWalk.mockResolvedValueOnce({ id: 90, pet_id: 3, group_walks: [{ pet_id: 3, walk_id: 90 }] } as never);
     await fireEvent(screen.getByLabelText('Segure para finalizar'), 'pressIn');
     await waitFor(() => expect(api.liveFinish).toHaveBeenCalledWith('S1', [{ pet_id: 3, walk_id: 90 }]));
   });

@@ -43,7 +43,7 @@ export interface LiveBroadcast {
   /** Começa a transmitir (só os pets de passeio entre `petIds`; sem nenhum, não faz nada). */
   start: (petIds: number[]) => void;
   /** Passeio salvo: avisa o pai/mãe de pet com o registro de cada pet. */
-  finish: (saved: import('@/services/types').Walk, payload: import('@/services/types').NewWalkPayload) => Promise<void>;
+  finish: (saved: import('@/services/types').CreatedWalk) => Promise<void>;
   /** Passeio descartado. */
   cancel: () => void;
 }

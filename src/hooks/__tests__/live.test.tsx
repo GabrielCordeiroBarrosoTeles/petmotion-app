@@ -4,7 +4,7 @@ import { act, renderHookWithTheme } from '../../../test/render';
 import { makePet, makeWalk, user } from '../../../test/fixtures';
 import * as apiModule from '@/services/api';
 import { realtimeFromEnv } from '@/services/realtime';
-import type { LatLng, LiveWalk, NewWalkPayload } from '@/services/types';
+import type { LatLng, LiveWalk } from '@/services/types';
 import { useAuth } from '@/store/auth';
 import { useLive } from '@/store/live';
 import { usePets } from '@/store/pets';
@@ -16,7 +16,7 @@ import { useOwnerLive } from '../useOwnerLive';
 
 jest.mock('@/services/api', () => ({
   ...jest.requireActual('@/services/api'),
-  api: { liveStart: jest.fn(), liveProgress: jest.fn(), liveFinish: jest.fn(), liveCancel: jest.fn(), walks: jest.fn(), live: jest.fn() },
+  api: { liveStart: jest.fn(), liveProgress: jest.fn(), liveFinish: jest.fn(), liveCancel: jest.fn(), live: jest.fn() },
 }));
 jest.mock('@/services/realtime', () => ({ realtimeFromEnv: jest.fn() }));
 
@@ -59,7 +59,6 @@ describe('useLiveBroadcast (passeador transmite)', () => {
 
   beforeEach(() => {
     jest.useFakeTimers().setSystemTime(new Date('2026-11-17T18:00:00Z'));
-    useAuth.setState({ status: 'signedIn', user: { ...user, id: 9 } });
     usePets.setState({ pets, selectedId: 3, loaded: true });
     useWalk.setState({ status: 'running', petIds: [1, 3, 4], accumulatedMs: 0, resumedAt: Date.now(), points: [], distance: 0, steps: 0, events: [] });
     api.liveStart.mockResolvedValue({ session: 'S1' });
@@ -136,47 +135,36 @@ describe('useLiveBroadcast (passeador transmite)', () => {
     expect(api.liveProgress).toHaveBeenCalledTimes(1);
   });
 
-  it('salvou: fecha a transmissão com o registro de cada pet de passeio', async () => {
+  it('salvou: fecha a transmissão com o registro de cada pet de passeio (os meus ficam de fora)', async () => {
     live.start([1, 3, 4]);
     await flush();
-    const payload = { duration_seconds: 600, distance_meters: 800 } as NewWalkPayload;
-    api.walks.mockResolvedValueOnce({
-      data: [
-        makeWalk({ id: 70, pet_id: 4, walker: { id: 2, name: 'Ana' }, duration_seconds: 600, distance_meters: 800 }),
-        makeWalk({ id: 71, pet_id: 4, walker: { id: 9, name: 'João' }, duration_seconds: 600, distance_meters: 800 }),
-      ],
-    } as never);
-    await live.finish(makeWalk({ id: 50, pet_id: 3 }), payload);
-    expect(api.walks).toHaveBeenCalledWith(4);
-    expect(api.liveFinish).toHaveBeenCalledWith('S1', [{ pet_id: 3, walk_id: 50 }, { pet_id: 4, walk_id: 71 }]);
+    const saved = makeWalk({ id: 50, pet_id: 1, group_walks: [{ pet_id: 1, walk_id: 50 }, { pet_id: 3, walk_id: 51 }, { pet_id: 4, walk_id: 52 }] });
+    await live.finish(saved);
+    expect(api.liveFinish).toHaveBeenCalledWith('S1', [{ pet_id: 3, walk_id: 51 }, { pet_id: 4, walk_id: 52 }]);
 
     await tick(); // acabou: não manda mais nada
     expect(api.liveProgress).not.toHaveBeenCalled();
   });
 
-  it('salvou: pet sem registro achado fica de fora; nenhum achado, nada a fechar', async () => {
-    live.start([1, 3, 4]);
+  it('salvou: pet que não veio em group_walks fica de fora; nenhum, nada a fechar', async () => {
+    live.start([3, 4]);
     await flush();
-    const payload = { duration_seconds: 600, distance_meters: 800 } as NewWalkPayload;
-    api.walks.mockResolvedValue({ data: [makeWalk({ id: 71, pet_id: 4, walker: { id: 9, name: 'João' }, duration_seconds: 1, distance_meters: 800 })] } as never);
-    await live.finish(makeWalk({ id: 50, pet_id: 3 }), payload);
-    expect(api.liveFinish).toHaveBeenCalledWith('S1', [{ pet_id: 3, walk_id: 50 }]);
+    await live.finish(makeWalk({ id: 51, pet_id: 3, group_walks: [{ pet_id: 3, walk_id: 51 }] }));
+    expect(api.liveFinish).toHaveBeenCalledWith('S1', [{ pet_id: 3, walk_id: 51 }]);
 
-    // o primeiro pet do passeio era meu: os de passeio vêm todos do histórico
     api.liveFinish.mockClear();
-    live.start([1, 3]);
+    live.start([3]);
     await flush();
-    api.walks.mockResolvedValue({ data: [] } as never);
-    await live.finish(makeWalk({ id: 50, pet_id: 1 }), payload);
+    await live.finish(makeWalk({ id: 50, pet_id: 1 })); // resposta sem group_walks
     expect(api.liveFinish).not.toHaveBeenCalled();
   });
 
   it('salvou sem rede: não quebra', async () => {
-    live.start([3, 4]);
+    live.start([3]);
     await flush();
-    api.walks.mockRejectedValueOnce(offline());
-    await expect(live.finish(makeWalk({ id: 50, pet_id: 3 }), {} as NewWalkPayload)).resolves.toBeUndefined();
-    expect(api.liveFinish).not.toHaveBeenCalled();
+    api.liveFinish.mockRejectedValueOnce(offline());
+    await expect(live.finish(makeWalk({ id: 51, pet_id: 3, group_walks: [{ pet_id: 3, walk_id: 51 }] }))).resolves.toBeUndefined();
+    expect(api.liveFinish).toHaveBeenCalledTimes(1);
   });
 
   it('descartou: avisa que o passeio foi cancelado', async () => {
@@ -194,7 +182,7 @@ describe('useLiveBroadcast (passeador transmite)', () => {
     const opening = deferred<{ session: string }>();
     api.liveStart.mockReturnValueOnce(opening.promise);
     live.start([3]);
-    await live.finish(makeWalk({ id: 50, pet_id: 3 }), {} as NewWalkPayload);
+    await live.finish(makeWalk({ id: 50, pet_id: 3, group_walks: [{ pet_id: 3, walk_id: 50 }] }));
     expect(api.liveFinish).not.toHaveBeenCalled();
     api.liveCancel.mockRejectedValueOnce(offline());
     opening.resolve({ session: 'S0' });

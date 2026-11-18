@@ -133,7 +133,7 @@ export function WalkScreen() {
     setSaving(true);
     try {
       const saved = await api.createWalk(payload);
-      live.finish(saved, payload);
+      live.finish(saved);
       await clearWalkNotification();
       useWalk.getState().reset();
       router.replace({ pathname: '/walk-summary', params: { id: String(saved.id), before: unlockedBefore.current.join(',') } });
