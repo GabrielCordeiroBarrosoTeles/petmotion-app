@@ -65,7 +65,7 @@ export function RootLayout() {
   useAuthGate();
   useWearSync();
   useOwnerLive();
-  useNotificationLinks();
+  useNotificationLinks(ready);
 
   if (!fontsLoaded) return null;
 

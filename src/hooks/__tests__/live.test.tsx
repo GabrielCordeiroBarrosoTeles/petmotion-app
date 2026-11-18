@@ -1,4 +1,5 @@
 import { AxiosError } from 'axios';
+import { AppState, type AppStateStatus } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import { act, renderHookWithTheme } from '../../../test/render';
 import { makePet, makeWalk, user } from '../../../test/fixtures';
@@ -16,7 +17,7 @@ import { useOwnerLive } from '../useOwnerLive';
 
 jest.mock('@/services/api', () => ({
   ...jest.requireActual('@/services/api'),
-  api: { liveStart: jest.fn(), liveProgress: jest.fn(), liveFinish: jest.fn(), liveCancel: jest.fn(), live: jest.fn() },
+  api: { liveStart: jest.fn(), liveProgress: jest.fn(), liveFinish: jest.fn(), liveCancel: jest.fn(), live: jest.fn(), logout: jest.fn() },
 }));
 jest.mock('@/services/realtime', () => ({ realtimeFromEnv: jest.fn() }));
 
@@ -28,6 +29,19 @@ const flush = async () => {
 };
 const conflict = () => new AxiosError('conflito', '409', undefined, undefined, { status: 409 } as never);
 const offline = () => new AxiosError('sem rede', 'ERR_NETWORK');
+const forbidden = () => new AxiosError('proibido', '403', undefined, undefined, { status: 403 } as never);
+
+/** Captura os ouvintes de AppState para simular o app indo para o fundo e voltando. */
+function fakeAppState() {
+  const listeners: Array<(s: AppStateStatus) => void> = [];
+  const remove = jest.fn();
+  jest.spyOn(AppState, 'addEventListener').mockImplementation((_type, cb) => {
+    listeners.push(cb as (s: AppStateStatus) => void);
+    return { remove } as never;
+  });
+  const change = (next: AppStateStatus) => act(() => listeners.forEach((cb) => cb(next)));
+  return { change, remove };
+}
 
 function deferred<T>() {
   let resolve!: (v: T) => void;
@@ -59,6 +73,8 @@ describe('useLiveBroadcast (passeador transmite)', () => {
 
   beforeEach(() => {
     jest.useFakeTimers().setSystemTime(new Date('2026-11-17T18:00:00Z'));
+    useAuth.setState({ status: 'signedIn', user });
+    api.logout.mockResolvedValue({} as never);
     usePets.setState({ pets, selectedId: 3, loaded: true });
     useWalk.setState({ status: 'running', petIds: [1, 3, 4], accumulatedMs: 0, resumedAt: Date.now(), points: [], distance: 0, steps: 0, events: [] });
     api.liveStart.mockResolvedValue({ session: 'S1' });
@@ -124,6 +140,49 @@ describe('useLiveBroadcast (passeador transmite)', () => {
     await tick();
     expect(api.liveProgress).toHaveBeenCalledTimes(1);
     expect(useToastStore.getState().current).toBeNull();
+  });
+
+  it('403/404/401 (pet deixou de ser meu, sem login): para de transmitir', async () => {
+    live.start([3]);
+    await flush();
+    api.liveProgress.mockRejectedValueOnce(forbidden());
+    await tick();
+    await tick();
+    expect(api.liveProgress).toHaveBeenCalledTimes(1);
+
+    api.liveStart.mockRejectedValueOnce(new AxiosError('x', '404', undefined, undefined, { status: 404 } as never));
+    live.start([3]);
+    await flush();
+    await tick();
+    expect(api.liveStart).toHaveBeenCalledTimes(2); // não ficou tentando abrir
+  });
+
+  it('saiu da conta no meio do passeio: cancela (ainda com login) e para de enviar', async () => {
+    live.start([3]);
+    await flush();
+    // Perfil: zera o passeio e depois sai
+    useWalk.getState().reset();
+    expect(api.liveCancel).toHaveBeenCalledWith('S1', [3]);
+    await act(() => useAuth.getState().signOut());
+    await tick();
+    await tick();
+    expect(api.liveProgress).not.toHaveBeenCalled();
+    expect(api.liveCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('sessão caiu (401 em outra chamada) sem zerar o passeio: para também', async () => {
+    live.start([3]);
+    await flush();
+    await act(() => useAuth.setState({ status: 'signedOut' }));
+    expect(api.liveCancel).toHaveBeenCalledWith('S1', [3]);
+    await tick();
+    expect(api.liveProgress).not.toHaveBeenCalled();
+    // sem transmissão ativa, sair de novo ou zerar o passeio não chama nada
+    await act(() => useAuth.setState({ status: 'signedIn' }));
+    await act(() => useAuth.setState({ status: 'signedOut' }));
+    useWalk.setState({ status: 'running' });
+    useWalk.getState().reset();
+    expect(api.liveCancel).toHaveBeenCalledTimes(1);
   });
 
   it('não acumula envios se a rede está lenta', async () => {
@@ -347,6 +406,73 @@ describe('useOwnerLive (pai/mãe de pet acompanha)', () => {
     expect(useLive.getState().byPet[1]).toMatchObject({ session: 'C2', points: [] });
   });
 
+  it('voltou para o app: busca de novo o estado (eventos perdidos com o socket fora)', async () => {
+    const { change, remove } = fakeAppState();
+    api.live.mockImplementation(async (id) => (id === 1 ? liveState({ session: 'B1', points: [[0, 0]] }) : null));
+    const { emit } = fakeRealtime();
+    const hook = await renderHookWithTheme(useOwnerLive);
+    await act(flush);
+    expect(useLive.getState().byPet[1]).toMatchObject({ session: 'B1' });
+
+    // no fundo: o descarte e os pontos se perderam; o servidor esqueceu o passeio
+    api.live.mockResolvedValue(null);
+    await change('background');
+    expect(api.live).toHaveBeenCalledTimes(2);
+    await change('active');
+    await act(flush);
+    expect(api.live).toHaveBeenCalledTimes(4);
+    expect(useLive.getState().byPet[1]).toBeUndefined();
+
+    // voltou e o passeio andou: a rota completa substitui a antiga
+    api.live.mockResolvedValue(liveState({ session: 'B1', points: [[0, 0], [0, 1], [0, 2]], at: '2026-11-17T18:05:00Z' }));
+    await emit('private-pet.1', liveState({ session: 'B1' }));
+    await change('active');
+    await act(flush);
+    expect(useLive.getState().byPet[1].points).toHaveLength(3);
+    expect(Notifications.scheduleNotificationAsync).not.toHaveBeenCalled(); // B1 já era conhecido: sem aviso repetido
+    await hook.unmount();
+    expect(remove).toHaveBeenCalled();
+  });
+
+  it('resposta do GET mais velha que o evento do socket não atropela', async () => {
+    const reply = deferred<LiveWalk | null>();
+    api.live.mockReturnValueOnce(reply.promise).mockResolvedValue(null);
+    const { emit } = fakeRealtime();
+    await renderHookWithTheme(useOwnerLive);
+    await emit('private-pet.1', liveState({ session: 'R1', at: '2026-11-17T18:02:00Z', distance: 900 }));
+    await act(async () => {
+      reply.resolve(liveState({ session: 'R1', at: '2026-11-17T18:01:00Z', distance: 400 }));
+      await flush();
+    });
+    expect(useLive.getState().byPet[1]).toMatchObject({ distance: 900 });
+  });
+
+  it('"nenhum passeio" atrasado não apaga um passeio que acabou de começar pelo socket', async () => {
+    const reply = deferred<LiveWalk | null>();
+    api.live.mockReturnValueOnce(reply.promise).mockResolvedValue(null);
+    const { emit } = fakeRealtime();
+    await renderHookWithTheme(useOwnerLive);
+    await emit('private-pet.1', liveState({ session: 'R2' }));
+    await act(async () => {
+      reply.resolve(null);
+      await flush();
+    });
+    expect(useLive.getState().byPet[1]).toMatchObject({ session: 'R2' });
+  });
+
+  it('resposta que chega depois de sair da conta é descartada', async () => {
+    const reply = deferred<LiveWalk | null>();
+    api.live.mockReturnValueOnce(reply.promise).mockResolvedValue(null);
+    fakeRealtime();
+    await renderHookWithTheme(useOwnerLive);
+    await act(() => useAuth.setState({ status: 'signedOut' }));
+    await act(async () => {
+      reply.resolve(liveState({ session: 'LATE' }));
+      await flush();
+    });
+    expect(useLive.getState().byPet).toEqual({});
+  });
+
   it('sair da conta: deixa de escutar, fecha a conexão e esquece o estado', async () => {
     const { client, listeners, emit } = fakeRealtime();
     await renderHookWithTheme(useOwnerLive);
@@ -373,9 +499,19 @@ describe('useNotificationLinks', () => {
 
   beforeEach(() => useAuth.setState({ status: 'signedIn', user }));
 
+  it('antes de a navegação existir (fontes ou sessão carregando), espera', async () => {
+    jest.mocked(Notifications.getLastNotificationResponse).mockReturnValue(response('n0', { url: '/live/1' }));
+    const hook = await renderHookWithTheme(({ ready }: { ready: boolean }) => useNotificationLinks(ready), { initialProps: { ready: false } });
+    expect(global.__router.push).not.toHaveBeenCalled();
+    expect(Notifications.addNotificationResponseReceivedListener).not.toHaveBeenCalled();
+    await hook.rerender({ ready: true });
+    expect(global.__router.push).toHaveBeenCalledWith('/live/1');
+    jest.mocked(Notifications.getLastNotificationResponse).mockReturnValue(null);
+  });
+
   it('abriu o app tocando no aviso: vai para a tela do link, uma vez só', async () => {
     jest.mocked(Notifications.getLastNotificationResponse).mockReturnValue(response('n1', { url: '/live/1' }));
-    await renderHookWithTheme(useNotificationLinks);
+    await renderHookWithTheme(() => useNotificationLinks(true));
     expect(global.__router.push).toHaveBeenCalledWith('/live/1');
 
     await act(() => useAuth.setState({ status: 'signedOut' }));
@@ -387,7 +523,7 @@ describe('useNotificationLinks', () => {
   it('toque com o app aberto abre o link; aviso sem link é ignorado; deslogado não escuta', async () => {
     const remove = jest.fn();
     jest.mocked(Notifications.addNotificationResponseReceivedListener).mockReturnValue({ remove } as never);
-    const hook = await renderHookWithTheme(useNotificationLinks);
+    const hook = await renderHookWithTheme(() => useNotificationLinks(true));
     const listener = jest.mocked(Notifications.addNotificationResponseReceivedListener).mock.calls[0][0];
     listener(response('n2', {}));
     expect(global.__router.push).not.toHaveBeenCalled();
@@ -398,7 +534,7 @@ describe('useNotificationLinks', () => {
 
     jest.mocked(Notifications.addNotificationResponseReceivedListener).mockClear();
     useAuth.setState({ status: 'signedOut' });
-    await renderHookWithTheme(useNotificationLinks);
+    await renderHookWithTheme(() => useNotificationLinks(true));
     expect(Notifications.addNotificationResponseReceivedListener).not.toHaveBeenCalled();
   });
 });

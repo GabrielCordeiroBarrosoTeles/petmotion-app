@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { api } from '@/services/api';
 import type { CreatedWalk, WalkEventType } from '@/services/types';
+import { useAuth } from '@/store/auth';
 import { usePets } from '@/store/pets';
 import { elapsedMs, useWalk } from '@/store/walk';
 import type { LiveBroadcast } from './types';
@@ -23,7 +24,12 @@ let busy = false;
 /** Muda a cada passeio: resposta atrasada de um passeio antigo é ignorada. */
 let generation = 0;
 
-const isConflict = (e: unknown) => axios.isAxiosError(e) && e.response?.status === 409;
+/**
+ * Respostas que não melhoram tentando de novo: sessão vencida ou já encerrada (409), sem login (401),
+ * pet que deixou de ser meu ou de existir (403/404). Sem rede ou erro do servidor: tenta no próximo envio.
+ */
+const TERMINAL = [401, 403, 404, 409];
+const isTerminal = (e: unknown) => axios.isAxiosError(e) && TERMINAL.includes(e.response?.status as number);
 
 function stop() {
   if (timer) clearInterval(timer);
@@ -68,8 +74,7 @@ async function tick() {
     });
     if (gen === generation) sentPoints = total;
   } catch (e) {
-    // 409: o passeio já terminou ou outra sessão assumiu; sem rede: tenta no próximo envio
-    if (gen === generation && isConflict(e)) stop();
+    if (gen === generation && isTerminal(e)) stop();
   } finally {
     if (gen === generation) busy = false;
   }
@@ -105,6 +110,15 @@ function cancel() {
 }
 
 const broadcast: LiveBroadcast = { start, finish, cancel };
+
+// O passeio foi zerado por fora da tela (sair da conta, excluir a conta) ou a sessão caiu: encerra a
+// transmissão. Ao sair pelo Perfil o passeio é zerado antes do logout, então o cancelamento ainda vai com o token.
+useWalk.subscribe((state, prev) => {
+  if (state.status === 'idle' && prev.status !== 'idle' && timer) cancel();
+});
+useAuth.subscribe((state, prev) => {
+  if (prev.status === 'signedIn' && state.status !== 'signedIn' && timer) cancel();
+});
 
 /** Usado pelo WalkScreen: começa, termina e descarta a transmissão ao vivo. */
 export function useLiveBroadcast(): LiveBroadcast {

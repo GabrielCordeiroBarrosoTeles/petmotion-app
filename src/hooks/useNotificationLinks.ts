@@ -15,14 +15,18 @@ function open(response: Notifications.NotificationResponse | null) {
   router.push(url as never);
 }
 
-/** Tocar numa notificação com `data.url` abre essa tela (com o app aberto ou vindo de fechado). */
-export function useNotificationLinks() {
+/**
+ * Tocar numa notificação com `data.url` abre essa tela (com o app aberto ou vindo de fechado).
+ * `ready`: o Root já montou a navegação (fontes carregadas e sessão resolvida); antes disso não há para onde ir.
+ */
+export function useNotificationLinks(ready: boolean) {
   const signedIn = useAuth((s) => s.status === 'signedIn');
+  const enabled = ready && signedIn;
 
   useEffect(() => {
-    if (!signedIn) return;
+    if (!enabled) return;
     open(Notifications.getLastNotificationResponse());
     const sub = Notifications.addNotificationResponseReceivedListener(open);
     return () => sub.remove();
-  }, [signedIn]);
+  }, [enabled]);
 }

@@ -1,6 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { ChevronDown, Droplet, Droplets, Leaf, MapPinOff, Route, Trash2 } from 'lucide-react-native';
 import { useCallback, useEffect, useState } from 'react';
+import { AppState } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useTheme } from 'styled-components/native';
 import { Button } from '@/components/Button';
@@ -73,9 +74,9 @@ export function LiveWalkScreen() {
   // o GET traz a rota inteira; daí em diante os eventos do socket chegam pelo useOwnerLive
   const load = useCallback(async () => {
     try {
+      const before = useLive.getState().byPet[petId];
       const state = await api.live(petId);
-      if (state) useLive.getState().set(petId, state);
-      else useLive.getState().clear(petId);
+      useLive.getState().reconcile(petId, state, before);
     } catch (e) {
       customToast(errorMessage(e), 'danger');
     } finally {
@@ -83,8 +84,13 @@ export function LiveWalkScreen() {
     }
   }, [petId]);
 
+  // ao abrir e ao voltar para o app (com o socket fora, eventos podem ter se perdido)
   useEffect(() => {
     load();
+    const sub = AppState.addEventListener('change', (next) => {
+      if (next === 'active') load();
+    });
+    return () => sub.remove();
   }, [load]);
 
   // o evento só levou os últimos pontos: busca a rota completa

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { AppState } from 'react-native';
 import { api } from '@/services/api';
 import { realtimeFromEnv, type RealtimeClient } from '@/services/realtime';
 import type { LiveWalk } from '@/services/types';
@@ -46,13 +47,24 @@ function onEvent(petId: number, data: unknown) {
   useLive.getState().apply(petId, event);
 }
 
-/** Estado atual ao entrar (o passeio pode ter começado com o app fechado): atualiza sem avisar. */
-async function loadCurrent(petId: number) {
-  const state = await api.live(petId).catch(() => null);
-  if (!state) return;
-  announced.add(`start:${state.session}`);
-  if (state.status === 'finished') announced.add(`finish:${state.session}`);
-  useLive.getState().set(petId, state);
+/**
+ * Estado atual do servidor, sem avisar: ao entrar (o passeio pode ter começado com o app fechado) e ao
+ * voltar para o app (eventos perdidos com o socket fora). `alive` falso = saiu da conta no meio do pedido.
+ */
+async function loadCurrent(petId: number, alive: () => boolean) {
+  const before = useLive.getState().byPet[petId];
+  let state: LiveWalk | null;
+  try {
+    state = await api.live(petId);
+  } catch {
+    return; // sem rede: fica o que já havia
+  }
+  if (!alive()) return;
+  if (state) {
+    announced.add(`start:${state.session}`);
+    if (state.status === 'finished') announced.add(`finish:${state.session}`);
+  }
+  useLive.getState().reconcile(petId, state, before);
 }
 
 /**
@@ -80,7 +92,16 @@ export function useOwnerLive() {
     if (!client || !ownedKey) return;
     const ids = ownedKey.split(',').map(Number);
     const offs = ids.map((id) => client.subscribe(`private-pet.${id}`, 'live.updated', (data) => onEvent(id, data)));
-    ids.forEach(loadCurrent);
-    return () => offs.forEach((off) => off());
+    let alive = true;
+    const sync = () => ids.forEach((id) => loadCurrent(id, () => alive));
+    sync();
+    const appState = AppState.addEventListener('change', (next) => {
+      if (next === 'active') sync();
+    });
+    return () => {
+      alive = false;
+      appState.remove();
+      offs.forEach((off) => off());
+    };
   }, [client, ownedKey]);
 }

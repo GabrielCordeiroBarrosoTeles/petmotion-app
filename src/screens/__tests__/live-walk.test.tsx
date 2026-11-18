@@ -1,4 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
+import { AppState, type AppStateStatus } from 'react-native';
 import { act, fireEvent, renderWithTheme, screen, waitFor } from '../../../test/render';
 import { makePet } from '../../../test/fixtures';
 import * as apiModule from '@/services/api';
@@ -114,5 +115,30 @@ describe('Passeio ao vivo (pai/mãe de pet)', () => {
     await screen.findByText('01:10');
     await act(() => useLive.getState().apply(1, { session: 'S1', pet_id: 1, status: 'cancelled' } as LiveWalk));
     expect(screen.getByText('O passeio foi descartado')).toBeOnTheScreen();
+  });
+
+  it('voltou para o app: busca a rota completa de novo (pontos perdidos com o socket fora)', async () => {
+    const listeners: Array<(st: AppStateStatus) => void> = [];
+    const remove = jest.fn();
+    jest.spyOn(AppState, 'addEventListener').mockImplementation((_t, cb) => {
+      listeners.push(cb as (st: AppStateStatus) => void);
+      return { remove } as never;
+    });
+    api.live.mockResolvedValueOnce(liveState());
+    const view = await renderWithTheme(<LiveWalkScreen />);
+    await screen.findByText('01:10');
+
+    api.live.mockResolvedValueOnce(liveState({ points: [[0, 0], [0, 1], [0, 2]], at: '2026-11-17T18:01:08Z' }));
+    await act(() => listeners.forEach((cb) => cb('inactive')));
+    expect(api.live).toHaveBeenCalledTimes(1);
+    await act(() => listeners.forEach((cb) => cb('active')));
+    await waitFor(() => expect(routeData()).toHaveLength(3));
+
+    // e o descarte perdido aparece
+    api.live.mockResolvedValueOnce(null);
+    await act(() => listeners.forEach((cb) => cb('active')));
+    expect(await screen.findByText('Nenhum passeio agora')).toBeOnTheScreen();
+    await view.unmount();
+    expect(remove).toHaveBeenCalled();
   });
 });

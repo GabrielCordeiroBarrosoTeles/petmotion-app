@@ -9,6 +9,11 @@ interface LiveState {
   /** Aplica um evento do socket: na mesma sessão, os pontos novos entram no fim da rota. */
   apply: (petId: number, event: LiveWalk) => void;
   clear: (petId: number) => void;
+  /**
+   * Aplica a resposta do GET live sem atropelar o socket: ignora se já há um evento mais novo da
+   * mesma sessão; "nenhum passeio" só limpa se nada chegou desde que o pedido saiu (`before`).
+   */
+  reconcile: (petId: number, state: LiveWalk | null, before: LiveWalk | undefined) => void;
   reset: () => void;
 }
 
@@ -20,7 +25,7 @@ export function mergeLive(prev: LiveWalk | undefined, event: LiveWalk): LiveWalk
   return { ...base, ...rest, points: [...(base?.points ?? []), ...newPoints], truncated: event.truncated };
 }
 
-export const useLive = create<LiveState>((set) => ({
+export const useLive = create<LiveState>((set, get) => ({
   byPet: {},
   set: (petId, state) => set((s) => ({ byPet: { ...s.byPet, [petId]: state } })),
   apply: (petId, event) => set((s) => ({ byPet: { ...s.byPet, [petId]: mergeLive(s.byPet[petId], event) } })),
@@ -29,6 +34,15 @@ export const useLive = create<LiveState>((set) => ({
       const { [petId]: _removed, ...byPet } = s.byPet;
       return { byPet };
     }),
+  reconcile: (petId, state, before) => {
+    const current = get().byPet[petId];
+    if (!state) {
+      if (current === before) get().clear(petId);
+      return;
+    }
+    if (current?.session === state.session && Date.parse(current.at) > Date.parse(state.at)) return;
+    get().set(petId, state);
+  },
   reset: () => set({ byPet: {} }),
 }));
 
