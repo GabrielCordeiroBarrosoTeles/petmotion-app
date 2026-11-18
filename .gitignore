@@ -39,3 +39,12 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# grafo do graphify (gerado localmente)
+graphify-out/
+
+# variáveis locais (use .env.example como modelo)
+.env
+
+# relatório de cobertura dos testes
+coverage/
