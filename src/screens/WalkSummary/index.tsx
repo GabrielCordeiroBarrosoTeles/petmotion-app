@@ -65,7 +65,7 @@ export function WalkSummaryScreen() {
 
             <CardWrap from={{ opacity: 0, scale: 0.9, rotate: '-3deg' }} animate={{ opacity: 1, scale: 1, rotate: '0deg' }} transition={spring({ damping: 13, delay: 200 })}>
               <Capture ref={ref} collapsable={false}>
-                <WalkShareCard walk={data.walk} pet={petForCard} animated premium={isPremium} />
+                <WalkShareCard walk={data.walk} pet={petForCard} premium={isPremium} map />
               </Capture>
             </CardWrap>
 

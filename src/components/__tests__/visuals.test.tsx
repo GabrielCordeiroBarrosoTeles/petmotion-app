@@ -207,6 +207,13 @@ describe('WalkShareCard', () => {
     const routeBox = screen.getByText('Passeio do Thor').parent!.parent!.parent!.children[1] as never;
     await fireEvent(routeBox, 'layout', { nativeEvent: { layout: { width: 300 } } });
   });
+
+  it('com map, mostra o mapa de verdade (estático) no lugar do desenho', async () => {
+    await renderWithTheme(<WalkShareCard walk={walk} pet={pet(1, { name: 'Thor' })} map />);
+    const map = screen.getByTestId('map');
+    expect(map.props.liteMode).toBe(true);
+    expect(map.props.scrollEnabled).toBe(false);
+  });
 });
 
 describe('RouteMap', () => {

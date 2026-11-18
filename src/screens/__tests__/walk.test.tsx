@@ -1,6 +1,6 @@
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
-import { act, fireEvent, renderWithTheme, screen, waitFor } from '../../../test/render';
+import { act, answerConfirm, fireEvent, renderWithTheme, screen, waitFor } from '../../../test/render';
 import { makePet, makeStats, weather } from '../../../test/fixtures';
 import * as apiModule from '@/services/api';
 import { usePets } from '@/store/pets';
@@ -138,6 +138,24 @@ describe('Passeio: em andamento', () => {
     expect(error).not.toHaveBeenCalledWith(expect.stringContaining('same key'), expect.anything(), expect.anything());
     expect(error.mock.calls.flat().join(' ')).not.toContain('same key');
     error.mockRestore();
+  });
+
+  it('descartar pede confirmação e encerra sem salvar nada', async () => {
+    const walk = await startWalking();
+    await walk(-23.5, -46.6);
+    await walk(-23.5, -46.601);
+
+    await fireEvent.press(screen.getByLabelText('Descartar passeio'));
+    await answerConfirm(false);
+    expect(useWalk.getState().status).toBe('running');
+
+    await fireEvent.press(screen.getByLabelText('Descartar passeio'));
+    await answerConfirm(true);
+    expect(useWalk.getState().status).toBe('idle');
+    expect(api.createWalk).not.toHaveBeenCalled();
+    expect(Notifications.dismissNotificationAsync).toHaveBeenCalled();
+    expect(useToastStore.getState().current?.message).toBe('Passeio descartado.');
+    expect(global.__router.back).toHaveBeenCalled();
   });
 
   it('atualiza a notificação fixa a cada 15 segundos', async () => {

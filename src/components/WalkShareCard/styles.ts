@@ -31,9 +31,12 @@ export const When = styled.Text`
   color: ${({ theme }) => theme.colors.onInkMuted};
 `;
 
-export const RouteBox = styled.View`
+/** Com mapa, a caixa tem altura fixa e corta o mapa nos cantos arredondados. */
+export const RouteBox = styled.View<{ $map: boolean; $height: number }>`
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  ${({ $map, $height }) => ($map ? `height: ${$height}px; align-items: stretch;` : '')}
   border-radius: ${({ theme }) => theme.radii.medium}px;
   background-color: ${({ theme }) => theme.colors.inkSoft};
 `;

@@ -13,9 +13,9 @@ export const Wrapper = styled.View`
 `;
 
 export const Circle = styled.View<{ $type: WalkEventType }>`
-  width: ${RFValue(64)}px;
-  height: ${RFValue(64)}px;
-  border-radius: ${RFValue(32)}px;
+  width: ${RFValue(52)}px;
+  height: ${RFValue(52)}px;
+  border-radius: ${RFValue(26)}px;
   align-items: center;
   justify-content: center;
   background-color: ${({ theme, $type }) => eventColor(theme, $type)};
@@ -23,9 +23,9 @@ export const Circle = styled.View<{ $type: WalkEventType }>`
 
 export const Ripple = styled(MotiView)<{ $type: WalkEventType }>`
   position: absolute;
-  width: ${RFValue(64)}px;
-  height: ${RFValue(64)}px;
-  border-radius: ${RFValue(32)}px;
+  width: ${RFValue(52)}px;
+  height: ${RFValue(52)}px;
+  border-radius: ${RFValue(26)}px;
   border-width: ${RFValue(3)}px;
   border-color: ${({ theme, $type }) => eventColor(theme, $type)};
 `;

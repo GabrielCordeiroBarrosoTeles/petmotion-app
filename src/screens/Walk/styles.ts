@@ -57,7 +57,7 @@ export const Sheet = styled(MotiView)<{ $bottom: number }>`
   border-top-right-radius: ${({ theme }) => theme.radii.large}px;
   padding: ${({ theme }) => theme.spacing.large}px;
   padding-bottom: ${({ $bottom }) => $bottom + 16}px;
-  gap: ${({ theme }) => theme.spacing.large}px;
+  gap: ${({ theme }) => theme.spacing.medium}px;
 `;
 
 export const Grabber = styled.View`
@@ -69,42 +69,78 @@ export const Grabber = styled.View`
   background-color: ${({ theme }) => theme.colors.inkLine};
 `;
 
+export const HeadRow = styled.View`
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+`;
+
+export const HeadMain = styled.View`
+  flex-shrink: 1;
+`;
+
 export const Timer = styled.Text`
   font-family: ${({ theme }) => theme.fonts.display};
-  font-size: ${RFValue(68)}px;
+  font-size: ${RFValue(52)}px;
+  line-height: ${RFValue(58)}px;
   letter-spacing: -2px;
   color: ${({ theme }) => theme.colors.onInk};
-  text-align: center;
   font-variant: tabular-nums;
+`;
+
+export const LiveRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.xs}px;
+`;
+
+/** Ponto "ao vivo": pisca enquanto o passeio está rodando. */
+export const LiveDot = styled(MotiView)`
+  width: ${RFValue(8)}px;
+  height: ${RFValue(8)}px;
+  border-radius: ${({ theme }) => theme.radii.pill}px;
+  background-color: ${({ theme }) => theme.colors.primary};
 `;
 
 export const TimerCaption = styled.Text`
   font-family: ${({ theme }) => theme.fonts.bodyBold};
   font-size: ${({ theme }) => RFValue(theme.fontSizes.small)}px;
   color: ${({ theme }) => theme.colors.onInkMuted};
-  text-align: center;
-  margin-top: ${({ theme }) => -theme.spacing.medium}px;
 `;
 
-export const Stats = styled.View`
+export const Distance = styled.View`
+  align-items: flex-end;
+`;
+
+export const DistanceValue = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: ${({ theme }) => RFValue(theme.fontSizes.display + 4)}px;
+  line-height: ${({ theme }) => RFValue(theme.fontSizes.display + 10)}px;
+  letter-spacing: -1px;
+  color: ${({ theme }) => theme.colors.primary};
+  font-variant: tabular-nums;
+`;
+
+export const Pills = styled.View`
   flex-direction: row;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing.medium}px 0;
-  border-top-width: 1px;
-  border-bottom-width: 1px;
-  border-color: ${({ theme }) => theme.colors.inkSoft};
+  gap: ${({ theme }) => theme.spacing.xs}px;
 `;
 
-export const Stat = styled.View`
+export const StatPill = styled.View`
   flex: 1;
-  align-items: center;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
   gap: ${({ theme }) => theme.spacing.xxs}px;
+  padding: ${({ theme }) => theme.spacing.xs}px ${({ theme }) => theme.spacing.small}px;
+  border-radius: ${({ theme }) => theme.radii.pill}px;
+  background-color: ${({ theme }) => theme.colors.inkSoft};
 `;
 
 export const StatValue = styled.Text`
   font-family: ${({ theme }) => theme.fonts.display};
-  font-size: ${({ theme }) => RFValue(theme.fontSizes.xxl)}px;
-  color: ${({ theme }) => theme.colors.primary};
+  font-size: ${({ theme }) => RFValue(theme.fontSizes.large)}px;
+  color: ${({ theme }) => theme.colors.onInk};
   font-variant: tabular-nums;
 `;
 

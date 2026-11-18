@@ -11,7 +11,7 @@ import type { RouteMapProps } from './types';
 
 const EVENT_ICON = { pee: Droplet, poop: Leaf, water: Droplets };
 
-export function RouteMap({ points, events = [], follow, interactive = true, edgePadding }: RouteMapProps) {
+export function RouteMap({ points, events = [], follow, interactive = true, lite = false, edgePadding }: RouteMapProps) {
   const theme = useTheme();
   const ref = useRef<MapView>(null);
   const last = points[points.length - 1];
@@ -28,6 +28,7 @@ export function RouteMap({ points, events = [], follow, interactive = true, edge
     <Map
       ref={ref}
       initialRegion={regionFor(points)}
+      liteMode={lite}
       customMapStyle={mapStyle}
       showsPointsOfInterests={false}
       showsCompass={false}

@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import * as Location from 'expo-location';
-import { ChevronDown, Droplet, Droplets, Flag, Leaf, Pause, Play, Satellite, Sparkles, Thermometer } from 'lucide-react-native';
+import { ChevronDown, Droplet, Droplets, Flag, Leaf, Pause, Play, Satellite, Sparkles, Thermometer, Trash2, X } from 'lucide-react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useSafeInsets } from '@/hooks/useSafeInsets';
@@ -20,12 +20,13 @@ import { MIN_WALK_M, useWalk } from '@/store/walk';
 import { spring, timing } from '@/theme/motion';
 import { duration, km, pace, thousands } from '@/utils/format';
 import { clearWalkNotification, ensureNotificationPermission, showWalkNotification } from '@/utils/notifications';
+import { confirmAction } from '@/utils/confirm';
 import { customToast } from '@/utils/toast';
 import { QuickAction } from './QuickAction';
 import {
-  Actions, Chip, ChipText, ControlFlex, Controls, Grabber, MapArea, PauseButton, ReadyBody, ReadyTitle, RoundButton,
-  SavingOverlay, SavingText, Screen, Sheet, Spacer, Spinner, StartBall, StartLabel, StartRow, Stat, StatLabel, Stats,
-  StatValue, Timer, TimerCaption, TopBar,
+  Actions, Chip, ChipText, ControlFlex, Controls, Distance, DistanceValue, Grabber, HeadMain, HeadRow, LiveDot, LiveRow,
+  MapArea, PauseButton, Pills, ReadyBody, ReadyTitle, RoundButton, SavingOverlay, SavingText, Screen, Sheet, Spacer,
+  Spinner, StartBall, StartLabel, StartRow, StatLabel, StatPill, StatValue, Timer, TimerCaption, TopBar,
 } from './styles';
 import type { WalkPhase } from './types';
 
@@ -118,6 +119,21 @@ export function WalkScreen() {
     }
   };
 
+  // desistiu: nada é salvo, nem conta para meta, sequência ou conquistas
+  const discard = async () => {
+    const ok = await confirmAction({
+      title: 'Descartar passeio?',
+      message: 'O tempo, o trajeto e as marcações deste passeio não serão salvos.',
+      confirmLabel: 'Descartar',
+      icon: Trash2,
+    });
+    if (!ok) return;
+    useWalk.getState().reset();
+    await clearWalkNotification();
+    customToast('Passeio descartado.', 'warning');
+    router.back();
+  };
+
   const addEvent = (type: WalkEventType) => useWalk.getState().addEvent(type);
   const counts = (type: WalkEventType) => walk.events.filter((e) => e.type === type).length;
   const mapPoints = walk.points.length ? walk.points : coords ? [coords] : [];
@@ -141,6 +157,13 @@ export function WalkScreen() {
             </Chip>
           ) : null}
           <Spacer />
+          {tracking ? (
+            <PressableScale onPress={discard} accessibilityLabel="Descartar passeio">
+              <RoundButton>
+                <X size={RFValue(22)} color={theme.colors.ink} />
+              </RoundButton>
+            </PressableScale>
+          ) : null}
           {demoMode ? (
             <Chip $tone="sun">
               <Sparkles size={RFValue(14)} color={theme.colors.ink} />
@@ -160,22 +183,31 @@ export function WalkScreen() {
         <Grabber />
         {tracking ? (
           <>
-            <Timer accessibilityLabel={`Tempo de passeio ${duration(elapsedSeconds)}`}>{duration(elapsedSeconds)}</Timer>
-            <TimerCaption>{walk.status === 'paused' ? 'Pausado' : `Passeando com ${pet?.name ?? ''}`}</TimerCaption>
-            <Stats>
-              <Stat>
-                <StatValue>{km(walk.distance)}</StatValue>
+            <HeadRow>
+              <HeadMain>
+                <Timer accessibilityLabel={`Tempo de passeio ${duration(elapsedSeconds)}`}>{duration(elapsedSeconds)}</Timer>
+                <LiveRow>
+                  {walk.status === 'running' ? (
+                    <LiveDot from={{ opacity: 1 }} animate={{ opacity: 0.25 }} transition={timing({ duration: 800, loop: true, repeatReverse: true })} />
+                  ) : null}
+                  <TimerCaption>{walk.status === 'paused' ? 'Pausado' : `Passeando com ${pet?.name ?? ''}`}</TimerCaption>
+                </LiveRow>
+              </HeadMain>
+              <Distance>
+                <DistanceValue>{km(walk.distance)}</DistanceValue>
                 <StatLabel>km</StatLabel>
-              </Stat>
-              <Stat>
+              </Distance>
+            </HeadRow>
+            <Pills>
+              <StatPill>
                 <StatValue>{thousands(walk.steps)}</StatValue>
                 <StatLabel>passos</StatLabel>
-              </Stat>
-              <Stat>
+              </StatPill>
+              <StatPill>
                 <StatValue>{pace(elapsedSeconds, walk.distance)}</StatValue>
                 <StatLabel>min/km</StatLabel>
-              </Stat>
-            </Stats>
+              </StatPill>
+            </Pills>
             <Actions>
               {QUICK_ACTIONS.map((a) => (
                 <QuickAction key={a.type} {...a} count={counts(a.type)} onPress={addEvent} />

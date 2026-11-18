@@ -38,7 +38,7 @@ export function QuickAction({ type, label, icon: Icon, count, onPress }: QuickAc
           />
         ) : null}
         <Circle $type={type}>
-          <Icon size={RFValue(28)} color={theme.colors.ink} strokeWidth={2.4} />
+          <Icon size={RFValue(24)} color={theme.colors.ink} strokeWidth={2.4} />
         </Circle>
         {count > 0 ? (
           <Count key={`count-${count}`} from={{ scale: 0.4 }} animate={{ scale: 1 }} transition={spring({ damping: 8 })}>

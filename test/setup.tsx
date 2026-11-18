@@ -33,7 +33,7 @@ jest.mock('react-native-maps', () => {
     React.useEffect(() => {
       props.onMapReady?.();
     }, []);
-    return <View testID="map">{props.children}</View>;
+    return <View testID="map" liteMode={props.liteMode} scrollEnabled={props.scrollEnabled}>{props.children}</View>;
   });
   const Marker = (p: any) => <View testID="marker">{p.children}</View>;
   const Polyline = () => <View testID="polyline" />;
