@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="app.petmotion.wear.WatchStateTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-18T14:08:15.813Z" hostname="MacBook-Air-de-Gabriel.local" time="0.042">
+  <properties/>
+  <testcase name="mensagem estranha e ignorada" classname="app.petmotion.wear.WatchStateTest" time="0.021"/>
+  <testcase name="acoes usam os nomes que o app RN entende" classname="app.petmotion.wear.WatchStateTest" time="0.019"/>
+  <testcase name="le o estado que o celular publica" classname="app.petmotion.wear.WatchStateTest" time="0.001"/>
+  <testcase name="pausado, parado e sem pet" classname="app.petmotion.wear.WatchStateTest" time="0.0"/>
+  <testcase name="contagem parcial vira zero no que faltar" classname="app.petmotion.wear.WatchStateTest" time="0.0"/>
+  <testcase name="rodando, o cronometro anda sozinho e pausado fica parado" classname="app.petmotion.wear.WatchStateTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

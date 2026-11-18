@@ -14,6 +14,7 @@ import { ThemeProvider } from 'styled-components/native';
 import { ConfirmHost } from '@/components/ConfirmSheet';
 import { SplashIntro } from '@/components/SplashIntro';
 import { ToastHost } from '@/components/ToastHost';
+import { useWearSync } from '@/hooks/useWearSync';
 import { useAuth } from '@/store/auth';
 import { usePets } from '@/store/pets';
 import { theme } from '@/theme';
@@ -60,6 +61,7 @@ export function RootLayout() {
   }, [fontsLoaded]);
 
   useAuthGate();
+  useWearSync();
 
   if (!fontsLoaded) return null;
 

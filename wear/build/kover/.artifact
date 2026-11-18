@@ -1,0 +1,14 @@
+:wear
+../wear/src/debug/kotlin
+../wear/src/debug/java
+../wear/src/main/kotlin
+../wear/src/main/java
+../wear/src/release/kotlin
+../wear/src/release/java
+
+../wear/build/tmp/kotlin-classes/debug
+../wear/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes
+../wear/build/tmp/kotlin-classes/release
+../wear/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes
+
+../wear/build/kover/bin-reports/testDebugUnitTest.ic

@@ -1,0 +1,3 @@
+int color ink 0x0
+int drawable ic_ball 0x0
+int mipmap ic_launcher 0x0

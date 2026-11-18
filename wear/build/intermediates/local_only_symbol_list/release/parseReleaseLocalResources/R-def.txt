@@ -1,0 +1,5 @@
+R_DEF: Internal format may change without notice
+local
+color ink
+drawable ic_ball
+mipmap ic_launcher

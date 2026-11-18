@@ -1,0 +1,22 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'app.petmotion'
+version = '1.0.0'
+
+android {
+  namespace "app.petmotion.wearbridge"
+  defaultConfig {
+    versionCode 1
+    versionName "1.0.0"
+  }
+}
+
+dependencies {
+  // Data Layer do Wear OS: celular e relógio com o mesmo pacote e a mesma assinatura conversam por aqui.
+  implementation 'com.google.android.gms:play-services-wearable:19.0.0'
+  // DeviceEventEmitter (emitDeviceEvent) para entregar os toques do relógio ao JS
+  compileOnly 'com.facebook.react:react-android'
+}

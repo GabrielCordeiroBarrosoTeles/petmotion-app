@@ -1,0 +1,354 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:2:1-26:12
+INJECTED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:2:1-26:12
+INJECTED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:2:1-26:12
+INJECTED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:2:1-26:12
+MERGED from [com.google.android.gms:play-services-wearable:19.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/09aaf8cdf4201cc78f93b749bb99c49d/transformed/play-services-wearable-19.0.0/AndroidManifest.xml:17:1-24:12
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/69e851397c342c8eea744460c5b7145d/transformed/play-services-base-18.5.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/399ad9fb5897088d288a6b8c64a0ea9a/transformed/play-services-tasks-18.2.0/AndroidManifest.xml:2:1-5:12
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/d901090b07e4206c50067a5ab89ca746/transformed/play-services-basement-18.4.0/AndroidManifest.xml:2:1-9:12
+MERGED from [androidx.fragment:fragment:1.1.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/21ac96ff1a40bbc5e69a8192e76e52ab/transformed/fragment-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.activity:activity:1.10.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/4e20688d5a5b101bfa81f29280d92af4/transformed/activity-1.10.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.wear.compose:compose-foundation:1.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/04aced1c40e7bf1945dded13e85a29be/transformed/compose-foundation-1.5.0/AndroidManifest.xml:17:1-28:12
+MERGED from [androidx.compose.animation:animation-core-android:1.8.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/c25e9c72ff32a2db4c25713f842f599c/transformed/animation-core-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.animation:animation-android:1.8.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/fa65c60e0f93b99d66f8a884050ec6d6/transformed/animation/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.8.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/d41418ec51f5a8c139d9c9e3ba373d18/transformed/foundation-layout-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-android:1.8.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/7a5ebe0780ab88a31002dcc6a01a61a7/transformed/foundation-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-unit-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/1479cfe674d7956a502eff0b8ffcdd53/transformed/ui-unit-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-text-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/8c954a04eb1da5e03eabd15753edf021/transformed/ui-text-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-graphics-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/c15348db5476e202b3bc8cb5175c389d/transformed/ui-graphics-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-geometry-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/455bd520c92ab4da61163f9bf7275e90/transformed/ui-geometry-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-util-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/356219a43c2c4138a1a10c5371da11d9/transformed/ui-util-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/807f25a4fc0eed21c4d421798e354154/transformed/ui-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.activity:activity-ktx:1.10.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/b946de7e0c1d17474b3fff86390690e6/transformed/activity-ktx-1.10.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.activity:activity-compose:1.10.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/ddb93074567454ad9faec03f0b1acc09/transformed/activity-compose-1.10.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/c60a113ecfc87faa13abeefbba6f0ccd/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.loader:loader:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/368a02ea8819bdbbf5e63fcf01477187/transformed/loader-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.autofill:autofill:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/4482c79e89a9cb5bb9412fbac929e8f7/transformed/autofill-1.0.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/cd971ec00480619139038a540ea29728/transformed/viewpager-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/67e31b8bebe39ebe008965c69b5eba70/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:17:1-23:12
+MERGED from [androidx.core:core-ktx:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/2d6e8b0dd7f54d2fa789ef32415ffdd1/transformed/core-ktx-1.13.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.customview:customview:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/2d186a9c867d004c26f1c29c167725ca/transformed/customview-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.graphics:graphics-path:1.0.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/9e6ad3fa1115e39028b8b711ed7a08e0/transformed/graphics-path-1.0.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.emoji2:emoji2:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bdb09978e6b96ed2180146e57aa52f08/transformed/emoji2-1.4.0/AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:17:1-30:12
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/df039ad27eb98b8057a06c9ce9ba7701/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/4120cbc47c977d6de4d50c614598290b/transformed/lifecycle-livedata-core-ktx-2.8.7/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/ad0903a51f4720ea6137263137a2af62/transformed/lifecycle-livedata-core-2.8.7/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/47c127af16f08a0122209ff97438732c/transformed/lifecycle-runtime-ktx-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/17bb73e4e615470569a31032bc2d802d/transformed/lifecycle-runtime-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/78e88ef9d6801c0f9b8d33e67e45c257/transformed/lifecycle-livedata-2.8.7/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/297ff70c00f44f4a75864966397afb21/transformed/lifecycle-viewmodel-2.8.7/AndroidManifest.xml:2:1-5:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/57f5ce6f15a4486a2e056b62097a19ca/transformed/lifecycle-viewmodel-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/cc3320dccc71b87d66fb0ad353a58abb/transformed/lifecycle-runtime-compose-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/5694047108c5e998d826498bded073d5/transformed/lifecycle-viewmodel-ktx-2.8.7/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/e8a1f8fda63bf9a998cb42c9274579b6/transformed/lifecycle-viewmodel-savedstate-2.8.7/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/18c4098da8dd21414785fff2258e2069/transformed/savedstate-1.2.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.core:core-viewtree:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/f07e3394b57ae3513b4657a0a8cb855c/transformed/core-viewtree-1.0.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/13e9d9adffec92c5a1b81af69a0a2a8e/transformed/runtime-saveable-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.runtime:runtime-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/d7b4a8577ef252e61f70d9be0f4d0157/transformed/runtime-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.annotation:annotation-experimental:1.4.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/faeb0028005ea5693f02a98aba42ceb2/transformed/annotation-experimental-1.4.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/9abd6a1d68e1da9e8c434dbb6b3bc67d/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:17:1-55:12
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/11c4939e4f24737b3456f6c1fad7de3f/transformed/startup-runtime-1.1.1/AndroidManifest.xml:17:1-33:12
+MERGED from [androidx.tracing:tracing:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/a8621d54baf87a6ab303fb0ba28a6a82/transformed/tracing-1.0.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/189bf9938f3a1d6d63ab998aadcc1dd6/transformed/interpolator-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/4ef924360141f3e666933caa0d24aa12/transformed/core-runtime-2.2.0/AndroidManifest.xml:17:1-22:12
+	package
+		INJECTED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:2:11-69
+uses-feature#android.hardware.type.watch
+ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:4:3-62
+	android:name
+		ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:4:17-59
+uses-permission#android.permission.VIBRATE
+ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:5:3-64
+	android:name
+		ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:5:20-61
+application
+ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:7:3-25:17
+INJECTED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:7:3-25:17
+MERGED from [com.google.android.gms:play-services-wearable:19.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/09aaf8cdf4201cc78f93b749bb99c49d/transformed/play-services-wearable-19.0.0/AndroidManifest.xml:22:5-20
+MERGED from [com.google.android.gms:play-services-wearable:19.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/09aaf8cdf4201cc78f93b749bb99c49d/transformed/play-services-wearable-19.0.0/AndroidManifest.xml:22:5-20
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/69e851397c342c8eea744460c5b7145d/transformed/play-services-base-18.5.0/AndroidManifest.xml:4:5-6:19
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/69e851397c342c8eea744460c5b7145d/transformed/play-services-base-18.5.0/AndroidManifest.xml:4:5-6:19
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/399ad9fb5897088d288a6b8c64a0ea9a/transformed/play-services-tasks-18.2.0/AndroidManifest.xml:4:5-20
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/399ad9fb5897088d288a6b8c64a0ea9a/transformed/play-services-tasks-18.2.0/AndroidManifest.xml:4:5-20
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/d901090b07e4206c50067a5ab89ca746/transformed/play-services-basement-18.4.0/AndroidManifest.xml:5:5-7:19
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/d901090b07e4206c50067a5ab89ca746/transformed/play-services-basement-18.4.0/AndroidManifest.xml:5:5-7:19
+MERGED from [androidx.wear.compose:compose-foundation:1.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/04aced1c40e7bf1945dded13e85a29be/transformed/compose-foundation-1.5.0/AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.wear.compose:compose-foundation:1.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/04aced1c40e7bf1945dded13e85a29be/transformed/compose-foundation-1.5.0/AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.emoji2:emoji2:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bdb09978e6b96ed2180146e57aa52f08/transformed/emoji2-1.4.0/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.emoji2:emoji2:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bdb09978e6b96ed2180146e57aa52f08/transformed/emoji2-1.4.0/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:28:5-89
+MERGED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:28:5-89
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/df039ad27eb98b8057a06c9ce9ba7701/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/df039ad27eb98b8057a06c9ce9ba7701/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/9abd6a1d68e1da9e8c434dbb6b3bc67d/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/9abd6a1d68e1da9e8c434dbb6b3bc67d/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/11c4939e4f24737b3456f6c1fad7de3f/transformed/startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/11c4939e4f24737b3456f6c1fad7de3f/transformed/startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
+	android:extractNativeLibs
+		INJECTED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+	android:label
+		ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:10:5-30
+	android:icon
+		ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:9:5-39
+	android:allowBackup
+		ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:8:5-32
+	android:theme
+		ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:11:5-55
+meta-data#com.google.android.wearable.standalone
+ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:14:5-94
+	android:value
+		ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:14:70-91
+	android:name
+		ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:14:16-69
+activity#app.petmotion.wear.MainActivity
+ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:16:5-24:16
+	android:exported
+		ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:18:7-30
+	android:taskAffinity
+		ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:19:7-30
+	android:name
+		ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:17:7-35
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:20:7-23:23
+action#android.intent.action.MAIN
+ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:21:9-61
+	android:name
+		ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:21:17-58
+category#android.intent.category.LAUNCHER
+ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:22:9-69
+	android:name
+		ADDED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml:22:19-66
+uses-sdk
+INJECTED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml
+INJECTED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml
+MERGED from [com.google.android.gms:play-services-wearable:19.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/09aaf8cdf4201cc78f93b749bb99c49d/transformed/play-services-wearable-19.0.0/AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-wearable:19.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/09aaf8cdf4201cc78f93b749bb99c49d/transformed/play-services-wearable-19.0.0/AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/69e851397c342c8eea744460c5b7145d/transformed/play-services-base-18.5.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/69e851397c342c8eea744460c5b7145d/transformed/play-services-base-18.5.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/399ad9fb5897088d288a6b8c64a0ea9a/transformed/play-services-tasks-18.2.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/399ad9fb5897088d288a6b8c64a0ea9a/transformed/play-services-tasks-18.2.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/d901090b07e4206c50067a5ab89ca746/transformed/play-services-basement-18.4.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/d901090b07e4206c50067a5ab89ca746/transformed/play-services-basement-18.4.0/AndroidManifest.xml:3:5-44
+MERGED from [androidx.fragment:fragment:1.1.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/21ac96ff1a40bbc5e69a8192e76e52ab/transformed/fragment-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.1.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/21ac96ff1a40bbc5e69a8192e76e52ab/transformed/fragment-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.activity:activity:1.10.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/4e20688d5a5b101bfa81f29280d92af4/transformed/activity-1.10.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.10.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/4e20688d5a5b101bfa81f29280d92af4/transformed/activity-1.10.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.wear.compose:compose-foundation:1.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/04aced1c40e7bf1945dded13e85a29be/transformed/compose-foundation-1.5.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.wear.compose:compose-foundation:1.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/04aced1c40e7bf1945dded13e85a29be/transformed/compose-foundation-1.5.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.animation:animation-core-android:1.8.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/c25e9c72ff32a2db4c25713f842f599c/transformed/animation-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-core-android:1.8.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/c25e9c72ff32a2db4c25713f842f599c/transformed/animation-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-android:1.8.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/fa65c60e0f93b99d66f8a884050ec6d6/transformed/animation/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-android:1.8.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/fa65c60e0f93b99d66f8a884050ec6d6/transformed/animation/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.8.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/d41418ec51f5a8c139d9c9e3ba373d18/transformed/foundation-layout-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.8.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/d41418ec51f5a8c139d9c9e3ba373d18/transformed/foundation-layout-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.8.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/7a5ebe0780ab88a31002dcc6a01a61a7/transformed/foundation-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.8.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/7a5ebe0780ab88a31002dcc6a01a61a7/transformed/foundation-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-unit-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/1479cfe674d7956a502eff0b8ffcdd53/transformed/ui-unit-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-unit-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/1479cfe674d7956a502eff0b8ffcdd53/transformed/ui-unit-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/8c954a04eb1da5e03eabd15753edf021/transformed/ui-text-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/8c954a04eb1da5e03eabd15753edf021/transformed/ui-text-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-graphics-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/c15348db5476e202b3bc8cb5175c389d/transformed/ui-graphics-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-graphics-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/c15348db5476e202b3bc8cb5175c389d/transformed/ui-graphics-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-geometry-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/455bd520c92ab4da61163f9bf7275e90/transformed/ui-geometry-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-geometry-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/455bd520c92ab4da61163f9bf7275e90/transformed/ui-geometry-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-util-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/356219a43c2c4138a1a10c5371da11d9/transformed/ui-util-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-util-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/356219a43c2c4138a1a10c5371da11d9/transformed/ui-util-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/807f25a4fc0eed21c4d421798e354154/transformed/ui-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/807f25a4fc0eed21c4d421798e354154/transformed/ui-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-ktx:1.10.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/b946de7e0c1d17474b3fff86390690e6/transformed/activity-ktx-1.10.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-ktx:1.10.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/b946de7e0c1d17474b3fff86390690e6/transformed/activity-ktx-1.10.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-compose:1.10.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/ddb93074567454ad9faec03f0b1acc09/transformed/activity-compose-1.10.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-compose:1.10.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/ddb93074567454ad9faec03f0b1acc09/transformed/activity-compose-1.10.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/c60a113ecfc87faa13abeefbba6f0ccd/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/c60a113ecfc87faa13abeefbba6f0ccd/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/368a02ea8819bdbbf5e63fcf01477187/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/368a02ea8819bdbbf5e63fcf01477187/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.autofill:autofill:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/4482c79e89a9cb5bb9412fbac929e8f7/transformed/autofill-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.autofill:autofill:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/4482c79e89a9cb5bb9412fbac929e8f7/transformed/autofill-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/cd971ec00480619139038a540ea29728/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/cd971ec00480619139038a540ea29728/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/67e31b8bebe39ebe008965c69b5eba70/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/67e31b8bebe39ebe008965c69b5eba70/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.core:core-ktx:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/2d6e8b0dd7f54d2fa789ef32415ffdd1/transformed/core-ktx-1.13.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core-ktx:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/2d6e8b0dd7f54d2fa789ef32415ffdd1/transformed/core-ktx-1.13.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.customview:customview:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/2d186a9c867d004c26f1c29c167725ca/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/2d186a9c867d004c26f1c29c167725ca/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.graphics:graphics-path:1.0.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/9e6ad3fa1115e39028b8b711ed7a08e0/transformed/graphics-path-1.0.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.graphics:graphics-path:1.0.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/9e6ad3fa1115e39028b8b711ed7a08e0/transformed/graphics-path-1.0.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.emoji2:emoji2:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bdb09978e6b96ed2180146e57aa52f08/transformed/emoji2-1.4.0/AndroidManifest.xml:21:5-44
+MERGED from [androidx.emoji2:emoji2:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bdb09978e6b96ed2180146e57aa52f08/transformed/emoji2-1.4.0/AndroidManifest.xml:21:5-44
+MERGED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/df039ad27eb98b8057a06c9ce9ba7701/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/df039ad27eb98b8057a06c9ce9ba7701/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/4120cbc47c977d6de4d50c614598290b/transformed/lifecycle-livedata-core-ktx-2.8.7/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/4120cbc47c977d6de4d50c614598290b/transformed/lifecycle-livedata-core-ktx-2.8.7/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/ad0903a51f4720ea6137263137a2af62/transformed/lifecycle-livedata-core-2.8.7/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/ad0903a51f4720ea6137263137a2af62/transformed/lifecycle-livedata-core-2.8.7/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/47c127af16f08a0122209ff97438732c/transformed/lifecycle-runtime-ktx-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/47c127af16f08a0122209ff97438732c/transformed/lifecycle-runtime-ktx-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/17bb73e4e615470569a31032bc2d802d/transformed/lifecycle-runtime-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/17bb73e4e615470569a31032bc2d802d/transformed/lifecycle-runtime-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/78e88ef9d6801c0f9b8d33e67e45c257/transformed/lifecycle-livedata-2.8.7/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/78e88ef9d6801c0f9b8d33e67e45c257/transformed/lifecycle-livedata-2.8.7/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/297ff70c00f44f4a75864966397afb21/transformed/lifecycle-viewmodel-2.8.7/AndroidManifest.xml:4:5-43
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/297ff70c00f44f4a75864966397afb21/transformed/lifecycle-viewmodel-2.8.7/AndroidManifest.xml:4:5-43
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/57f5ce6f15a4486a2e056b62097a19ca/transformed/lifecycle-viewmodel-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/57f5ce6f15a4486a2e056b62097a19ca/transformed/lifecycle-viewmodel-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/cc3320dccc71b87d66fb0ad353a58abb/transformed/lifecycle-runtime-compose-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/cc3320dccc71b87d66fb0ad353a58abb/transformed/lifecycle-runtime-compose-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/5694047108c5e998d826498bded073d5/transformed/lifecycle-viewmodel-ktx-2.8.7/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/5694047108c5e998d826498bded073d5/transformed/lifecycle-viewmodel-ktx-2.8.7/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/e8a1f8fda63bf9a998cb42c9274579b6/transformed/lifecycle-viewmodel-savedstate-2.8.7/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/e8a1f8fda63bf9a998cb42c9274579b6/transformed/lifecycle-viewmodel-savedstate-2.8.7/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/18c4098da8dd21414785fff2258e2069/transformed/savedstate-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/18c4098da8dd21414785fff2258e2069/transformed/savedstate-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core-viewtree:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/f07e3394b57ae3513b4657a0a8cb855c/transformed/core-viewtree-1.0.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core-viewtree:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/f07e3394b57ae3513b4657a0a8cb855c/transformed/core-viewtree-1.0.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/13e9d9adffec92c5a1b81af69a0a2a8e/transformed/runtime-saveable-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/13e9d9adffec92c5a1b81af69a0a2a8e/transformed/runtime-saveable-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/d7b4a8577ef252e61f70d9be0f4d0157/transformed/runtime-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-android:1.8.2] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/d7b4a8577ef252e61f70d9be0f4d0157/transformed/runtime-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/faeb0028005ea5693f02a98aba42ceb2/transformed/annotation-experimental-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/faeb0028005ea5693f02a98aba42ceb2/transformed/annotation-experimental-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/9abd6a1d68e1da9e8c434dbb6b3bc67d/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/9abd6a1d68e1da9e8c434dbb6b3bc67d/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:21:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:21:5-44
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/11c4939e4f24737b3456f6c1fad7de3f/transformed/startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/11c4939e4f24737b3456f6c1fad7de3f/transformed/startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.tracing:tracing:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/a8621d54baf87a6ab303fb0ba28a6a82/transformed/tracing-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.tracing:tracing:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/a8621d54baf87a6ab303fb0ba28a6a82/transformed/tracing-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/189bf9938f3a1d6d63ab998aadcc1dd6/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/189bf9938f3a1d6d63ab998aadcc1dd6/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/4ef924360141f3e666933caa0d24aa12/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/4ef924360141f3e666933caa0d24aa12/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+	android:targetSdkVersion
+		INJECTED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/gabrielcordeiro/projects/app/petmotion-app/wear/src/main/AndroidManifest.xml
+activity#com.google.android.gms.common.api.GoogleApiActivity
+ADDED from [com.google.android.gms:play-services-base:18.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/69e851397c342c8eea744460c5b7145d/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:9-173
+	android:exported
+		ADDED from [com.google.android.gms:play-services-base:18.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/69e851397c342c8eea744460c5b7145d/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:146-170
+	android:theme
+		ADDED from [com.google.android.gms:play-services-base:18.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/69e851397c342c8eea744460c5b7145d/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:86-145
+	android:name
+		ADDED from [com.google.android.gms:play-services-base:18.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/69e851397c342c8eea744460c5b7145d/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:19-85
+meta-data#com.google.android.gms.version
+ADDED from [com.google.android.gms:play-services-basement:18.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/d901090b07e4206c50067a5ab89ca746/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:9-122
+	android:value
+		ADDED from [com.google.android.gms:play-services-basement:18.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/d901090b07e4206c50067a5ab89ca746/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:66-119
+	android:name
+		ADDED from [com.google.android.gms:play-services-basement:18.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/d901090b07e4206c50067a5ab89ca746/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:20-65
+uses-library#wear-sdk
+ADDED from [androidx.wear.compose:compose-foundation:1.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/04aced1c40e7bf1945dded13e85a29be/transformed/compose-foundation-1.5.0/AndroidManifest.xml:23:9-25:40
+	android:required
+		ADDED from [androidx.wear.compose:compose-foundation:1.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/04aced1c40e7bf1945dded13e85a29be/transformed/compose-foundation-1.5.0/AndroidManifest.xml:25:13-37
+	android:name
+		ADDED from [androidx.wear.compose:compose-foundation:1.5.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/04aced1c40e7bf1945dded13e85a29be/transformed/compose-foundation-1.5.0/AndroidManifest.xml:24:13-36
+provider#androidx.startup.InitializationProvider
+ADDED from [androidx.emoji2:emoji2:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bdb09978e6b96ed2180146e57aa52f08/transformed/emoji2-1.4.0/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/df039ad27eb98b8057a06c9ce9ba7701/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/df039ad27eb98b8057a06c9ce9ba7701/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/11c4939e4f24737b3456f6c1fad7de3f/transformed/startup-runtime-1.1.1/AndroidManifest.xml:26:9-30:34
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/11c4939e4f24737b3456f6c1fad7de3f/transformed/startup-runtime-1.1.1/AndroidManifest.xml:26:9-30:34
+	tools:node
+		ADDED from [androidx.emoji2:emoji2:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bdb09978e6b96ed2180146e57aa52f08/transformed/emoji2-1.4.0/AndroidManifest.xml:28:13-31
+	android:authorities
+		ADDED from [androidx.emoji2:emoji2:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bdb09978e6b96ed2180146e57aa52f08/transformed/emoji2-1.4.0/AndroidManifest.xml:26:13-68
+	android:exported
+		ADDED from [androidx.emoji2:emoji2:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bdb09978e6b96ed2180146e57aa52f08/transformed/emoji2-1.4.0/AndroidManifest.xml:27:13-37
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bdb09978e6b96ed2180146e57aa52f08/transformed/emoji2-1.4.0/AndroidManifest.xml:25:13-67
+meta-data#androidx.emoji2.text.EmojiCompatInitializer
+ADDED from [androidx.emoji2:emoji2:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bdb09978e6b96ed2180146e57aa52f08/transformed/emoji2-1.4.0/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.emoji2:emoji2:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bdb09978e6b96ed2180146e57aa52f08/transformed/emoji2-1.4.0/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bdb09978e6b96ed2180146e57aa52f08/transformed/emoji2-1.4.0/AndroidManifest.xml:30:17-75
+permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+permission#app.petmotion.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+uses-permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+uses-permission#app.petmotion.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/288f2cfde7de02fbc806a11e473184b4/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+meta-data#androidx.lifecycle.ProcessLifecycleInitializer
+ADDED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/df039ad27eb98b8057a06c9ce9ba7701/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/df039ad27eb98b8057a06c9ce9ba7701/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/df039ad27eb98b8057a06c9ce9ba7701/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:30:17-78
+meta-data#androidx.profileinstaller.ProfileInstallerInitializer
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:30:17-85
+receiver#androidx.profileinstaller.ProfileInstallReceiver
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:34:9-52:20
+	android:enabled
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:37:13-35
+	android:exported
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:38:13-36
+	android:permission
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:39:13-57
+	android:directBootAware
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:36:13-44
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:35:13-76
+intent-filter#action:name:androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:40:13-42:29
+action#androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:17-91
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:25-88
+intent-filter#action:name:androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:43:13-45:29
+action#androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:17-85
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:25-82
+intent-filter#action:name:androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:46:13-48:29
+action#androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:17-88
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:25-85
+intent-filter#action:name:androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:49:13-51:29
+action#androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:17-95
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] /Users/gabrielcordeiro/.gradle/caches/9.4.1/transforms/bec035558798cf5cc3f8d8ae42c88f86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:25-92

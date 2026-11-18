@@ -7,6 +7,7 @@ import { usePets } from '@/store/pets';
 import { useSettings } from '@/store/settings';
 import { useToastStore } from '@/store/toast';
 import { useWalk } from '@/store/walk';
+import { useWearCommand } from '@/store/wearCommand';
 import { WalkScreen } from '../Walk';
 
 jest.mock('@/services/api', () => ({
@@ -79,6 +80,16 @@ describe('Passeio: antes de começar', () => {
     await waitFor(() => expect(useWalk.getState().status).toBe('running'));
     expect(useWalk.getState().temperature).toBe(22);
     expect(screen.getByText('Procurando GPS…')).toBeOnTheScreen();
+  });
+
+  it('pedido do relógio: "começar" dispara a contagem; repetido no meio não faz nada', async () => {
+    await renderWithTheme(<WalkScreen />);
+    expect(await screen.findByText(/Pronto pra sair/)).toBeOnTheScreen();
+    await act(() => useWearCommand.getState().send('finish')); // ainda não começou: ignora
+    expect(useWearCommand.getState().command).toBeNull();
+    await act(() => useWearCommand.getState().send('start'));
+    await waitFor(() => expect(screen.getByText('3')).toBeOnTheScreen());
+    expect(useWearCommand.getState().command).toBeNull();
   });
 
   it('modo apresentação não pede GPS e mostra o selo "Simulado"', async () => {
@@ -184,6 +195,16 @@ describe('Passeio: em andamento', () => {
     await fireEvent(screen.getByLabelText('Segure para finalizar'), 'pressIn');
     expect(useToastStore.getState().current?.message).toMatch(/muito curto/);
     expect(api.createWalk).not.toHaveBeenCalled();
+  });
+
+  it('pedido do relógio: "finalizar" salva o passeio como o botão de segurar', async () => {
+    const walk = await startWalking();
+    await walk(-23.5, -46.6);
+    await walk(-23.5, -46.601);
+    api.createWalk.mockResolvedValueOnce({ id: 78 } as never);
+    await act(() => useWearCommand.getState().send('start')); // já está passeando: ignora
+    await act(() => useWearCommand.getState().send('finish'));
+    await waitFor(() => expect(api.createWalk).toHaveBeenCalled());
   });
 
   it('salva e abre o resumo com as conquistas de antes', async () => {

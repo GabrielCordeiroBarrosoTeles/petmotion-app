@@ -133,7 +133,7 @@ jest.mock('expo-constants', () => ({ __esModule: true, default: { expoConfig: { 
 // expo-router: navegação simulada; useFocusEffect roda como um efeito comum
 jest.mock('expo-router', () => {
   const React = require('react');
-  const router = { push: jest.fn(), replace: jest.fn(), back: jest.fn() };
+  const router = { push: jest.fn(), replace: jest.fn(), back: jest.fn(), navigate: jest.fn() };
   const focusCallbacks = new Set<() => unknown>();
   global.__router = router;
   global.__focus = () => focusCallbacks.forEach((cb) => cb());
@@ -171,7 +171,7 @@ declare global {
   // eslint-disable-next-line no-var
   var __map: { animateCamera: jest.Mock; fitToCoordinates: jest.Mock };
   // eslint-disable-next-line no-var
-  var __router: { push: jest.Mock; replace: jest.Mock; back: jest.Mock };
+  var __router: { push: jest.Mock; replace: jest.Mock; back: jest.Mock; navigate: jest.Mock };
   // eslint-disable-next-line no-var
   var __focus: () => void;
 }

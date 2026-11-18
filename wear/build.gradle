@@ -1,0 +1,85 @@
+// App do Galaxy Watch (Wear OS). Mesmo pacote e mesma assinatura do app do celular:
+// é o que o Data Layer exige para os dois conversarem.
+buildscript {
+  repositories {
+    google()
+    mavenCentral()
+  }
+  dependencies {
+    def kotlinVersion = findProperty('android.kotlinVersion') ?: '2.2.10'
+    classpath "org.jetbrains.kotlin:compose-compiler-gradle-plugin:$kotlinVersion"
+    classpath 'org.jetbrains.kotlinx:kover-gradle-plugin:0.9.3'
+  }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'org.jetbrains.kotlin.android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
+apply plugin: 'org.jetbrains.kotlinx.kover'
+
+android {
+  namespace 'app.petmotion.wear'
+  compileSdk 36
+
+  defaultConfig {
+    applicationId 'app.petmotion'
+    minSdk 30
+    targetSdk 36
+    // faixa própria: o relógio nunca colide com o versionCode do celular
+    versionCode 2000001
+    versionName '1.0.0'
+  }
+
+  signingConfigs {
+    debug {
+      // a mesma chave de teste do app do celular (android/app/debug.keystore)
+      storeFile rootProject.file('app/debug.keystore')
+      storePassword 'android'
+      keyAlias 'androiddebugkey'
+      keyPassword 'android'
+    }
+  }
+
+  buildTypes {
+    debug { signingConfig signingConfigs.debug }
+    release { signingConfig signingConfigs.debug }
+  }
+
+  buildFeatures { compose true }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+  kotlinOptions { jvmTarget = '17' }
+}
+
+dependencies {
+  implementation 'androidx.activity:activity-compose:1.10.1'
+  implementation 'androidx.wear.compose:compose-foundation:1.5.0'
+  implementation 'com.google.android.gms:play-services-wearable:19.0.0'
+
+  testImplementation 'junit:junit:4.13.2'
+  // org.json é do Android: nos testes de JVM precisa da implementação real
+  testImplementation 'org.json:json:20240303'
+}
+
+kover {
+  reports {
+    filters {
+      excludes {
+        // Telas Compose e a Activity: só desenham o que o WalkUi decide e ligam o Data Layer
+        // (que não existe fora do relógio). Conferidas no Galaxy Watch.
+        classes('app.petmotion.wear.MainActivity*', 'app.petmotion.wear.WatchScreensKt*', 'app.petmotion.wear.ComposableSingletons*', 'app.petmotion.wear.BuildConfig', 'app.petmotion.wear.R', 'app.petmotion.wear.R$*')
+      }
+    }
+    total {
+      verify {
+        rule('100% de linhas e ramos na lógica do relógio') {
+          bound { minValue = 100; coverageUnits = kotlinx.kover.gradle.plugin.dsl.CoverageUnit.LINE }
+          bound { minValue = 100; coverageUnits = kotlinx.kover.gradle.plugin.dsl.CoverageUnit.BRANCH }
+        }
+      }
+    }
+  }
+}

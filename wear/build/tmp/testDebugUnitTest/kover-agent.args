@@ -1,0 +1,4 @@
+report.file=/Users/gabrielcordeiro/projects/app/petmotion-app/wear/build/kover/bin-reports/testDebugUnitTest.ic
+exclude=android.*
+exclude=com.android.*
+exclude=jdk.internal.*

@@ -74,7 +74,8 @@
         {
           "color": "#C9F24B"
         }
-      ]
+      ],
+      "./plugins/withWear"
     ],
     "scheme": "petmotion",
     "backgroundColor": "#EEF2EC",

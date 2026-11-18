@@ -17,6 +17,7 @@ import type { WalkEventType } from '@/services/types';
 import { useSelectedPet } from '@/store/pets';
 import { useSettings } from '@/store/settings';
 import { MIN_WALK_M, useWalk } from '@/store/walk';
+import { useWearCommand } from '@/store/wearCommand';
 import { spring, timing } from '@/theme/motion';
 import { duration, km, pace, thousands } from '@/utils/format';
 import { clearWalkNotification, ensureNotificationPermission, showWalkNotification } from '@/utils/notifications';
@@ -133,6 +134,16 @@ export function WalkScreen() {
     customToast('Passeio descartado.', 'warning');
     router.back();
   };
+
+  // começar/finalizar pedidos pelo relógio (a contagem e o salvamento vivem nesta tela)
+  const wearCommand = useWearCommand((st) => st.command);
+  useEffect(() => {
+    if (!wearCommand) return;
+    useWearCommand.getState().clear();
+    if (wearCommand.type === 'start' && phase === 'ready') requestStart();
+    if (wearCommand.type === 'finish' && phase === 'tracking') finish();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wearCommand]);
 
   const addEvent = (type: WalkEventType) => useWalk.getState().addEvent(type);
   const counts = (type: WalkEventType) => walk.events.filter((e) => e.type === type).length;
