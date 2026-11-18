@@ -88,16 +88,3 @@ export const Link = styled.Text`
   color: ${({ theme }) => theme.colors.ink};
   text-decoration-line: underline;
 `;
-
-export const DemoHint = styled.Pressable`
-  padding: ${({ theme }) => theme.spacing.small}px;
-  border-radius: ${({ theme }) => theme.radii.small}px;
-  background-color: ${({ theme }) => theme.colors.surfaceAlt};
-`;
-
-export const DemoText = styled.Text`
-  font-family: ${({ theme }) => theme.fonts.bodySemi};
-  font-size: ${({ theme }) => RFValue(theme.fontSizes.caption)}px;
-  color: ${({ theme }) => theme.colors.textMuted};
-  text-align: center;
-`;

@@ -38,6 +38,7 @@ describe('Login', () => {
   it('entra com a conta demo, normalizando o e-mail', async () => {
     api.login.mockResolvedValueOnce({ token: 'tok', user });
     await renderWithTheme(<LoginScreen />);
+    expect(screen.queryByText(/Toque para usar a conta demo/)).toBeNull(); // o atalho fica escondido na bola
     await fireEvent.press(screen.getByLabelText('Preencher com a conta de demonstração'));
     await fireEvent(screen.getByLabelText('Senha'), 'submitEditing');
     await waitFor(() => expect(useAuth.getState().status).toBe('signedIn'));

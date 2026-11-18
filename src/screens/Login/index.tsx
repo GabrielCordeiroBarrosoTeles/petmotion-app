@@ -15,7 +15,7 @@ import { useAuth } from '@/store/auth';
 import { spring } from '@/theme/motion';
 import { customToast } from '@/utils/toast';
 import {
-  Brand, DemoHint, DemoText, Footer, FooterText, Headline, Hero, HeroText, Link, Screen, Scroll, Sheet, Subtitle, Title,
+  Brand, Footer, FooterText, Headline, Hero, HeroText, Link, Screen, Scroll, Sheet, Subtitle, Title,
 } from './styles';
 import type { LoginErrors } from './types';
 
@@ -58,7 +58,17 @@ export function LoginScreen() {
             <Brand>PetMotion</Brand>
             <Headline maxFontSizeMultiplier={1.15}>Bora{'\n'}passear?</Headline>
           </HeroText>
-          <BouncingBall size={RFValue(54)} />
+          {/* atalho da apresentação: tocar na bola preenche a conta demo */}
+          <PressableScale
+            haptic="select"
+            onPress={() => {
+              setEmail('gabriel@petmotion.app');
+              setPassword('petmotion');
+            }}
+            accessibilityLabel="Preencher com a conta de demonstração"
+          >
+            <BouncingBall size={RFValue(54)} />
+          </PressableScale>
         </Hero>
 
         <Sheet
@@ -104,17 +114,6 @@ export function LoginScreen() {
           />
 
           <Button title="Entrar" onPress={submit} loading={loading} />
-
-          <DemoHint
-            onPress={() => {
-              setEmail('gabriel@petmotion.app');
-              setPassword('petmotion');
-            }}
-            accessibilityRole="button"
-            accessibilityLabel="Preencher com a conta de demonstração"
-          >
-            <DemoText>Toque para usar a conta demo: gabriel@petmotion.app</DemoText>
-          </DemoHint>
 
           <Footer>
             <FooterText>Primeira vez aqui?</FooterText>
