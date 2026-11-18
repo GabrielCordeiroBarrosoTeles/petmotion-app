@@ -291,8 +291,23 @@ describe('Passeio em grupo', () => {
     });
     await renderWithTheme(<WalkScreen />);
     expect(screen.queryByText('Seus pets')).toBeNull();
-    expect(screen.getByText('Da Ana')).toBeOnTheScreen();
-    expect(screen.getByText('Da Carlos')).toBeOnTheScreen();
+    expect(screen.getByText('Pets de Ana')).toBeOnTheScreen();
+    expect(screen.getByText('Pets de Carlos')).toBeOnTheScreen();
+  });
+
+  it('sem nome do dono, o grupo se chama "Pets compartilhados"', async () => {
+    usePets.setState({ pets: [makePet({ id: 3, name: 'Bidu', role: 'walker' }), makePet({ id: 4, name: 'Nina', role: 'walker' })], selectedId: 3 });
+    await renderWithTheme(<WalkScreen />);
+    expect(screen.getByText('Pets compartilhados')).toBeOnTheScreen();
+  });
+
+  it('se todos os marcados saírem da lista, volta para o pet selecionado', async () => {
+    threePets();
+    await renderWithTheme(<WalkScreen />);
+    await fireEvent.press(screen.getByRole('checkbox', { name: 'Mel' }));
+    await fireEvent.press(screen.getByRole('checkbox', { name: 'Thor' }));
+    await act(() => usePets.getState().remove(2));
+    expect(screen.getByText(/com Thor\?/)).toBeOnTheScreen();
   });
 
   it('agrupa por dono, marca o selecionado e nunca deixa desmarcar o último', async () => {
@@ -300,7 +315,7 @@ describe('Passeio em grupo', () => {
     await renderWithTheme(<WalkScreen />);
     expect(screen.getByText('Quem vai junto?')).toBeOnTheScreen();
     expect(screen.getByText('Seus pets')).toBeOnTheScreen();
-    expect(screen.getAllByText('Da Ana')).toHaveLength(1);
+    expect(screen.getAllByText('Pets de Ana')).toHaveLength(1);
     expect(screen.getByRole('checkbox', { name: 'Thor', checked: true })).toBeOnTheScreen();
     expect(screen.getByRole('checkbox', { name: 'Mel', checked: false })).toBeOnTheScreen();
 

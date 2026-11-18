@@ -28,7 +28,7 @@ describe('Início: pet de passeio', () => {
     api.pets.mockResolvedValue([makePet({ id: 7, name: 'Bidu', role: 'walker', owner_name: 'Ana' })]);
     api.stats.mockResolvedValue(makeStats());
     await renderWithTheme(<HomeScreen />);
-    expect(await screen.findByText('Pet da Ana')).toBeOnTheScreen();
+    expect(await screen.findByText('Pet de Ana')).toBeOnTheScreen();
     expect(screen.getByText('Passeio')).toBeOnTheScreen();
   });
 });

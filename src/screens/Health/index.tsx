@@ -71,7 +71,7 @@ export function HealthScreen() {
         action={pet && !walkerPet ? { icon: Plus, label: 'Adicionar cuidado', onPress: () => router.push('/health-form') } : undefined}
       />
       {walkerPet ? (
-        <EmptyState icon={HeartPulse} title={`A saúde do ${pet.name} fica com a ${pet.owner_name}.`} message="Vacinas e consultas são com quem cuida dele. Você cuida dos passeios." />
+        <EmptyState icon={HeartPulse} title={`A saúde do ${pet.name} fica com ${pet.owner_name}.`} message={`Só quem cadastrou o ${pet.name} vê vacinas e remédios. Você cuida dos passeios.`} />
       ) : loading ? (
         <HealthSkeleton />
       ) : (

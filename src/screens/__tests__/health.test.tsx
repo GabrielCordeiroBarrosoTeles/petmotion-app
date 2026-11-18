@@ -26,7 +26,7 @@ describe('Saúde: pet de passeio', () => {
   it('a carteirinha fica com o dono: sem busca e sem botão de adicionar', async () => {
     usePets.setState({ pets: [makePet({ name: 'Bidu', role: 'walker', owner_name: 'Ana' })], selectedId: 1, loaded: true });
     await renderWithTheme(<HealthScreen />);
-    expect(screen.getByText('A saúde do Bidu fica com a Ana.')).toBeOnTheScreen();
+    expect(screen.getByText('A saúde do Bidu fica com Ana.')).toBeOnTheScreen();
     expect(api.health).not.toHaveBeenCalled();
     expect(screen.queryByLabelText('Adicionar cuidado')).toBeNull();
   });

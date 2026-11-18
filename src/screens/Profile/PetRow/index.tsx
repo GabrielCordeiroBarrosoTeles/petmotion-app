@@ -21,7 +21,7 @@ export function PetRow({ pet, index, onPress }: PetRowProps) {
         <PetAvatar pet={pet} size={RFValue(56)} />
         <Texts>
           <Name>{pet.name}</Name>
-          <Meta numberOfLines={1}>{walker ? `Da ${pet.owner_name}` : details || (pet.species === 'dog' ? 'Cachorro' : 'Gato')}</Meta>
+          <Meta numberOfLines={1}>{walker ? `Pet de ${pet.owner_name}` : details || (pet.species === 'dog' ? 'Cachorro' : 'Gato')}</Meta>
         </Texts>
         {walker ? null : (
           <Edit>

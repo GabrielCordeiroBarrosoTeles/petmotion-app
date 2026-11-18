@@ -57,7 +57,9 @@ export function WalkScreen() {
   const idsToPets = (ids: number[]) => ids.flatMap((id) => pets.find((p) => p.id === id) ?? []);
   // na ordem da lista, não na do toque: o nome do passeio fica sempre igual
   const pickedIds = picked ?? (pet ? [pet.id] : []);
-  const crew = pets.filter((p) => pickedIds.includes(p.id));
+  const pickedPets = pets.filter((p) => pickedIds.includes(p.id));
+  // se todos os marcados saíram da lista, volta para o pet selecionado
+  const crew = pickedPets.length ? pickedPets : pet ? [pet] : [];
   const crewIds = crew.map((p) => p.id);
   const walkingNames = joinNames((phase === 'tracking' ? idsToPets(walk.petIds) : crew).map((p) => p.name));
   const toggleCrew = (id: number) =>

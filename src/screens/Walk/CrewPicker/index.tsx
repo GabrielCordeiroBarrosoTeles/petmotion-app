@@ -15,10 +15,10 @@ export function CrewPicker({ pets, checkedIds, onToggle }: CrewPickerProps) {
     pets
       .filter((p) => p.role === 'walker')
       .forEach((p) => {
-        const owner = p.owner_name!;
+        const owner = p.owner_name ?? '';
         const existing = result.find((g) => g.key === `owner:${owner}`);
         if (existing) existing.pets.push(p);
-        else result.push({ key: `owner:${owner}`, title: `Da ${owner}`, pets: [p] });
+        else result.push({ key: `owner:${owner}`, title: owner ? `Pets de ${owner}` : 'Pets compartilhados', pets: [p] });
       });
     return result;
   }, [pets]);

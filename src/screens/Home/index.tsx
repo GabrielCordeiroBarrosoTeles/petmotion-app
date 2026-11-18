@@ -100,7 +100,7 @@ export function HomeScreen() {
                 <GreetingName>{firstName(user?.name)}</GreetingName>
               </Greeting>
               {user?.is_premium ? <PackBadge tone="onInk" /> : null}
-              {pet?.role === 'walker' ? <OwnerNote>Pet da {pet.owner_name}</OwnerNote> : null}
+              {pet?.role === 'walker' ? <OwnerNote>Pet de {pet.owner_name}</OwnerNote> : null}
             </NameBlock>
             {stats && stats.streak_days > 0 ? (
               <StreakChip

@@ -43,7 +43,7 @@ describe('Resumo do passeio', () => {
     api.stats.mockResolvedValue(makeStats());
     await renderWithTheme(<WalkSummaryScreen />);
     expect(await screen.findByText('Passeio de Thor, Mel e Bidu')).toBeOnTheScreen();
-    expect(screen.getByText(/Thor, Mel e Bidu andaram 3,42 km/)).toBeOnTheScreen();
+    expect(screen.getByText(/Thor, Mel e Bidu andaram 3,42 km e mantiveram a sequência de 6 dias\./)).toBeOnTheScreen();
     expect(screen.getAllByLabelText(/^Foto de /)).toHaveLength(3);
     await fireEvent.press(screen.getByRole('button', { name: 'Compartilhar card' }));
     await waitFor(() => expect(Sharing.shareAsync).toHaveBeenCalled());

@@ -61,7 +61,7 @@ export function WalkSummaryScreen() {
               <Title>{goalHit ? 'Meta do dia\nbatida!' : 'Que passeio!'}</Title>
               <Subtitle>
                 {namesWith(petForCard.name)} {companions.length ? 'andaram' : 'andou'} {km(data.walk.distance_meters)} km
-                {data.stats.streak_days > 1 ? ` e manteve a sequência de ${data.stats.streak_days} dias.` : '.'}
+                {data.stats.streak_days > 1 ? ` e ${companions.length ? 'mantiveram' : 'manteve'} a sequência de ${data.stats.streak_days} dias.` : '.'}
               </Subtitle>
             </Heading>
 
