@@ -23,3 +23,18 @@ export interface UseWeatherResult {
 export interface UseElapsedResult {
   elapsedSeconds: number;
 }
+
+export interface UseKeyboardAwareScrollResult {
+  scrollRef: import('react').RefObject<import('react').ComponentRef<typeof import('react-native').ScrollView> | null>;
+  keyboardHeight: number;
+  onScroll: (e: import('react-native').NativeSyntheticEvent<import('react-native').NativeScrollEvent>) => void;
+  /** Rola até o campo em foco (chamado pelo TextField ao ganhar foco). */
+  scrollToFocused: () => void;
+}
+
+export interface SafeInsets {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}

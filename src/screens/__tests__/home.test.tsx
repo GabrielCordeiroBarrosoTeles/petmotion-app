@@ -1,5 +1,5 @@
 import { fireEvent, pullToRefresh, renderWithTheme, screen, waitFor } from '../../../test/render';
-import { makeHealth, makePet, makeStats, user, weather } from '../../../test/fixtures';
+import { makeHealth, makePet, makeStats, member, user, weather } from '../../../test/fixtures';
 import * as apiModule from '@/services/api';
 import { useAuth } from '@/store/auth';
 import { usePets } from '@/store/pets';
@@ -100,6 +100,13 @@ describe('Início', () => {
     // falha ao atualizar não derruba a tela
     api.pets.mockRejectedValueOnce(new Error('offline de novo'));
     await pullToRefresh();
+  });
+
+  it('membro da Matilha ganha o selo ao lado do nome', async () => {
+    useAuth.setState({ user: member });
+    api.pets.mockResolvedValue([]);
+    await renderWithTheme(<HomeScreen />);
+    expect(await screen.findByLabelText('Membro da Matilha')).toBeOnTheScreen();
   });
 
   it('sem usuário não quebra a saudação', async () => {

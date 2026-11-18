@@ -3,6 +3,7 @@ import type { LayoutChangeEvent } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { fullDateLabel, km, minutesLabel, thousands, timeLabel } from '@/utils/format';
 import { MiniRoute } from '../MiniRoute';
+import { PackBadge } from '../PackBadge';
 import { PetAvatar } from '../PetAvatar';
 import {
   Big, Brand, BrandDot, BrandText, Card, Header, HeaderTexts, Number, Numbers, PetName, RouteBox, Small, When,
@@ -10,7 +11,7 @@ import {
 import type { WalkShareCardProps } from './types';
 
 /** O card "estilo Strava" — é ele que vira imagem para compartilhar. */
-export function WalkShareCard({ walk, pet, animated }: WalkShareCardProps) {
+export function WalkShareCard({ walk, pet, animated, premium }: WalkShareCardProps) {
   const [width, setWidth] = useState(0);
   const routeHeight = RFValue(170);
 
@@ -46,6 +47,7 @@ export function WalkShareCard({ walk, pet, animated }: WalkShareCardProps) {
       <Brand>
         <BrandDot />
         <BrandText>PetMotion</BrandText>
+        {premium ? <PackBadge tone="onInk" /> : null}
       </Brand>
     </Card>
   );

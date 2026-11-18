@@ -2,11 +2,11 @@ import { router } from 'expo-router';
 import { HeartPulse, Plus } from 'lucide-react-native';
 import { useMemo } from 'react';
 import { Alert } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
 import { EmptyState } from '@/components/EmptyState';
 import { ScreenHeader } from '@/components/ScreenHeader';
-import { BAR_HEIGHT } from '@/components/TabBar/styles';
+import { BAR_HEIGHT, FAB_SIZE } from '@/components/TabBar/styles';
 import { useFetch } from '@/hooks/useFetch';
 import { api, errorMessage } from '@/services/api';
 import type { HealthRecord } from '@/services/types';
@@ -21,7 +21,7 @@ import type { HealthSections } from './types';
 
 export function HealthScreen() {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useSafeInsets();
   const pet = useSelectedPet();
 
   const { data, loading, refreshing, refetch, setData } = useFetch(() => api.health(pet!.id), {
@@ -59,7 +59,7 @@ export function HealthScreen() {
       },
     ]);
 
-  const bottom = BAR_HEIGHT + insets.bottom + theme.spacing.xxl;
+  const bottom = BAR_HEIGHT + FAB_SIZE / 2 + insets.bottom + theme.spacing.xl;
 
   return (
     <Screen $top={insets.top}>

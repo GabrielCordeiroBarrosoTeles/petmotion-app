@@ -1,10 +1,9 @@
-import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Cake, Camera, Cat, Dog, Images, PawPrint, Scale, Trash2 } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
 import { Button } from '@/components/Button';
 import { PetAvatar } from '@/components/PetAvatar';
@@ -12,17 +11,24 @@ import { PressableScale } from '@/components/PressableScale';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { SegmentedControl } from '@/components/SegmentedControl';
 import { TextField } from '@/components/TextField';
-import { useKeyboardHeight } from '@/hooks/useKeyboardHeight';
+import { KeyboardScrollContext } from '@/hooks/KeyboardScrollContext';
+import { useKeyboardAwareScroll } from '@/hooks/useKeyboardAwareScroll';
+import { useModalTopInset } from '@/hooks/useModalTopInset';
 import { api, errorMessage } from '@/services/api';
 import type { Pet, Species } from '@/services/types';
+import { useAuth } from '@/store/auth';
 import { usePets } from '@/store/pets';
 import { spring } from '@/theme/motion';
 import { fromIsoDate, localIso, maskDate, toIsoDate } from '@/utils/format';
 import { celebrate } from '@/utils/haptics';
+import { type ImageSource, pickImage } from '@/utils/pickImage';
 import { customToast } from '@/utils/toast';
 import { GoalStepper } from './GoalStepper';
 import { Form, Half, PhotoArea, PhotoBadge, PhotoButtons, Row, Screen, Scroll } from './styles';
 import type { PetFormErrors, PetFormParams } from './types';
+
+/** Igual ao User::FREE_PET_LIMIT da API. */
+const FREE_PET_LIMIT = 1;
 
 /** Peso aceita vírgula e no máximo 2 casas. */
 const maskWeight = (v: string) => {
@@ -33,11 +39,14 @@ const maskWeight = (v: string) => {
 
 export function PetFormScreen() {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
-  const keyboardHeight = useKeyboardHeight();
+  const insets = useSafeInsets();
+  const modalTop = useModalTopInset();
+  const { scrollRef, keyboardHeight, onScroll, scrollToFocused } = useKeyboardAwareScroll();
   const { id } = useLocalSearchParams<PetFormParams>();
   const existing = usePets((s) => s.pets.find((p) => String(p.id) === id));
   const upsert = usePets((s) => s.upsert);
+  const petCount = usePets((s) => s.pets.length);
+  const isPremium = useAuth((s) => !!s.user?.is_premium);
   const remove = usePets((s) => s.remove);
 
   const [name, setName] = useState(existing?.name ?? '');
@@ -50,20 +59,18 @@ export function PetFormScreen() {
   const [errors, setErrors] = useState<PetFormErrors>({});
   const [saving, setSaving] = useState(false);
 
-  const pickPhoto = async (source: 'camera' | 'library') => {
-    const perm = source === 'camera'
-      ? await ImagePicker.requestCameraPermissionsAsync()
-      : await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!perm.granted) {
-      customToast(source === 'camera' ? 'Permita o uso da câmera para tirar a foto.' : 'Permita o acesso às fotos.', 'warning');
-      return;
-    }
-    const options: ImagePicker.ImagePickerOptions = { mediaTypes: ['images'], allowsEditing: true, aspect: [1, 1], quality: 0.7 };
-    const result = source === 'camera' ? await ImagePicker.launchCameraAsync(options) : await ImagePicker.launchImageLibraryAsync(options);
-    if (!result.canceled) setPhotoUri(result.assets[0].uri);
+  const pickPhoto = async (source: ImageSource) => {
+    const uri = await pickImage(source, [1, 1]);
+    if (uri) setPhotoUri(uri);
   };
 
   const save = async () => {
+    // plano grátis: 1 pet. A API também barra, mas aqui já leva direto para a Matilha.
+    if (!existing && !isPremium && petCount >= FREE_PET_LIMIT) {
+      customToast('No plano grátis cabe 1 pet. Entre para a Matilha para ter pets ilimitados.', 'warning');
+      router.push('/premium');
+      return;
+    }
     const isoBirth = birth ? toIsoDate(birth) : null;
     const next: PetFormErrors = {};
     if (name.trim().length < 1) next.name = 'Qual o nome do seu pet?';
@@ -119,9 +126,10 @@ export function PetFormScreen() {
   const preview = { name: name || '?', species, photo_url: photoUri ?? existing?.photo_url ?? null };
 
   return (
-    <Screen>
+    <Screen $top={modalTop}>
       <ScreenHeader title={existing ? `Editar ${existing.name}` : 'Novo pet'} onBack={() => router.back()} />
-      <Scroll contentContainerStyle={{ paddingBottom: keyboardHeight }}>
+      <KeyboardScrollContext.Provider value={scrollToFocused}>
+      <Scroll ref={scrollRef} onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ paddingBottom: keyboardHeight }}>
         <Form $bottom={insets.bottom}>
           <PhotoArea from={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={spring({ damping: 12 })}>
             <PressableScale onPress={() => pickPhoto('library')} accessibilityLabel="Escolher foto do pet">
@@ -193,6 +201,7 @@ export function PetFormScreen() {
           {existing ? <Button title={`Remover ${existing.name}`} icon={Trash2} variant="danger" onPress={() => confirmDelete(existing)} /> : null}
         </Form>
       </Scroll>
+      </KeyboardScrollContext.Provider>
     </Screen>
   );
 }

@@ -1,9 +1,9 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { ChevronLeft, Clock, Droplet, Droplets, Footprints, Gauge, Leaf, Route, Share2, Thermometer, Trash2 } from 'lucide-react-native';
+import { Camera, ChevronLeft, Clock, Droplet, Droplets, Footprints, Gauge, Leaf, Route, Share2, Thermometer, Trash2 } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Alert, useWindowDimensions } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
 import { Button } from '@/components/Button';
 import { PressableScale } from '@/components/PressableScale';
@@ -14,6 +14,7 @@ import { useFetch } from '@/hooks/useFetch';
 import { useShareView } from '@/hooks/useShareView';
 import { api, errorMessage } from '@/services/api';
 import type { WalkEvent } from '@/services/types';
+import { useAuth } from '@/store/auth';
 import { useSelectedPet } from '@/store/pets';
 import { fullDateLabel, km, minutesLabel, pace, thousands, timeLabel } from '@/utils/format';
 import { customToast } from '@/utils/toast';
@@ -25,10 +26,11 @@ const countEvents = (events: WalkEvent[], type: WalkEvent['type']) => events.fil
 
 export function WalkDetailScreen() {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useSafeInsets();
   const { height } = useWindowDimensions();
   const { id } = useLocalSearchParams<WalkDetailParams>();
   const pet = useSelectedPet();
+  const isPremium = useAuth((s) => !!s.user?.is_premium);
   const { ref, share, sharing } = useShareView();
   const [deleting, setDeleting] = useState(false);
   const mapHeight = height * 0.42;
@@ -95,11 +97,12 @@ export function WalkDetailScreen() {
 
             <SectionTitle>Card para compartilhar</SectionTitle>
             <Capture ref={ref} collapsable={false}>
-              <WalkShareCard walk={walk} pet={cardPet} />
+              <WalkShareCard walk={walk} pet={cardPet} premium={isPremium} />
             </Capture>
 
             <Buttons>
-              <Button title="Compartilhar" icon={Share2} onPress={() => share(`Passeio do ${cardPet.name}`)} loading={sharing} />
+              <Button title="Criar foto do passeio" icon={Camera} onPress={() => router.push({ pathname: '/walk-photo', params: { id: String(walk.id) } })} />
+              <Button title="Compartilhar card" icon={Share2} variant="ink" onPress={() => share(`Passeio do ${cardPet.name}`)} loading={sharing} />
               <Button title="Excluir passeio" icon={Trash2} variant="danger" onPress={confirmDelete} loading={deleting} />
             </Buttons>
           </Body>

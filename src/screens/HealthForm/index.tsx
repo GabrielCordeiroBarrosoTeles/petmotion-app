@@ -1,13 +1,15 @@
 import { router } from 'expo-router';
 import { CalendarClock, CalendarDays, NotebookPen, Tag } from 'lucide-react-native';
 import { useState } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { Button } from '@/components/Button';
 import { ChoiceChips } from '@/components/ChoiceChips';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { SegmentedControl } from '@/components/SegmentedControl';
 import { TextField } from '@/components/TextField';
-import { useKeyboardHeight } from '@/hooks/useKeyboardHeight';
+import { KeyboardScrollContext } from '@/hooks/KeyboardScrollContext';
+import { useKeyboardAwareScroll } from '@/hooks/useKeyboardAwareScroll';
+import { useModalTopInset } from '@/hooks/useModalTopInset';
 import { api, errorMessage } from '@/services/api';
 import type { HealthType } from '@/services/types';
 import { useSelectedPet } from '@/store/pets';
@@ -41,8 +43,9 @@ function addDays(iso: string, days: number): string {
 }
 
 export function HealthFormScreen() {
-  const insets = useSafeAreaInsets();
-  const keyboardHeight = useKeyboardHeight();
+  const insets = useSafeInsets();
+  const modalTop = useModalTopInset();
+  const { scrollRef, keyboardHeight, onScroll, scrollToFocused } = useKeyboardAwareScroll();
   const pet = useSelectedPet();
   const [type, setType] = useState<HealthType>('vaccine');
   const [title, setTitle] = useState('');
@@ -80,9 +83,10 @@ export function HealthFormScreen() {
   };
 
   return (
-    <Screen>
+    <Screen $top={modalTop}>
       <ScreenHeader title="Novo cuidado" subtitle={pet ? `Para ${pet.name}` : undefined} onBack={() => router.back()} />
-      <Scroll contentContainerStyle={{ paddingBottom: keyboardHeight }}>
+      <KeyboardScrollContext.Provider value={scrollToFocused}>
+      <Scroll ref={scrollRef} onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ paddingBottom: keyboardHeight }}>
         <Form $bottom={insets.bottom}>
           <SegmentedControl
             label="Tipo"
@@ -161,6 +165,7 @@ export function HealthFormScreen() {
           <Button title="Salvar cuidado" onPress={save} loading={saving} />
         </Form>
       </Scroll>
+      </KeyboardScrollContext.Provider>
     </Screen>
   );
 }

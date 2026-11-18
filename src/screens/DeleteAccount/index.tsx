@@ -1,12 +1,14 @@
 import { router } from 'expo-router';
 import { Lock, Trash2 } from 'lucide-react-native';
 import { useState } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { Button } from '@/components/Button';
 import { LegalLinks } from '@/components/LegalLinks';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { TextField } from '@/components/TextField';
-import { useKeyboardHeight } from '@/hooks/useKeyboardHeight';
+import { KeyboardScrollContext } from '@/hooks/KeyboardScrollContext';
+import { useKeyboardAwareScroll } from '@/hooks/useKeyboardAwareScroll';
+import { useModalTopInset } from '@/hooks/useModalTopInset';
 import { api, errorMessage } from '@/services/api';
 import { useAuth } from '@/store/auth';
 import { useWalk } from '@/store/walk';
@@ -21,8 +23,9 @@ const DELETED = [
 ];
 
 export function DeleteAccountScreen() {
-  const insets = useSafeAreaInsets();
-  const keyboardHeight = useKeyboardHeight();
+  const insets = useSafeInsets();
+  const modalTop = useModalTopInset();
+  const { scrollRef, keyboardHeight, onScroll, scrollToFocused } = useKeyboardAwareScroll();
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -45,9 +48,10 @@ export function DeleteAccountScreen() {
   };
 
   return (
-    <Screen>
+    <Screen $top={modalTop}>
       <ScreenHeader title="Excluir conta" onBack={() => router.back()} />
-      <Scroll contentContainerStyle={{ paddingBottom: keyboardHeight }}>
+      <KeyboardScrollContext.Provider value={scrollToFocused}>
+      <Scroll ref={scrollRef} onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ paddingBottom: keyboardHeight }}>
         <Content $bottom={insets.bottom}>
           <Warning accessibilityRole="summary">
             <WarningTitle>Isso não tem volta.</WarningTitle>
@@ -73,6 +77,7 @@ export function DeleteAccountScreen() {
           <LegalLinks prefix="Saiba como tratamos seus dados nos" />
         </Content>
       </Scroll>
+      </KeyboardScrollContext.Provider>
     </Screen>
   );
 }

@@ -2,13 +2,15 @@ import { router } from 'expo-router';
 import { Lock, Mail, UserRound } from 'lucide-react-native';
 import { useState } from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { BouncingBall } from '@/components/BouncingBall';
 import { Button } from '@/components/Button';
 import { LegalLinks } from '@/components/LegalLinks';
 import { PressableScale } from '@/components/PressableScale';
 import { TextField } from '@/components/TextField';
-import { useKeyboardHeight } from '@/hooks/useKeyboardHeight';
+import { KeyboardScrollContext } from '@/hooks/KeyboardScrollContext';
+import { useKeyboardAwareScroll } from '@/hooks/useKeyboardAwareScroll';
+import { useStatusBar } from '@/hooks/useStatusBar';
 import { api, errorMessage } from '@/services/api';
 import { useAuth } from '@/store/auth';
 import { spring } from '@/theme/motion';
@@ -21,8 +23,9 @@ import type { RegisterErrors } from './types';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function RegisterScreen() {
-  const insets = useSafeAreaInsets();
-  const keyboardHeight = useKeyboardHeight();
+  const insets = useSafeInsets();
+  useStatusBar('light');
+  const { scrollRef, keyboardHeight, onScroll, scrollToFocused } = useKeyboardAwareScroll();
   const signIn = useAuth((s) => s.signIn);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -55,11 +58,12 @@ export function RegisterScreen() {
 
   return (
     <Screen>
-      <Scroll contentContainerStyle={{ flexGrow: 1, paddingBottom: keyboardHeight }}>
+      <KeyboardScrollContext.Provider value={scrollToFocused}>
+      <Scroll ref={scrollRef} onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ flexGrow: 1, paddingBottom: keyboardHeight }}>
         <Hero $top={insets.top}>
           <HeroText from={{ opacity: 0, translateY: 20 }} animate={{ opacity: 1, translateY: 0 }} transition={spring({ damping: 14 })}>
             <Brand>PetMotion</Brand>
-            <Headline>Cada passo{'\n'}conta.</Headline>
+            <Headline maxFontSizeMultiplier={1.15}>Cada passo{'\n'}conta.</Headline>
           </HeroText>
           <BouncingBall size={RFValue(48)} />
         </Hero>
@@ -128,6 +132,7 @@ export function RegisterScreen() {
           </Footer>
         </Sheet>
       </Scroll>
+      </KeyboardScrollContext.Provider>
     </Screen>
   );
 }

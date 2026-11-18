@@ -78,6 +78,7 @@ export const api = {
   me: () => http.get<User>('/me').then((r) => r.data),
   logout: () => http.post('/logout'),
   deleteAccount: (password: string) => http.delete('/me', { data: { password } }),
+  startTrial: () => http.post<User>('/premium/trial').then((r) => r.data),
 
   pets: () => http.get<Pet[]>('/pets').then((r) => r.data),
   createPet: (payload: PetFormPayload) => http.post<Pet>('/pets', petFormData(payload), multipart).then((r) => r.data),

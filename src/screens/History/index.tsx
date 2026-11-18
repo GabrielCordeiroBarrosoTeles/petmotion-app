@@ -1,11 +1,11 @@
 import { router } from 'expo-router';
 import { Footprints } from 'lucide-react-native';
 import { useCallback, useRef, useState } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
 import { EmptyState } from '@/components/EmptyState';
 import { ScreenHeader } from '@/components/ScreenHeader';
-import { BAR_HEIGHT } from '@/components/TabBar/styles';
+import { BAR_HEIGHT, FAB_SIZE } from '@/components/TabBar/styles';
 import { useFetch } from '@/hooks/useFetch';
 import { api, errorMessage } from '@/services/api';
 import type { Walk } from '@/services/types';
@@ -19,7 +19,7 @@ import { WalkRow } from './WalkRow';
 
 export function HistoryScreen() {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useSafeInsets();
   const pet = useSelectedPet();
   const [loadingMore, setLoadingMore] = useState(false);
   // ref (e não só estado): o onEndReached pode disparar 2x antes do re-render e duplicar a página
@@ -52,7 +52,7 @@ export function HistoryScreen() {
   const renderItem = useCallback(({ item, index }: { item: Walk; index: number }) => <WalkRow walk={item} index={index} onPress={openWalk} />, [openWalk]);
 
   const loadedKm = data?.items.reduce((sum, w) => sum + w.distance_meters, 0) ?? 0;
-  const bottom = BAR_HEIGHT + insets.bottom + theme.spacing.xxl;
+  const bottom = BAR_HEIGHT + FAB_SIZE / 2 + insets.bottom + theme.spacing.xl;
 
   return (
     <Screen $top={insets.top}>

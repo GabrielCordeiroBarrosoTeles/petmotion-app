@@ -4,9 +4,9 @@ import { Ball, Seam, Shadow, Stage } from './styles';
 import type { BouncingBallProps } from './types';
 
 /** A bola de tênis quicando: o símbolo do app. */
-export function BouncingBall({ size }: BouncingBallProps) {
+export function BouncingBall({ size, delay = 0 }: BouncingBallProps) {
   const reduced = useReducedMotion();
-  const loop = timing({ duration: 520, loop: true, repeatReverse: true });
+  const loop = timing({ duration: 520, loop: true, repeatReverse: true, delay });
 
   return (
     <Stage $size={size} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">

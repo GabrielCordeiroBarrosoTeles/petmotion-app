@@ -1,19 +1,22 @@
 import { router } from 'expo-router';
 import { Footprints, HeartPulse, House, Route, UserRound } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import {
-  useAnimatedStyle, useReducedMotion, useSharedValue, withRepeat, withSpring, withTiming, Easing,
-} from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
 import { useElapsed } from '@/hooks/useElapsed';
 import { useWalk } from '@/store/walk';
+import { spring } from '@/theme/motion';
 import { duration } from '@/utils/format';
 import { select, thump } from '@/utils/haptics';
 import { PressableScale } from '../PressableScale';
-import { Bar, Fab, FabPulse, FabSlot, FabTime, Indicator, Slot, TabLabel, Wrapper } from './styles';
+import { TennisBall } from '../TennisBall';
+import { NotchedBackground } from './NotchedBackground';
+import {
+  BAR_HEIGHT, Dot, FAB_SIZE, FabWrap, Gap, IconLift, NOTCH_RADIUS, Row, Side, Slot, TabLabel, TabLabelText, Timer,
+  TimerText, Wrapper,
+} from './styles';
 import type { TabBarProps, TabMeta } from './types';
 
 const META: Record<string, TabMeta> = {
@@ -23,93 +26,81 @@ const META: Record<string, TabMeta> = {
   profile: { label: 'Perfil', icon: UserRound },
 };
 
-/** Ordem visual: 2 abas | botão Passear | 2 abas */
-const SLOTS = ['home', 'history', 'fab', 'health', 'profile'] as const;
+/** 2 abas | bola de passear no encaixe | 2 abas */
+const LEFT = ['home', 'history'];
+const RIGHT = ['health', 'profile'];
 
 export function TabBar({ state, emitter, navigateToTab }: TabBarProps) {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
-  const reduced = useReducedMotion();
+  const insets = useSafeInsets();
   const walkStatus = useWalk((s) => s.status);
   const { elapsedSeconds } = useElapsed();
-  const [barWidth, setBarWidth] = useState(0);
-
+  const [width, setWidth] = useState(0);
   const activeName = state.routes[state.index]?.name;
-  const slotIndex = SLOTS.indexOf(activeName as (typeof SLOTS)[number]);
-  const slotWidth = (barWidth - RFValue(12)) / SLOTS.length;
-
-  const x = useSharedValue(0);
-  useEffect(() => {
-    x.value = withSpring(slotIndex * slotWidth, theme.motion.spring);
-  }, [slotIndex, slotWidth, theme.motion.spring, x]);
-  const indicatorStyle = useAnimatedStyle(() => ({ width: slotWidth, transform: [{ translateX: x.value }] }));
-
-  // "Respiração" do botão central: convida a começar o passeio
-  const pulse = useSharedValue(0);
-  useEffect(() => {
-    if (reduced) return;
-    pulse.value = withRepeat(withTiming(1, { duration: 1800, easing: Easing.out(Easing.quad) }), -1, false);
-  }, [pulse, reduced]);
-  const pulseStyle = useAnimatedStyle(() => ({
-    opacity: 0.5 * (1 - pulse.value),
-    transform: [{ scale: 1 + pulse.value * 0.45 }],
-  }));
-
   const walking = walkStatus !== 'idle';
 
-  return (
-    <Wrapper $bottom={Math.max(insets.bottom, theme.spacing.small)}>
-      <Bar onLayout={(e: LayoutChangeEvent) => setBarWidth(e.nativeEvent.layout.width)}>
-        {barWidth > 0 && slotIndex >= 0 ? <Indicator style={indicatorStyle} /> : null}
-        {SLOTS.map((name) => {
-          if (name === 'fab') {
-            return (
-              <FabSlot key="fab">
-                <FabPulse style={pulseStyle} pointerEvents="none" />
-                <PressableScale
-                  scaleTo={0.9}
-                  haptic="none"
-                  onPress={() => {
-                    thump();
-                    router.push('/walk');
-                  }}
-                  accessibilityLabel={walking ? 'Voltar ao passeio em andamento' : 'Começar passeio'}
-                >
-                  <Fab>
-                    <Footprints size={RFValue(walking ? 20 : 28)} color={theme.colors.ink} strokeWidth={2.6} />
-                    {walking ? <FabTime>{duration(elapsedSeconds)}</FabTime> : null}
-                  </Fab>
-                </PressableScale>
-              </FabSlot>
-            );
+  const renderTab = (name: string) => {
+    const route = state.routes.find((r) => r.name === name);
+    if (!route) return null;
+    const { label, icon: Icon } = META[name];
+    const active = activeName === name;
+
+    return (
+      <Slot
+        key={name}
+        accessibilityRole="tab"
+        accessibilityState={{ selected: active }}
+        accessibilityLabel={label}
+        onPress={() => {
+          const event = emitter.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+          if (!active && !event.defaultPrevented) {
+            select();
+            navigateToTab(route.key);
           }
+        }}
+      >
+        <IconLift animate={{ translateY: active ? -RFValue(4) : RFValue(6) }} transition={spring(theme.motion.spring)}>
+          <Icon size={RFValue(23)} color={active ? theme.colors.primary : theme.colors.onInkMuted} strokeWidth={active ? 2.6 : 2} />
+          <TabLabel animate={{ opacity: active ? 1 : 0, scale: active ? 1 : 0.6 }} transition={spring(theme.motion.spring)}>
+            <TabLabelText>{label}</TabLabelText>
+          </TabLabel>
+          <Dot animate={{ scale: active ? 1 : 0, opacity: active ? 1 : 0 }} transition={spring(theme.motion.springBouncy)} />
+        </IconLift>
+      </Slot>
+    );
+  };
 
-          const route = state.routes.find((r) => r.name === name);
-          if (!route) return null;
-          const meta = META[name];
-          const active = activeName === name;
-          const Icon = meta.icon;
+  return (
+    <Wrapper $bottom={insets.bottom + theme.spacing.small} onLayout={(e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width)}>
+      {width > 0 ? (
+        <NotchedBackground width={width} height={BAR_HEIGHT} notchRadius={NOTCH_RADIUS} cornerRadius={theme.radii.large} color={theme.colors.ink} />
+      ) : null}
+      <Row>
+        <Side>{LEFT.map(renderTab)}</Side>
+        <Gap />
+        <Side>{RIGHT.map(renderTab)}</Side>
+      </Row>
 
-          return (
-            <Slot
-              key={name}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: active }}
-              accessibilityLabel={meta.label}
-              onPress={() => {
-                const event = emitter.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-                if (!active && !event.defaultPrevented) {
-                  select();
-                  navigateToTab(route.key);
-                }
-              }}
-            >
-              <Icon size={RFValue(22)} color={active ? theme.colors.primary : theme.colors.onInkMuted} strokeWidth={active ? 2.6 : 2} />
-              <TabLabel $active={active}>{meta.label}</TabLabel>
-            </Slot>
-          );
-        })}
-      </Bar>
+      <FabWrap>
+        {walking ? (
+          <Timer from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={spring({ damping: 14 })}>
+            <TimerText>{duration(elapsedSeconds)}</TimerText>
+          </Timer>
+        ) : null}
+        <PressableScale
+          scaleTo={0.88}
+          haptic="none"
+          onPress={() => {
+            thump();
+            router.push('/walk');
+          }}
+          accessibilityLabel={walking ? 'Voltar ao passeio em andamento' : 'Começar passeio'}
+        >
+          <TennisBall size={FAB_SIZE} spinning={walking}>
+            <Footprints size={RFValue(24)} color={theme.colors.ink} strokeWidth={2.6} />
+          </TennisBall>
+        </PressableScale>
+      </FabWrap>
     </Wrapper>
   );
 }

@@ -26,6 +26,8 @@ const routes: Array<[string, unknown]> = [
   ['pet-form', Screens.PetFormScreen],
   ['health-form', Screens.HealthFormScreen],
   ['delete-account', Screens.DeleteAccountScreen],
+  ['premium', Screens.PremiumScreen],
+  ['walk-photo', Screens.WalkPhotoScreen],
 ];
 
 describe('rotas', () => {

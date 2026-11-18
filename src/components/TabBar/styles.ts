@@ -1,83 +1,90 @@
+import { MotiView } from 'moti';
 import { RFValue } from 'react-native-responsive-fontsize';
-import Animated from 'react-native-reanimated';
 import styled from 'styled-components/native';
 
-export const BAR_HEIGHT = RFValue(68);
-export const FAB_SIZE = RFValue(72);
+export const BAR_HEIGHT = RFValue(66);
+export const FAB_SIZE = RFValue(64);
+/** Raio do encaixe: a bola + um respiro de 7px em volta. */
+export const NOTCH_RADIUS = FAB_SIZE / 2 + RFValue(7);
 
 export const Wrapper = styled.View<{ $bottom: number }>`
   position: absolute;
   left: ${({ theme }) => theme.spacing.medium}px;
   right: ${({ theme }) => theme.spacing.medium}px;
   bottom: ${({ $bottom }) => $bottom}px;
+  height: ${BAR_HEIGHT}px;
+  shadow-color: ${({ theme }) => theme.colors.ink};
+  shadow-offset: 0px 12px;
+  shadow-opacity: 0.28;
+  shadow-radius: 20px;
+  elevation: 14;
 `;
 
-export const Bar = styled.View`
-  height: ${BAR_HEIGHT}px;
+export const Row = styled.View`
+  flex: 1;
   flex-direction: row;
   align-items: center;
-  border-radius: ${({ theme }) => theme.radii.large}px;
-  background-color: ${({ theme }) => theme.colors.ink};
-  padding: 0 ${RFValue(6)}px;
-  shadow-color: ${({ theme }) => theme.colors.ink};
-  shadow-offset: 0px 10px;
-  shadow-opacity: 0.25;
-  shadow-radius: 18px;
-  elevation: 12;
+`;
+
+export const Side = styled.View`
+  flex: 1;
+  flex-direction: row;
+`;
+
+export const Gap = styled.View`
+  width: ${NOTCH_RADIUS * 2}px;
 `;
 
 export const Slot = styled.Pressable`
   flex: 1;
-  height: 100%;
+  height: ${BAR_HEIGHT}px;
   align-items: center;
   justify-content: center;
+`;
+
+export const IconLift = styled(MotiView)`
+  align-items: center;
   gap: ${RFValue(3)}px;
 `;
 
-export const Indicator = styled(Animated.View)`
-  position: absolute;
-  top: ${RFValue(8)}px;
-  left: ${RFValue(6)}px;
-  height: ${BAR_HEIGHT - RFValue(16)}px;
-  border-radius: ${({ theme }) => theme.radii.medium}px;
-  background-color: ${({ theme }) => theme.colors.inkSoft};
-`;
+export const TabLabel = styled(MotiView)``;
 
-export const TabLabel = styled.Text<{ $active: boolean }>`
+export const TabLabelText = styled.Text`
   font-family: ${({ theme }) => theme.fonts.bodyHeavy};
   font-size: ${RFValue(11)}px;
-  color: ${({ theme, $active }) => ($active ? theme.colors.primary : theme.colors.onInkMuted)};
+  color: ${({ theme }) => theme.colors.primary};
 `;
 
-export const FabSlot = styled.View`
-  flex: 1;
-  align-items: center;
-`;
-
-export const Fab = styled.View`
-  width: ${FAB_SIZE}px;
-  height: ${FAB_SIZE}px;
-  border-radius: ${FAB_SIZE / 2}px;
-  margin-top: ${-FAB_SIZE * 0.42}px;
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ theme }) => theme.colors.primary};
-  border-width: ${RFValue(5)}px;
-  border-color: ${({ theme }) => theme.colors.background};
-`;
-
-export const FabPulse = styled(Animated.View)`
-  position: absolute;
-  top: ${-FAB_SIZE * 0.42}px;
-  width: ${FAB_SIZE}px;
-  height: ${FAB_SIZE}px;
-  border-radius: ${FAB_SIZE / 2}px;
+export const Dot = styled(MotiView)`
+  width: ${RFValue(5)}px;
+  height: ${RFValue(5)}px;
+  border-radius: ${RFValue(3)}px;
   background-color: ${({ theme }) => theme.colors.primary};
 `;
 
-export const FabTime = styled.Text`
+export const FabWrap = styled.View`
+  position: absolute;
+  top: ${-FAB_SIZE / 2}px;
+  left: 50%;
+  margin-left: ${-FAB_SIZE / 2}px;
+  width: ${FAB_SIZE}px;
+  height: ${FAB_SIZE}px;
+  align-items: center;
+`;
+
+export const Timer = styled(MotiView)`
+  position: absolute;
+  top: ${-RFValue(30)}px;
+  padding: ${RFValue(4)}px ${({ theme }) => theme.spacing.small}px;
+  border-radius: ${({ theme }) => theme.radii.pill}px;
+  background-color: ${({ theme }) => theme.colors.ink};
+  border-width: ${RFValue(2)}px;
+  border-color: ${({ theme }) => theme.colors.primary};
+`;
+
+export const TimerText = styled.Text`
   font-family: ${({ theme }) => theme.fonts.bodyHeavy};
-  font-size: ${RFValue(11)}px;
-  color: ${({ theme }) => theme.colors.ink};
+  font-size: ${RFValue(12)}px;
+  color: ${({ theme }) => theme.colors.primary};
   font-variant: tabular-nums;
 `;

@@ -3,7 +3,7 @@ import * as Location from 'expo-location';
 import { ChevronDown, Droplet, Droplets, Flag, Leaf, Pause, Play, Satellite, Sparkles, Thermometer } from 'lucide-react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
 import { Countdown } from '@/components/Countdown';
 import { HoldToConfirm } from '@/components/HoldToConfirm';
@@ -37,7 +37,7 @@ const QUICK_ACTIONS = [
 
 export function WalkScreen() {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useSafeInsets();
   useStatusBar('dark');
 
   const pet = useSelectedPet();

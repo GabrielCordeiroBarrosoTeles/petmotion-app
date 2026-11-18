@@ -12,3 +12,5 @@ export { TabsLayout } from '@/screens/Tabs';
 export { WalkScreen } from '@/screens/Walk';
 export { WalkDetailScreen } from '@/screens/WalkDetail';
 export { WalkSummaryScreen } from '@/screens/WalkSummary';
+export { PremiumScreen } from '@/screens/Premium';
+export { WalkPhotoScreen } from '@/screens/WalkPhoto';

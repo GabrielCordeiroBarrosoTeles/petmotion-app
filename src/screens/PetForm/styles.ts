@@ -2,8 +2,9 @@ import { MotiView } from 'moti';
 import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
 
-export const Screen = styled.View`
+export const Screen = styled.View<{ $top: number }>`
   flex: 1;
+  padding-top: ${({ $top }) => $top}px;
   background-color: ${({ theme }) => theme.colors.background};
 `;
 

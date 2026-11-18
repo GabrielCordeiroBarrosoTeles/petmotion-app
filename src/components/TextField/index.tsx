@@ -3,6 +3,7 @@ import { MotiView } from 'moti';
 import { useState } from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useTheme } from 'styled-components/native';
+import { useKeyboardScrollToFocused } from '@/hooks/KeyboardScrollContext';
 import { Container, FieldBox, Helper, Input, Label, Toggle } from './styles';
 import type { TextFieldProps } from './types';
 import { timing } from '@/theme/motion';
@@ -11,6 +12,7 @@ export function TextField({ label, icon: Icon, error, helper, secure, onFocus, o
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
   const [hidden, setHidden] = useState(!!secure);
+  const scrollToFocused = useKeyboardScrollToFocused();
   const iconColor = error ? theme.colors.danger : focused ? theme.colors.ink : theme.colors.textMuted;
 
   return (
@@ -25,6 +27,7 @@ export function TextField({ label, icon: Icon, error, helper, secure, onFocus, o
             secureTextEntry={hidden}
             onFocus={(e) => {
               setFocused(true);
+              scrollToFocused?.();
               onFocus?.(e);
             }}
             onBlur={(e) => {

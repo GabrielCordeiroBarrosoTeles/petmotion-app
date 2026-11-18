@@ -72,6 +72,8 @@ export function RootLayout() {
               <Stack.Screen name="pet-form" options={{ presentation: 'modal' }} />
               <Stack.Screen name="health-form" options={{ presentation: 'modal' }} />
               <Stack.Screen name="delete-account" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="premium" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }} />
+              <Stack.Screen name="walk-photo" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }} />
             </Stack>
             <ToastHost />
           </RootView>

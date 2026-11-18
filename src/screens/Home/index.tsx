@@ -2,16 +2,17 @@ import { router } from 'expo-router';
 import { Dog, Flame, Footprints, Play, Route } from 'lucide-react-native';
 import { useEffect } from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
 import { AchievementBadge } from '@/components/AchievementBadge';
 import { AnimatedCounter } from '@/components/AnimatedCounter';
 import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
+import { PackBadge } from '@/components/PackBadge';
 import { PetSwitcher } from '@/components/PetSwitcher';
 import { ProgressRing } from '@/components/ProgressRing';
 import { StatTile } from '@/components/StatTile';
-import { BAR_HEIGHT } from '@/components/TabBar/styles';
+import { BAR_HEIGHT, FAB_SIZE } from '@/components/TabBar/styles';
 import { WeatherBanner } from '@/components/WeatherBanner';
 import { WeekBars } from '@/components/WeekBars';
 import { useFetch } from '@/hooks/useFetch';
@@ -26,7 +27,7 @@ import { HEALTH_META } from '@/utils/health';
 import { customToast } from '@/utils/toast';
 import { HomeSkeleton } from './SkeletonLoader';
 import {
-  Badges, Body, Card, GoalBody, GoalTitle, Greeting, GreetingName, Header, Refresh, RingCaption, RingCenter, RingRow,
+  Badges, Body, Card, NameBlock, GoalBody, GoalTitle, Greeting, GreetingName, Header, Refresh, RingCaption, RingCenter, RingRow,
   RingSide, Screen, Scroll, SectionHeader, SectionMeta, SectionTitle, StreakChip, StreakText, TileRow, TopRow,
   UpcomingIcon, UpcomingRow, UpcomingTexts, UpcomingTitle, UpcomingWhen,
 } from './styles';
@@ -53,7 +54,7 @@ function UpcomingItem({ record, index }: UpcomingItemProps) {
 
 export function HomeScreen() {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useSafeInsets();
   useStatusBar('light');
 
   const user = useAuth((s) => s.user);
@@ -70,7 +71,7 @@ export function HomeScreen() {
     deps: [selectedId],
   });
 
-  const tabSpace = BAR_HEIGHT + insets.bottom + theme.spacing.xxl;
+  const tabSpace = BAR_HEIGHT + FAB_SIZE / 2 + insets.bottom + theme.spacing.xl;
   const goal = stats?.today.goal_minutes ?? pet?.daily_goal_minutes ?? 30;
   const minutes = stats?.today.minutes ?? 0;
   const remaining = Math.max(0, goal - minutes);
@@ -92,10 +93,13 @@ export function HomeScreen() {
       >
         <Header $top={insets.top}>
           <TopRow>
-            <Greeting>
-              {greeting()},{'\n'}
-              <GreetingName>{firstName(user?.name)}</GreetingName>
-            </Greeting>
+            <NameBlock>
+              <Greeting>
+                {greeting()},{'\n'}
+                <GreetingName>{firstName(user?.name)}</GreetingName>
+              </Greeting>
+              {user?.is_premium ? <PackBadge tone="onInk" /> : null}
+            </NameBlock>
             {stats && stats.streak_days > 0 ? (
               <StreakChip
                 from={{ scale: 0.6, opacity: 0 }}

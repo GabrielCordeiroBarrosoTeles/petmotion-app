@@ -46,8 +46,10 @@ describe('Resumo do passeio', () => {
     expect(screen.getByLabelText(/Nova conquista: Explorador/)).toBeOnTheScreen();
     expect(screen.queryByLabelText(/Nova conquista: Primeiro passo/)).toBeNull();
 
-    await fireEvent.press(screen.getByRole('button', { name: 'Compartilhar passeio' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Compartilhar card' }));
     await waitFor(() => expect(Sharing.shareAsync).toHaveBeenCalled());
+    await fireEvent.press(screen.getByRole('button', { name: 'Criar foto do passeio' }));
+    expect(global.__router.push).toHaveBeenCalledWith({ pathname: '/walk-photo', params: { id: '10' } });
     await fireEvent.press(screen.getByRole('button', { name: 'Concluir' }));
     expect(global.__router.replace).toHaveBeenCalledWith('/home');
   });
@@ -133,7 +135,9 @@ describe('Detalhe do passeio', () => {
     await renderWithTheme(<WalkDetailScreen />);
     expect(await screen.findByText('3,42 km com Thor')).toBeOnTheScreen();
     expect(screen.getByText('--')).toBeOnTheScreen(); // sem temperatura
-    await fireEvent.press(screen.getByRole('button', { name: 'Compartilhar' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Compartilhar card' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Criar foto do passeio' }));
+    expect(global.__router.push).toHaveBeenCalledWith({ pathname: '/walk-photo', params: { id: '10' } });
     await waitFor(() => expect(Sharing.shareAsync).toHaveBeenCalled());
     await fireEvent.press(screen.getByLabelText('Voltar'));
     expect(global.__router.back).toHaveBeenCalled();

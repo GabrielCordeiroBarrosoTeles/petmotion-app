@@ -35,8 +35,8 @@ export const Brand = styled.Text`
 
 export const Headline = styled.Text`
   font-family: ${({ theme }) => theme.fonts.display};
-  font-size: ${({ theme }) => RFValue(theme.fontSizes.hero - 8)}px;
-  line-height: ${({ theme }) => RFValue(theme.fontSizes.hero - 6)}px;
+  font-size: ${({ theme }) => RFValue(theme.fontSizes.display + 4)}px;
+  line-height: ${({ theme }) => RFValue(theme.fontSizes.display + 6)}px;
   letter-spacing: -1.5px;
   color: ${({ theme }) => theme.colors.primary};
 `;

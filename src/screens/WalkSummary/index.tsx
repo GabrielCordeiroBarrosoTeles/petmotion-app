@@ -1,13 +1,14 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { Check, Share2 } from 'lucide-react-native';
+import { Camera, Check, Share2 } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { Button } from '@/components/Button';
 import { Confetti } from '@/components/Confetti';
 import { WalkShareCard } from '@/components/WalkShareCard';
 import { useFetch } from '@/hooks/useFetch';
 import { useShareView } from '@/hooks/useShareView';
 import { api } from '@/services/api';
+import { useAuth } from '@/store/auth';
 import { useSelectedPet } from '@/store/pets';
 import { spring } from '@/theme/motion';
 import { celebrate } from '@/utils/haptics';
@@ -19,9 +20,10 @@ import { Buttons, Capture, CardWrap, Content, Heading, Screen, Scroll, Subtitle,
 import type { SummaryData, SummaryParams } from './types';
 
 export function WalkSummaryScreen() {
-  const insets = useSafeAreaInsets();
+  const insets = useSafeInsets();
   const { id, before } = useLocalSearchParams<SummaryParams>();
   const pet = useSelectedPet();
+  const isPremium = useAuth((s) => !!s.user?.is_premium);
   const { ref, share, sharing } = useShareView();
   const [burst, setBurst] = useState(0);
 
@@ -63,7 +65,7 @@ export function WalkSummaryScreen() {
 
             <CardWrap from={{ opacity: 0, scale: 0.9, rotate: '-3deg' }} animate={{ opacity: 1, scale: 1, rotate: '0deg' }} transition={spring({ damping: 13, delay: 200 })}>
               <Capture ref={ref} collapsable={false}>
-                <WalkShareCard walk={data.walk} pet={petForCard} animated />
+                <WalkShareCard walk={data.walk} pet={petForCard} animated premium={isPremium} />
               </Capture>
             </CardWrap>
 
@@ -72,7 +74,8 @@ export function WalkSummaryScreen() {
             ))}
 
             <Buttons>
-              <Button title="Compartilhar passeio" icon={Share2} onPress={() => share(`Passeio do ${petForCard.name}`)} loading={sharing} />
+              <Button title="Criar foto do passeio" icon={Camera} onPress={() => router.push({ pathname: '/walk-photo', params: { id: String(data.walk.id) } })} />
+              <Button title="Compartilhar card" icon={Share2} variant="ink" onPress={() => share(`Passeio do ${petForCard.name}`)} loading={sharing} />
               <Button title="Concluir" icon={Check} variant="ghost" onPress={() => router.replace('/home')} />
             </Buttons>
           </Content>

@@ -2,12 +2,12 @@ import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { BellRing, LogOut, Plus, Sparkles, Trash2 } from 'lucide-react-native';
 import { Alert } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
 import { Button } from '@/components/Button';
 import { LegalLinks } from '@/components/LegalLinks';
 import { ScreenHeader } from '@/components/ScreenHeader';
-import { BAR_HEIGHT } from '@/components/TabBar/styles';
+import { BAR_HEIGHT, FAB_SIZE } from '@/components/TabBar/styles';
 import type { Pet } from '@/services/types';
 import { useAuth } from '@/store/auth';
 import { usePets, useSelectedPet } from '@/store/pets';
@@ -17,6 +17,7 @@ import { spring } from '@/theme/motion';
 import { ensureNotificationPermission, setDailyWalkReminder } from '@/utils/notifications';
 import { customToast } from '@/utils/toast';
 import { PetRow } from './PetRow';
+import { PremiumCard } from './PremiumCard';
 import {
   Content, Divider, Initials, InitialsText, Panel, Screen, Scroll, Section, SectionTitle, UserCard, UserEmail, UserName,
   UserTexts, Version,
@@ -28,7 +29,7 @@ const initialsOf = (name = '') =>
 
 export function ProfileScreen() {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useSafeInsets();
   const user = useAuth((s) => s.user);
   const signOut = useAuth((s) => s.signOut);
   const pets = usePets((s) => s.pets);
@@ -64,7 +65,7 @@ export function ProfileScreen() {
     <Screen $top={insets.top}>
       <ScreenHeader title="Perfil" />
       <Scroll>
-        <Content $bottom={BAR_HEIGHT + insets.bottom + theme.spacing.xxl}>
+        <Content $bottom={BAR_HEIGHT + FAB_SIZE / 2 + insets.bottom + theme.spacing.xl}>
           <UserCard from={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={spring({ damping: 15 })}>
             <Initials>
               <InitialsText>{initialsOf(user?.name)}</InitialsText>
@@ -74,6 +75,8 @@ export function ProfileScreen() {
               <UserEmail numberOfLines={1}>{user?.email}</UserEmail>
             </UserTexts>
           </UserCard>
+
+          {user ? <PremiumCard user={user} onPress={() => router.push('/premium')} /> : null}
 
           <Section>
             <SectionTitle>Seus pets</SectionTitle>

@@ -3,7 +3,7 @@ import * as Notifications from 'expo-notifications';
 import { useLocalSearchParams } from 'expo-router';
 import { Alert } from 'react-native';
 import { act, fireEvent, renderWithTheme, screen, waitFor } from '../../../test/render';
-import { makePet, user } from '../../../test/fixtures';
+import { makePet, member, user } from '../../../test/fixtures';
 import * as apiModule from '@/services/api';
 import { useAuth } from '@/store/auth';
 import { usePets } from '@/store/pets';
@@ -55,6 +55,20 @@ describe('Perfil', () => {
     Constants.expoConfig = original;
   });
 
+  it('cartão da Matilha: convite com teste grátis, convite de volta e membro ativo', async () => {
+    const view = await renderWithTheme(<ProfileScreen />);
+    await fireEvent.press(screen.getByLabelText(/^Entre para a Matilha\. 7 dias grátis/));
+    expect(global.__router.push).toHaveBeenCalledWith('/premium');
+
+    await act(() => useAuth.setState({ user: { ...user, trial_available: false } }));
+    expect(screen.getByLabelText(/^Volte para a Matilha/)).toBeOnTheScreen();
+
+    await act(() => useAuth.setState({ user: member }));
+    expect(screen.getByLabelText(/^Você é da Matilha\. Ativa até 17 de dezembro de 2026/)).toBeOnTheScreen();
+    expect(screen.getByLabelText('Membro da Matilha')).toBeOnTheScreen();
+    await view.unmount();
+  });
+
   it('liga o modo apresentação e o lembrete diário', async () => {
     await renderWithTheme(<ProfileScreen />);
     await fireEvent(screen.getByLabelText('Modo apresentação'), 'valueChange', true);
@@ -92,6 +106,58 @@ describe('Perfil', () => {
 });
 
 describe('Cadastro de pet', () => {
+  // membro da Matilha: sem o limite de 1 pet do plano grátis
+  beforeEach(() => useAuth.setState({ user: member }));
+
+  it('no plano grátis o 2º pet leva para a Matilha (sem chamar a API)', async () => {
+    useAuth.setState({ user });
+    await renderWithTheme(<PetFormScreen />);
+    await fireEvent.changeText(screen.getByLabelText('Nome'), 'Rex');
+    await fireEvent.press(screen.getByRole('button', { name: 'Cadastrar pet' }));
+    expect(global.__router.push).toHaveBeenCalledWith('/premium');
+    expect(useToastStore.getState().current?.message).toMatch(/plano grátis cabe 1 pet/);
+    expect(api.createPet).not.toHaveBeenCalled();
+  });
+
+  it('no plano grátis, editar um pet existente continua liberado', async () => {
+    useAuth.setState({ user });
+    jest.mocked(useLocalSearchParams).mockReturnValue({ id: '1' });
+    api.updatePet.mockResolvedValueOnce(makePet());
+    await renderWithTheme(<PetFormScreen />);
+    await fireEvent.press(screen.getByRole('button', { name: 'Salvar alterações' }));
+    await waitFor(() => expect(api.updatePet).toHaveBeenCalled());
+  });
+
+  it('segurar o + repete e acelera; soltar não conta um passo a mais', async () => {
+    jest.useFakeTimers();
+    await renderWithTheme(<PetFormScreen />);
+    const plus = screen.getByLabelText('Aumentar meta');
+    await fireEvent(plus, 'pressIn');
+    await act(() => jest.advanceTimersByTime(380)); // 1º passo depois de segurar
+    await act(() => jest.advanceTimersByTime(304)); // 2º passo, já mais rápido
+    await fireEvent(plus, 'pressOut');
+    await fireEvent.press(plus); // o "press" de soltar é ignorado
+    // pet novo começa em 30: dois passos segurando = 40
+    expect(screen.getByLabelText('Meta diária').props.accessibilityValue).toEqual({ text: '40 minutos' });
+    jest.useRealTimers();
+  });
+
+  it('toque simples anda 5; segurar até o limite para sozinho', async () => {
+    jest.useFakeTimers();
+    usePets.setState({ pets: [makePet({ daily_goal_minutes: 170 })], selectedId: 1 });
+    jest.mocked(useLocalSearchParams).mockReturnValue({ id: '1' });
+    await renderWithTheme(<PetFormScreen />);
+    await fireEvent(screen.getByLabelText('Diminuir meta'), 'pressIn');
+    await fireEvent(screen.getByLabelText('Diminuir meta'), 'pressOut');
+    await fireEvent.press(screen.getByLabelText('Diminuir meta'));
+    expect(screen.getByLabelText('Meta diária').props.accessibilityValue).toEqual({ text: '165 minutos' });
+
+    await fireEvent(screen.getByLabelText('Aumentar meta'), 'pressIn');
+    await act(() => jest.advanceTimersByTime(5000));
+    expect(screen.getByLabelText('Meta diária').props.accessibilityValue).toEqual({ text: '180 minutos' });
+    await fireEvent(screen.getByLabelText('Aumentar meta'), 'pressOut');
+    jest.useRealTimers();
+  });
   it('valida nome, nascimento e peso', async () => {
     await renderWithTheme(<PetFormScreen />);
     await fireEvent.changeText(screen.getByLabelText('Nascimento'), '01012099');

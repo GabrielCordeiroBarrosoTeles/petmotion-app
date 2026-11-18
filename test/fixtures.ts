@@ -1,6 +1,10 @@
 import type { HealthRecord, Pet, PetStats, User, Walk, Weather } from '@/services/types';
 
-export const user: User = { id: 1, name: 'Gabriel Cordeiro', email: 'gabriel@petmotion.app' };
+export const user: User = {
+  id: 1, name: 'Gabriel Cordeiro', email: 'gabriel@petmotion.app', is_premium: false, premium_until: null, trial_available: true,
+};
+
+export const member: User = { ...user, is_premium: true, premium_until: '2026-12-17T12:00:00', trial_available: false };
 
 export const makePet = (overrides: Partial<Pet> = {}): Pet => ({
   id: 1, name: 'Thor', species: 'dog', breed: 'Golden', birth_date: '2022-01-10', weight_kg: 32.4,

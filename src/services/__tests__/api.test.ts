@@ -110,6 +110,7 @@ describe('endpoints', () => {
     await api.register('Ana', 'a@b.com', '123456');
     await api.logout();
     await api.deleteAccount('123456');
+    await api.startTrial();
     await api.pets();
     await api.deletePet(2);
     await api.stats(2);
@@ -124,14 +125,14 @@ describe('endpoints', () => {
     await api.weather(-23.5, -46.6);
 
     expect(calls.map((c) => `${c.method} ${c.url}`)).toEqual([
-      'post /login', 'post /register', 'post /logout', 'delete /me', 'get /pets', 'delete /pets/2', 'get /pets/2/stats',
+      'post /login', 'post /register', 'post /logout', 'delete /me', 'post /premium/trial', 'get /pets', 'delete /pets/2', 'get /pets/2/stats',
       'get /walks', 'get /walks', 'get /walks/5', 'post /walks', 'delete /walks/5', 'get /pets/2/health-records',
       'post /pets/2/health-records', 'delete /health-records/9', 'get /weather',
     ]);
     expect(calls[3].data).toBe(JSON.stringify({ password: '123456' }));
-    expect(calls[8].params).toEqual({ pet_id: 2, page: 3 });
-    expect(calls[7].params).toEqual({ pet_id: 2, page: 1 });
-    expect(calls[15].params).toEqual({ lat: -23.5, lng: -46.6 });
+    expect(calls[9].params).toEqual({ pet_id: 2, page: 3 });
+    expect(calls[8].params).toEqual({ pet_id: 2, page: 1 });
+    expect(calls[16].params).toEqual({ lat: -23.5, lng: -46.6 });
   });
 
   it('envia o pet como multipart, com foto e sem campos vazios', async () => {

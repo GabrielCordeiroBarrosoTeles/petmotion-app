@@ -7,6 +7,11 @@ export interface User {
   id: number;
   name: string;
   email: string;
+  /** Membro da Matilha (plano premium) agora. */
+  is_premium: boolean;
+  premium_until: string | null;
+  /** O teste grátis de 7 dias ainda não foi usado. */
+  trial_available: boolean;
 }
 
 export interface Pet {

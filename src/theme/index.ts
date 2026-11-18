@@ -32,6 +32,9 @@ export const theme = {
     white: '#FFFFFF',
     skeleton: '#DCE4DB',
     overlay: 'rgba(15, 42, 36, 0.55)',
+    /** Sombra do texto/rota sobre fotos (legível em qualquer imagem). */
+    photoShadow: 'rgba(0, 0, 0, 0.45)',
+    photoScrim: 'rgba(15, 42, 36, 0.72)',
   },
   spacing: {
     xxs: 4,

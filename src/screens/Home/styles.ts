@@ -27,6 +27,10 @@ export const TopRow = styled.View`
   padding: 0 ${({ theme }) => theme.spacing.large}px;
 `;
 
+export const NameBlock = styled.View`
+  gap: ${({ theme }) => theme.spacing.xs}px;
+`;
+
 export const Greeting = styled.Text`
   font-family: ${({ theme }) => theme.fonts.bodySemi};
   font-size: ${({ theme }) => RFValue(theme.fontSizes.medium)}px;

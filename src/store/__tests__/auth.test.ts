@@ -9,7 +9,7 @@ jest.mock('@/services/api', () => ({
 }));
 
 const { api, setAuthToken, setUnauthorizedHandler } = jest.mocked(apiModule);
-const user = { id: 1, name: 'Gabriel', email: 'g@x.com' };
+const user = { id: 1, name: 'Gabriel', email: 'g@x.com', is_premium: false, premium_until: null, trial_available: true };
 
 beforeEach(() => useAuth.setState({ user: null, status: 'booting' }));
 
@@ -46,6 +46,11 @@ describe('auth store', () => {
     onUnauthorized();
     await Promise.resolve();
     expect(SecureStore.deleteItemAsync).toHaveBeenCalled();
+  });
+
+  it('setUser atualiza o usuário (ex.: depois de entrar na Matilha)', () => {
+    useAuth.getState().setUser({ ...user, is_premium: true });
+    expect(useAuth.getState().user?.is_premium).toBe(true);
   });
 
   it('signIn guarda o token e signOut apaga, mesmo se o logout da API falhar', async () => {

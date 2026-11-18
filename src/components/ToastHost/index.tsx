@@ -3,7 +3,7 @@ import { AnimatePresence } from 'moti';
 import { useEffect } from 'react';
 import { Pressable } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
 import { useToastStore } from '@/store/toast';
 import { Message, Wrapper } from './styles';
@@ -11,7 +11,7 @@ import { spring } from '@/theme/motion';
 
 export function ToastHost() {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useSafeInsets();
   const current = useToastStore((s) => s.current);
   const hide = useToastStore((s) => s.hide);
 
