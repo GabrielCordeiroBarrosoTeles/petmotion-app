@@ -12,7 +12,7 @@
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "O PetMotion usa sua localização para desenhar o trajeto do passeio e checar a temperatura do asfalto.",
         "NSMotionUsageDescription": "O PetMotion usa o sensor de movimento para contar os passos durante o passeio.",
-        "NSCameraUsageDescription": "Para tirar a foto do seu pet.",
+        "NSCameraUsageDescription": "O PetMotion usa a câmera para ler o convite do passeador e para a foto do pet.",
         "NSPhotoLibraryUsageDescription": "Para escolher a foto do seu pet."
       }
     },
@@ -42,6 +42,12 @@
       "expo-secure-store",
       "expo-sharing",
       "expo-image",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "O PetMotion usa a câmera para ler o convite do passeador e para a foto do passeio."
+        }
+      ],
       [
         "expo-splash-screen",
         {

@@ -28,6 +28,8 @@ const routes: Array<[string, unknown]> = [
   ['delete-account', Screens.DeleteAccountScreen],
   ['premium', Screens.PremiumScreen],
   ['walk-photo', Screens.WalkPhotoScreen],
+  ['convite/[code]', Screens.InviteScreen],
+  ['scan-invite', Screens.ScanInviteScreen],
 ];
 
 describe('rotas', () => {

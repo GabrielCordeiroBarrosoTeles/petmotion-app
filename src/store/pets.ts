@@ -8,6 +8,8 @@ interface PetsState {
   loaded: boolean;
   load: () => Promise<void>;
   select: (id: number) => void;
+  /** Aceita um convite de passeador, recarrega a lista e seleciona o pet novo. */
+  adopt: (code: string) => Promise<Pet>;
   upsert: (pet: Pet) => void;
   remove: (id: number) => void;
   reset: () => void;
@@ -25,6 +27,12 @@ export const usePets = create<PetsState>((set, get) => ({
     set({ pets, loaded: true, selectedId: stillExists ? current : (pets[0]?.id ?? null) });
   },
   select: (id) => set({ selectedId: id }),
+  adopt: async (code) => {
+    const pet = await api.acceptInvite(code);
+    await get().load();
+    set({ selectedId: pet.id });
+    return pet;
+  },
   upsert: (pet) =>
     set((s) => {
       const exists = s.pets.some((p) => p.id === pet.id);

@@ -13,7 +13,7 @@ import { ProfileScreen } from '../Profile';
 
 jest.mock('@/services/api', () => ({
   ...jest.requireActual('@/services/api'),
-  api: { createPet: jest.fn(), updatePet: jest.fn(), deletePet: jest.fn(), logout: jest.fn() },
+  api: { createPet: jest.fn(), updatePet: jest.fn(), deletePet: jest.fn(), logout: jest.fn(), createInvite: jest.fn(), walkers: jest.fn() },
 }));
 const { api } = jest.mocked(apiModule);
 // respostas "Once" não podem vazar de um teste para o outro
@@ -39,6 +39,8 @@ describe('Perfil', () => {
     expect(global.__router.push).toHaveBeenCalledWith({ pathname: '/pet-form', params: { id: '1' } });
     await fireEvent.press(screen.getByRole('button', { name: 'Adicionar pet' }));
     expect(global.__router.push).toHaveBeenCalledWith('/pet-form');
+    await fireEvent.press(screen.getByRole('button', { name: 'Recebi um convite' }));
+    expect(global.__router.push).toHaveBeenCalledWith('/scan-invite');
     await fireEvent.press(screen.getByRole('button', { name: 'Excluir minha conta' }));
     expect(global.__router.push).toHaveBeenCalledWith('/delete-account');
   });
@@ -134,6 +136,28 @@ describe('Cadastro de pet', () => {
     await renderWithTheme(<PetFormScreen />);
     await fireEvent.press(screen.getByRole('button', { name: 'Salvar alterações' }));
     await waitFor(() => expect(api.updatePet).toHaveBeenCalled());
+  });
+
+  it('dono editando vê "Compartilhar com passeador" e abre a folha do convite', async () => {
+    jest.mocked(useLocalSearchParams).mockReturnValue({ id: '1' });
+    api.createInvite.mockResolvedValueOnce({ code: 'K7M2QX9A', url: 'https://x/convite/K7M2QX9A', expires_at: '2026-11-20T12:00:00' });
+    api.walkers.mockResolvedValueOnce([]);
+    await renderWithTheme(<PetFormScreen />);
+    expect(screen.queryByTestId('invite-modal')).toBeNull();
+    await fireEvent.press(screen.getByRole('button', { name: 'Compartilhar com passeador' }));
+    expect(screen.getByTestId('invite-modal')).toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole('button', { name: 'Fechar' }));
+    expect(screen.queryByTestId('invite-modal')).toBeNull();
+  });
+
+  it('passeador e pet novo não têm o botão de compartilhar', async () => {
+    usePets.setState({ pets: [makePet({ role: 'walker' })], selectedId: 1, loaded: true });
+    jest.mocked(useLocalSearchParams).mockReturnValue({ id: '1' });
+    await renderWithTheme(<PetFormScreen />);
+    expect(screen.queryByRole('button', { name: 'Compartilhar com passeador' })).toBeNull();
+    jest.mocked(useLocalSearchParams).mockReturnValue({});
+    await renderWithTheme(<PetFormScreen />);
+    expect(screen.queryByRole('button', { name: 'Compartilhar com passeador' })).toBeNull();
   });
 
   it('segurar o + repete e acelera; soltar não conta um passo a mais', async () => {

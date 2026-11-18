@@ -83,6 +83,8 @@ export function RootLayout() {
                   <Stack.Screen name="delete-account" options={{ presentation: 'modal' }} />
                   <Stack.Screen name="premium" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }} />
                   <Stack.Screen name="walk-photo" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }} />
+                  <Stack.Screen name="convite/[code]" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="scan-invite" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }} />
                 </Stack>
                 <ToastHost />
                 <ConfirmHost />

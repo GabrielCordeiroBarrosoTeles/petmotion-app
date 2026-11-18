@@ -1,6 +1,6 @@
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
-import { BellRing, LogOut, Plus, Sparkles, Trash2 } from 'lucide-react-native';
+import { BellRing, LogOut, Plus, QrCode, Sparkles, Trash2 } from 'lucide-react-native';
 import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
 import { Button } from '@/components/Button';
@@ -88,6 +88,7 @@ export function ProfileScreen() {
               <PetRow key={p.id} pet={p} index={i} onPress={editPet} />
             ))}
             <Button title="Adicionar pet" icon={Plus} variant="ghost" onPress={() => router.push('/pet-form')} />
+            <Button title="Recebi um convite" icon={QrCode} variant="ghost" onPress={() => router.push('/scan-invite')} />
           </Section>
 
           <Section>

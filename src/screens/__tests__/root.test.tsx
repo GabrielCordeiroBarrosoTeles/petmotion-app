@@ -38,6 +38,8 @@ describe('RootLayout', () => {
     expect(SplashScreen.hideAsync).toHaveBeenCalled();
     expect(screen.getByText('screen:walk')).toBeOnTheScreen();
     expect(screen.getByText('screen:delete-account')).toBeOnTheScreen();
+    expect(screen.getByText('screen:convite/[code]')).toBeOnTheScreen();
+    expect(screen.getByText('screen:scan-invite')).toBeOnTheScreen();
     expect(global.__router.replace).not.toHaveBeenCalled();
   });
 

@@ -14,3 +14,5 @@ export { WalkDetailScreen } from '@/screens/WalkDetail';
 export { WalkSummaryScreen } from '@/screens/WalkSummary';
 export { PremiumScreen } from '@/screens/Premium';
 export { WalkPhotoScreen } from '@/screens/WalkPhoto';
+export { InviteScreen } from '@/screens/Invite';
+export { ScanInviteScreen } from '@/screens/ScanInvite';

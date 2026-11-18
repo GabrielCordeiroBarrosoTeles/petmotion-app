@@ -101,6 +101,17 @@ jest.mock('expo-sharing', () => ({
 
 jest.mock('react-native-view-shot', () => ({ captureRef: jest.fn(() => Promise.resolve('file://card.png')) }));
 
+jest.mock('expo-camera', () => {
+  const { View } = require('react-native');
+  const CameraView = (p: any) => <View testID="camera-view" onBarcodeScanned={p.onBarcodeScanned} barcodeScannerSettings={p.barcodeScannerSettings} />;
+  return { CameraView, useCameraPermissions: jest.fn(() => [{ granted: true }, jest.fn()]) };
+});
+
+jest.mock('react-native-qrcode-svg', () => {
+  const { View } = require('react-native');
+  return { __esModule: true, default: (p: any) => <View testID="qr" accessibilityLabel={p.value} /> };
+});
+
 jest.mock('expo-font', () => ({ useFonts: jest.fn(() => [true]) }));
 jest.mock('expo-splash-screen', () => ({
   preventAutoHideAsync: jest.fn(() => Promise.resolve()),

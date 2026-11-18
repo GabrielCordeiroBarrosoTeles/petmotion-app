@@ -1,10 +1,11 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { Cake, Camera, Cat, Dog, Images, PawPrint, Scale, Trash2 } from 'lucide-react-native';
+import { Cake, Camera, Cat, Dog, Images, PawPrint, Scale, Trash2, UserPlus } from 'lucide-react-native';
 import { useState } from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
 import { Button } from '@/components/Button';
+import { InviteSheet } from '@/components/InviteSheet';
 import { PetAvatar } from '@/components/PetAvatar';
 import { PressableScale } from '@/components/PressableScale';
 import { ScreenHeader } from '@/components/ScreenHeader';
@@ -58,6 +59,7 @@ export function PetFormScreen() {
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [errors, setErrors] = useState<PetFormErrors>({});
   const [saving, setSaving] = useState(false);
+  const [inviting, setInviting] = useState(false);
 
   const pickPhoto = async (source: ImageSource) => {
     const uri = await pickImage(source, [1, 1]);
@@ -196,10 +198,14 @@ export function PetFormScreen() {
           <GoalStepper value={goal} onChange={setGoal} />
 
           <Button title={existing ? 'Salvar alterações' : 'Cadastrar pet'} onPress={save} loading={saving} />
+          {existing?.role === 'owner' ? (
+            <Button title="Compartilhar com passeador" icon={UserPlus} variant="ghost" onPress={() => setInviting(true)} />
+          ) : null}
           {existing ? <Button title={`Remover ${existing.name}`} icon={Trash2} variant="danger" onPress={() => confirmDelete(existing)} /> : null}
         </Form>
       </Scroll>
       </KeyboardScrollContext.Provider>
+      {existing ? <InviteSheet pet={existing} visible={inviting} onClose={() => setInviting(false)} /> : null}
     </Screen>
   );
 }
