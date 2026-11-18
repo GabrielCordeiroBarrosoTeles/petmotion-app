@@ -55,7 +55,18 @@ export function LoginScreen() {
       <Scroll ref={scrollRef} onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ flexGrow: 1, paddingBottom: keyboardHeight }}>
         <Hero $top={insets.top}>
           <HeroText from={{ opacity: 0, translateY: 20 }} animate={{ opacity: 1, translateY: 0 }} transition={spring({ damping: 14 })}>
-            <Brand>PetMotion</Brand>
+            {/* atalho da apresentação: tocar no nome preenche a conta do passeador */}
+            <PressableScale
+              haptic="select"
+              scaleTo={0.98}
+              onPress={() => {
+                setEmail('joao@passeador.app');
+                setPassword('petmotion');
+              }}
+              accessibilityLabel="Preencher com a conta do passeador"
+            >
+              <Brand>PetMotion</Brand>
+            </PressableScale>
             <Headline maxFontSizeMultiplier={1.15}>Bora{'\n'}passear?</Headline>
           </HeroText>
           {/* atalho da apresentação: tocar na bola preenche a conta demo */}

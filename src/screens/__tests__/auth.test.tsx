@@ -45,6 +45,14 @@ describe('Login', () => {
     expect(api.login).toHaveBeenCalledWith('gabriel@petmotion.app', 'petmotion');
   });
 
+  it('tocar no nome da marca preenche a conta do passeador', async () => {
+    api.login.mockResolvedValueOnce({ token: 'tok', user });
+    await renderWithTheme(<LoginScreen />);
+    await fireEvent.press(screen.getByLabelText('Preencher com a conta do passeador'));
+    await fireEvent(screen.getByLabelText('Senha'), 'submitEditing');
+    await waitFor(() => expect(api.login).toHaveBeenCalledWith('joao@passeador.app', 'petmotion'));
+  });
+
   it('mostra o erro da API e vai para o cadastro', async () => {
     api.login.mockRejectedValueOnce(apiError());
     await renderWithTheme(<LoginScreen />);
