@@ -12,9 +12,9 @@ import { duration } from '@/utils/format';
 import { select, thump } from '@/utils/haptics';
 import { PressableScale } from '../PressableScale';
 import { TennisBall } from '../TennisBall';
-import { NotchedBackground } from './NotchedBackground';
+import { BarBackground } from './BarBackground';
 import {
-  BAR_HEIGHT, Dot, FAB_SIZE, FabWrap, Gap, IconLift, NOTCH_RADIUS, Row, Side, Slot, TabLabel, TabLabelText, Timer,
+  BAR_HEIGHT, Dot, FAB_SIZE, FabWrap, Gap, IconLift, CRADLE_RADIUS, Row, Side, Slot, TabLabel, TabLabelText, Timer,
   TimerText, Wrapper,
 } from './styles';
 import type { TabBarProps, TabMeta } from './types';
@@ -26,7 +26,7 @@ const META: Record<string, TabMeta> = {
   profile: { label: 'Perfil', icon: UserRound },
 };
 
-/** 2 abas | bola de passear no encaixe | 2 abas */
+/** 2 abas | bola de passear na elevação do centro | 2 abas */
 const LEFT = ['home', 'history'];
 const RIGHT = ['health', 'profile'];
 
@@ -71,9 +71,9 @@ export function TabBar({ state, emitter, navigateToTab }: TabBarProps) {
   };
 
   return (
-    <Wrapper $bottom={insets.bottom + theme.spacing.small} onLayout={(e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width)}>
+    <Wrapper $bottom={insets.bottom} onLayout={(e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width)}>
       {width > 0 ? (
-        <NotchedBackground width={width} height={BAR_HEIGHT} notchRadius={NOTCH_RADIUS} cornerRadius={theme.radii.large} color={theme.colors.ink} />
+        <BarBackground width={width} height={BAR_HEIGHT + insets.bottom} cradleRadius={CRADLE_RADIUS} cornerRadius={theme.radii.large} color={theme.colors.ink} />
       ) : null}
       <Row>
         <Side>{LEFT.map(renderTab)}</Side>

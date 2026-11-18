@@ -1,7 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { Cake, Camera, Cat, Dog, Images, PawPrint, Scale, Trash2 } from 'lucide-react-native';
 import { useState } from 'react';
-import { Alert } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
@@ -22,6 +21,7 @@ import { spring } from '@/theme/motion';
 import { fromIsoDate, localIso, maskDate, toIsoDate } from '@/utils/format';
 import { celebrate } from '@/utils/haptics';
 import { type ImageSource, pickImage } from '@/utils/pickImage';
+import { confirmAction } from '@/utils/confirm';
 import { customToast } from '@/utils/toast';
 import { GoalStepper } from './GoalStepper';
 import { Form, Half, PhotoArea, PhotoBadge, PhotoButtons, Row, Screen, Scroll } from './styles';
@@ -103,24 +103,22 @@ export function PetFormScreen() {
     }
   };
 
-  const confirmDelete = (pet: Pet) => {
-    Alert.alert(`Remover ${pet.name}?`, 'Todos os passeios e registros de saúde serão apagados.', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Remover',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await api.deletePet(pet.id);
-            remove(pet.id);
-            customToast(`${pet.name} foi removido.`, 'success');
-            router.back();
-          } catch (e) {
-            customToast(errorMessage(e), 'danger');
-          }
-        },
-      },
-    ]);
+  const confirmDelete = async (pet: Pet) => {
+    const ok = await confirmAction({
+      title: `Remover ${pet.name}?`,
+      message: 'Todos os passeios e registros de saúde serão apagados. Isso não tem volta.',
+      confirmLabel: `Remover ${pet.name}`,
+      icon: Trash2,
+    });
+    if (!ok) return;
+    try {
+      await api.deletePet(pet.id);
+      remove(pet.id);
+      customToast(`${pet.name} foi removido.`, 'success');
+      router.back();
+    } catch (e) {
+      customToast(errorMessage(e), 'danger');
+    }
   };
 
   const preview = { name: name || '?', species, photo_url: photoUri ?? existing?.photo_url ?? null };

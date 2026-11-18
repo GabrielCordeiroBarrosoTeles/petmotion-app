@@ -52,6 +52,19 @@ describe('walk store com GPS real', () => {
     expect(s.steps).toBe(120);
   });
 
+  it('parado, o tremido do GPS dentro da margem de erro não vira trajeto', async () => {
+    const gps = captureGps();
+    await useWalk.getState().start({ petId: 1, demo: false, temperature: null });
+    gps.emit(-23.5, -46.6, 20);
+    gps.emit(-23.50012, -46.6, 20); // ~13 m, mas a leitura erra até 20 m: ignorado
+    gps.emit(-23.5, -46.60014, 18); // ~14 m: ignorado
+    expect(useWalk.getState().points).toHaveLength(1);
+    expect(useWalk.getState().distance).toBe(0);
+
+    gps.emit(-23.5003, -46.6, 20); // ~33 m: andou de verdade
+    expect(useWalk.getState().points).toHaveLength(2);
+  });
+
   it('ignora leituras sem precisão informada', async () => {
     const gps = captureGps();
     await useWalk.getState().start({ petId: 1, demo: false, temperature: null });

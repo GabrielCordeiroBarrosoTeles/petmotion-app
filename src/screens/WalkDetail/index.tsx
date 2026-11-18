@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { Camera, ChevronLeft, Clock, Droplet, Droplets, Footprints, Gauge, Leaf, Route, Share2, Thermometer, Trash2 } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { Alert, useWindowDimensions } from 'react-native';
+import { useWindowDimensions } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
@@ -17,6 +17,7 @@ import type { WalkEvent } from '@/services/types';
 import { useAuth } from '@/store/auth';
 import { useSelectedPet } from '@/store/pets';
 import { fullDateLabel, km, minutesLabel, pace, thousands, timeLabel } from '@/utils/format';
+import { confirmAction } from '@/utils/confirm';
 import { customToast } from '@/utils/toast';
 import { WalkDetailSkeleton } from './SkeletonLoader';
 import { BackButton, BackWrap, Body, Buttons, Capture, Grid, MapBox, Screen, Scroll, SectionTitle, Subtitle, Title } from './styles';
@@ -41,25 +42,24 @@ export function WalkDetailScreen() {
     if (error) customToast(error, 'danger');
   }, [error]);
 
-  const confirmDelete = () =>
-    Alert.alert('Excluir passeio?', 'O trajeto e as marcações serão apagados para sempre.', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Excluir',
-        style: 'destructive',
-        onPress: async () => {
-          setDeleting(true);
-          try {
-            await api.deleteWalk(Number(id));
-            customToast('Passeio excluído.', 'success');
-            router.back();
-          } catch (e) {
-            customToast(errorMessage(e), 'danger');
-            setDeleting(false);
-          }
-        },
-      },
-    ]);
+  const confirmDelete = async () => {
+    const ok = await confirmAction({
+      title: 'Excluir passeio?',
+      message: 'O trajeto e as marcações serão apagados para sempre.',
+      confirmLabel: 'Excluir passeio',
+      icon: Trash2,
+    });
+    if (!ok) return;
+    setDeleting(true);
+    try {
+      await api.deleteWalk(Number(id));
+      customToast('Passeio excluído.', 'success');
+      router.back();
+    } catch (e) {
+      customToast(errorMessage(e), 'danger');
+      setDeleting(false);
+    }
+  };
 
   const cardPet = walk?.pet ?? pet;
 

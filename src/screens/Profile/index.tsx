@@ -1,7 +1,6 @@
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { BellRing, LogOut, Plus, Sparkles, Trash2 } from 'lucide-react-native';
-import { Alert } from 'react-native';
 import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
 import { Button } from '@/components/Button';
@@ -15,11 +14,12 @@ import { useSettings } from '@/store/settings';
 import { useWalk } from '@/store/walk';
 import { spring } from '@/theme/motion';
 import { ensureNotificationPermission, setDailyWalkReminder } from '@/utils/notifications';
+import { confirmAction } from '@/utils/confirm';
 import { customToast } from '@/utils/toast';
 import { PetRow } from './PetRow';
 import { PremiumCard } from './PremiumCard';
 import {
-  Content, Divider, Initials, InitialsText, Panel, Screen, Scroll, Section, SectionTitle, UserCard, UserEmail, UserName,
+  Content, Divider, Initials, InitialsText, Panel, Screen, Scroll, Section, SectionTitle, UserCard, UserEmail, UserName, UserPhoto,
   UserTexts, Version,
 } from './styles';
 import { SettingRow } from './SettingRow';
@@ -48,18 +48,18 @@ export function ProfileScreen() {
     if (value) customToast('Fechado! Todo dia às 18h a gente te chama.', 'success');
   };
 
-  const confirmSignOut = () =>
-    Alert.alert('Sair da conta?', 'Você pode entrar de novo quando quiser.', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Sair',
-        style: 'destructive',
-        onPress: () => {
-          useWalk.getState().reset();
-          signOut();
-        },
-      },
-    ]);
+  const confirmSignOut = async () => {
+    const ok = await confirmAction({
+      title: 'Sair da conta?',
+      message: 'Você pode entrar de novo quando quiser. Seus passeios ficam guardados.',
+      confirmLabel: 'Sair',
+      icon: LogOut,
+      tone: 'ink',
+    });
+    if (!ok) return;
+    useWalk.getState().reset();
+    signOut();
+  };
 
   return (
     <Screen $top={insets.top}>
@@ -68,7 +68,11 @@ export function ProfileScreen() {
         <Content $bottom={BAR_HEIGHT + FAB_SIZE / 2 + insets.bottom + theme.spacing.xl}>
           <UserCard from={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={spring({ damping: 15 })}>
             <Initials>
-              <InitialsText>{initialsOf(user?.name)}</InitialsText>
+              {user?.photo_url ? (
+                <UserPhoto source={{ uri: user.photo_url }} contentFit="cover" transition={250} accessibilityLabel={`Foto de ${user.name}`} />
+              ) : (
+                <InitialsText>{initialsOf(user?.name)}</InitialsText>
+              )}
             </Initials>
             <UserTexts>
               <UserName numberOfLines={1}>{user?.name}</UserName>

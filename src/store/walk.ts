@@ -35,6 +35,8 @@ let demoMode = false;
 
 const MAX_ACCURACY_M = 35;
 const MIN_STEP_M = 4;
+/** Passeio mais curto que isso não é salvo (parado, o GPS ainda "anda" alguns metros). */
+export const MIN_WALK_M = 30;
 
 function stopSensors() {
   locationSub?.remove();
@@ -50,12 +52,13 @@ export function elapsedMs(s: Pick<WalkState, 'accumulatedMs' | 'resumedAt'>): nu
 }
 
 export const useWalk = create<WalkState>((set, get) => {
-  const pushPoint = (point: LatLng) => {
+  /** accuracy = margem de erro da leitura: um salto menor que ela é tremido do GPS, não passo. */
+  const pushPoint = (point: LatLng, accuracy = 0) => {
     const { points, distance } = get();
     const last = points[points.length - 1];
     if (!last) return set({ points: [point], gpsReady: true });
     const delta = haversine(last, point);
-    if (delta < MIN_STEP_M) return;
+    if (delta < Math.max(MIN_STEP_M, accuracy)) return;
     set({ points: [...points, point], distance: distance + delta, gpsReady: true });
   };
 
@@ -78,8 +81,9 @@ export const useWalk = create<WalkState>((set, get) => {
     locationSub = await Location.watchPositionAsync(
       { accuracy: Location.Accuracy.BestForNavigation, distanceInterval: 3, timeInterval: 2000 },
       ({ coords }) => {
-        if ((coords.accuracy ?? 99) > MAX_ACCURACY_M) return;
-        pushPoint([coords.latitude, coords.longitude]);
+        const accuracy = coords.accuracy ?? 99;
+        if (accuracy > MAX_ACCURACY_M) return;
+        pushPoint([coords.latitude, coords.longitude], accuracy);
       },
     );
 

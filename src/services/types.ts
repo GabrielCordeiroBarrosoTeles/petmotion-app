@@ -12,6 +12,7 @@ export interface User {
   premium_until: string | null;
   /** O teste grátis de 7 dias ainda não foi usado. */
   trial_available: boolean;
+  photo_url?: string | null;
 }
 
 export interface Pet {

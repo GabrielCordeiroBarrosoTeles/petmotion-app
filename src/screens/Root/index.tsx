@@ -8,9 +8,11 @@ import { useFonts } from 'expo-font';
 import { Stack, router, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components/native';
+import { ConfirmHost } from '@/components/ConfirmSheet';
+import { SplashIntro } from '@/components/SplashIntro';
 import { ToastHost } from '@/components/ToastHost';
 import { useAuth } from '@/store/auth';
 import { usePets } from '@/store/pets';
@@ -49,14 +51,17 @@ export function RootLayout() {
   }, [bootstrap]);
 
   const ready = fontsLoaded && status !== 'booting';
+  const [introOver, setIntroOver] = useState(false);
+  const finishIntro = useCallback(() => setIntroOver(true), []);
 
+  // a splash nativa sai assim que as fontes chegam: daí em diante a abertura animada assume
   useEffect(() => {
-    if (ready) SplashScreen.hideAsync().catch(() => undefined);
-  }, [ready]);
+    if (fontsLoaded) SplashScreen.hideAsync().catch(() => undefined);
+  }, [fontsLoaded]);
 
   useAuthGate();
 
-  if (!ready) return null;
+  if (!fontsLoaded) return null;
 
   return (
     <GestureRoot>
@@ -64,18 +69,24 @@ export function RootLayout() {
         <ThemeProvider theme={theme}>
           <RootView>
             <StatusBar style="dark" />
-            <Stack screenOptions={stackOptions}>
-              <Stack.Screen name="(auth)" options={{ animation: 'fade' }} />
-              <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
-              <Stack.Screen name="walk" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom', gestureEnabled: false }} />
-              <Stack.Screen name="walk-summary" options={{ presentation: 'fullScreenModal', animation: 'fade', gestureEnabled: false }} />
-              <Stack.Screen name="pet-form" options={{ presentation: 'modal' }} />
-              <Stack.Screen name="health-form" options={{ presentation: 'modal' }} />
-              <Stack.Screen name="delete-account" options={{ presentation: 'modal' }} />
-              <Stack.Screen name="premium" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }} />
-              <Stack.Screen name="walk-photo" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }} />
-            </Stack>
-            <ToastHost />
+            {ready ? (
+              <>
+                <Stack screenOptions={stackOptions}>
+                  <Stack.Screen name="(auth)" options={{ animation: 'fade' }} />
+                  <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
+                  <Stack.Screen name="walk" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom', gestureEnabled: false }} />
+                  <Stack.Screen name="walk-summary" options={{ presentation: 'fullScreenModal', animation: 'fade', gestureEnabled: false }} />
+                  <Stack.Screen name="pet-form" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="health-form" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="delete-account" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="premium" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }} />
+                  <Stack.Screen name="walk-photo" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }} />
+                </Stack>
+                <ToastHost />
+                <ConfirmHost />
+              </>
+            ) : null}
+            {introOver ? null : <SplashIntro ready={ready} onFinish={finishIntro} />}
           </RootView>
         </ThemeProvider>
       </SafeAreaProvider>

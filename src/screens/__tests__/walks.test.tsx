@@ -1,7 +1,7 @@
 import * as Sharing from 'expo-sharing';
 import { useLocalSearchParams } from 'expo-router';
-import { Alert } from 'react-native';
-import { act, fireEvent, pullToRefresh, renderWithTheme, screen, scrollToEnd, waitFor } from '../../../test/render';
+import { act, answerConfirm, fireEvent, pullToRefresh, renderWithTheme, screen, scrollToEnd, waitFor } from '../../../test/render';
+import { useConfirmStore } from '@/store/confirm';
 import { makePet, makeStats, makeWalk } from '../../../test/fixtures';
 import * as apiModule from '@/services/api';
 import { usePets } from '@/store/pets';
@@ -146,12 +146,13 @@ describe('Detalhe do passeio', () => {
   it('exclui depois de confirmar', async () => {
     api.walk.mockResolvedValue(makeWalk());
     api.deleteWalk.mockResolvedValueOnce({} as never);
-    const alert = jest.spyOn(Alert, 'alert');
     await renderWithTheme(<WalkDetailScreen />);
     await fireEvent.press(await screen.findByRole('button', { name: 'Excluir passeio' }));
-    const buttons = alert.mock.calls[0][2]!;
-    expect(buttons[0].style).toBe('cancel');
-    await act(() => buttons[1].onPress!());
+    expect(useConfirmStore.getState().current?.title).toBe('Excluir passeio?');
+    await answerConfirm(false);
+    expect(api.deleteWalk).not.toHaveBeenCalled();
+    await fireEvent.press(screen.getByRole('button', { name: 'Excluir passeio' }));
+    await answerConfirm(true);
     expect(api.deleteWalk).toHaveBeenCalledWith(10);
     expect(global.__router.back).toHaveBeenCalled();
     expect(useToastStore.getState().current?.message).toBe('Passeio excluído.');
@@ -160,10 +161,9 @@ describe('Detalhe do passeio', () => {
   it('erro ao excluir ou ao carregar mostra aviso; usa o pet da store se a API não mandar', async () => {
     api.walk.mockResolvedValue(makeWalk({ pet: undefined }));
     api.deleteWalk.mockRejectedValueOnce(new Error('x'));
-    const alert = jest.spyOn(Alert, 'alert');
     await renderWithTheme(<WalkDetailScreen />);
     await fireEvent.press(await screen.findByRole('button', { name: 'Excluir passeio' }));
-    await act(() => alert.mock.calls[0][2]![1].onPress!());
+    await answerConfirm(true);
     expect(useToastStore.getState().current?.type).toBe('danger');
 
     api.walk.mockRejectedValueOnce(new Error('404'));

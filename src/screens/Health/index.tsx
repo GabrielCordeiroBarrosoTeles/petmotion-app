@@ -1,7 +1,6 @@
 import { router } from 'expo-router';
-import { HeartPulse, Plus } from 'lucide-react-native';
+import { HeartPulse, Plus, Trash2 } from 'lucide-react-native';
 import { useMemo } from 'react';
-import { Alert } from 'react-native';
 import { useSafeInsets } from '@/hooks/useSafeInsets';
 import { useTheme } from 'styled-components/native';
 import { EmptyState } from '@/components/EmptyState';
@@ -12,6 +11,7 @@ import { api, errorMessage } from '@/services/api';
 import type { HealthRecord } from '@/services/types';
 import { useSelectedPet } from '@/store/pets';
 import { daysUntil } from '@/utils/format';
+import { confirmAction } from '@/utils/confirm';
 import { customToast } from '@/utils/toast';
 import { DueCard } from './DueCard';
 import { HealthSkeleton } from './SkeletonLoader';
@@ -39,25 +39,24 @@ export function HealthScreen() {
     };
   }, [data]);
 
-  const confirmDelete = (record: HealthRecord) =>
-    Alert.alert('Excluir registro?', `"${record.title}" será removido do histórico.`, [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Excluir',
-        style: 'destructive',
-        onPress: async () => {
-          const previous = data;
-          setData((prev) => prev?.filter((r) => r.id !== record.id) ?? null);
-          try {
-            await api.deleteHealth(record.id);
-            customToast('Registro excluído.', 'success');
-          } catch (e) {
-            setData(() => previous);
-            customToast(errorMessage(e), 'danger');
-          }
-        },
-      },
-    ]);
+  const confirmDelete = async (record: HealthRecord) => {
+    const ok = await confirmAction({
+      title: 'Excluir registro?',
+      message: `"${record.title}" será removido do histórico.`,
+      confirmLabel: 'Excluir',
+      icon: Trash2,
+    });
+    if (!ok) return;
+    const previous = data;
+    setData((prev) => prev?.filter((r) => r.id !== record.id) ?? null);
+    try {
+      await api.deleteHealth(record.id);
+      customToast('Registro excluído.', 'success');
+    } catch (e) {
+      setData(() => previous);
+      customToast(errorMessage(e), 'danger');
+    }
+  };
 
   const bottom = BAR_HEIGHT + FAB_SIZE / 2 + insets.bottom + theme.spacing.xl;
 

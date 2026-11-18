@@ -4,20 +4,21 @@ import styled from 'styled-components/native';
 
 export const BAR_HEIGHT = RFValue(66);
 export const FAB_SIZE = RFValue(64);
-/** Raio do encaixe: a bola + um respiro de 7px em volta. */
-export const NOTCH_RADIUS = FAB_SIZE / 2 + RFValue(7);
+/** Raio da elevação em volta da bola: a bola + um aro pinheiro de 7px. */
+export const CRADLE_RADIUS = FAB_SIZE / 2 + RFValue(7);
 
+/** Barra presa no rodapé, de ponta a ponta; o pinheiro desce até a borda da tela (atrás da barra do sistema). */
 export const Wrapper = styled.View<{ $bottom: number }>`
   position: absolute;
-  left: ${({ theme }) => theme.spacing.medium}px;
-  right: ${({ theme }) => theme.spacing.medium}px;
-  bottom: ${({ $bottom }) => $bottom}px;
-  height: ${BAR_HEIGHT}px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: ${({ $bottom }) => BAR_HEIGHT + $bottom}px;
+  padding-bottom: ${({ $bottom }) => $bottom}px;
   shadow-color: ${({ theme }) => theme.colors.ink};
-  shadow-offset: 0px 12px;
-  shadow-opacity: 0.28;
-  shadow-radius: 20px;
-  elevation: 14;
+  shadow-offset: 0px -6px;
+  shadow-opacity: 0.18;
+  shadow-radius: 16px;
 `;
 
 export const Row = styled.View`
@@ -32,7 +33,7 @@ export const Side = styled.View`
 `;
 
 export const Gap = styled.View`
-  width: ${NOTCH_RADIUS * 2}px;
+  width: ${CRADLE_RADIUS * 2}px;
 `;
 
 export const Slot = styled.Pressable`

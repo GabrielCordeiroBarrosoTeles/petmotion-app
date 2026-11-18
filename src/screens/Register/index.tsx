@@ -70,9 +70,9 @@ export function RegisterScreen() {
 
         <Sheet
           $bottom={insets.bottom}
-          from={{ translateY: 80, opacity: 0 }}
-          animate={{ translateY: 0, opacity: 1 }}
-          transition={spring({ damping: 18, delay: 120 })}
+          from={{ translateY: 120 }}
+          animate={{ translateY: 0 }}
+          transition={spring({ damping: 22, stiffness: 170, delay: 120 })}
         >
           <Title>Criar conta</Title>
           <Subtitle>Leva 20 segundos. Depois é só passear.</Subtitle>

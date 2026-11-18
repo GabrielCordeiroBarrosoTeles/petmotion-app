@@ -1,6 +1,7 @@
 import { act, render, renderHook, screen, type RenderOptions } from '@testing-library/react-native';
 import type { ReactElement, ReactNode } from 'react';
 import { ThemeProvider } from 'styled-components/native';
+import { useConfirmStore } from '@/store/confirm';
 import { theme } from '@/theme';
 
 function Providers({ children }: { children: ReactNode }) {
@@ -50,5 +51,13 @@ export async function scrollToEnd({ wait = true }: { wait?: boolean } = {}) {
   }
   await act(() => {
     list.props!.onEndReached({ distanceFromEnd: 0 });
+  });
+}
+
+/** Responde a folha de confirmação (ConfirmHost) e deixa a ação seguinte terminar. */
+export async function answerConfirm(ok: boolean) {
+  await act(async () => {
+    useConfirmStore.getState().answer(ok);
+    for (let i = 0; i < 10; i += 1) await Promise.resolve();
   });
 }

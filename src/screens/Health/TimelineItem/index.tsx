@@ -15,7 +15,9 @@ function TimelineItemBase({ record, index, isLast, onLongPress }: TimelineItemPr
 
   return (
     <Pressable
-      onLongPress={() => onLongPress(record)}
+      onLongPress={() => {
+        onLongPress(record);
+      }}
       delayLongPress={400}
       accessibilityLabel={`${meta.label}: ${record.title}, em ${fullDateLabel(record.date)}`}
       accessibilityHint="Toque e segure para excluir"

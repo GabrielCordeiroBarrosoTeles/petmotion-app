@@ -41,12 +41,17 @@ export const Headline = styled.Text`
   color: ${({ theme }) => theme.colors.primary};
 `;
 
+/** A folha passa da borda de baixo (margin negativa) para nunca mostrar o pinheiro embaixo enquanto sobe. */
+const SHEET_OVERSCAN = 160;
+
 export const Sheet = styled(MotiView)<{ $bottom: number }>`
   flex-grow: 1;
   background-color: ${({ theme }) => theme.colors.background};
   border-top-left-radius: ${({ theme }) => theme.radii.large}px;
   border-top-right-radius: ${({ theme }) => theme.radii.large}px;
-  padding: ${({ theme }) => theme.spacing.xl}px ${({ theme }) => theme.spacing.large}px ${({ $bottom }) => $bottom + 24}px;
+  margin-bottom: ${-SHEET_OVERSCAN}px;
+  padding: ${({ theme }) => theme.spacing.xl}px ${({ theme }) => theme.spacing.large}px
+    ${({ $bottom, theme }) => $bottom + theme.spacing.large + SHEET_OVERSCAN}px;
   gap: ${({ theme }) => theme.spacing.medium}px;
 `;
 

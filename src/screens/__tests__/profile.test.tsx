@@ -1,8 +1,7 @@
 import * as ImagePicker from 'expo-image-picker';
 import * as Notifications from 'expo-notifications';
 import { useLocalSearchParams } from 'expo-router';
-import { Alert } from 'react-native';
-import { act, fireEvent, renderWithTheme, screen, waitFor } from '../../../test/render';
+import { act, answerConfirm, fireEvent, renderWithTheme, screen, waitFor } from '../../../test/render';
 import { makePet, member, user } from '../../../test/fixtures';
 import * as apiModule from '@/services/api';
 import { useAuth } from '@/store/auth';
@@ -42,6 +41,13 @@ describe('Perfil', () => {
     expect(global.__router.push).toHaveBeenCalledWith('/pet-form');
     await fireEvent.press(screen.getByRole('button', { name: 'Excluir minha conta' }));
     expect(global.__router.push).toHaveBeenCalledWith('/delete-account');
+  });
+
+  it('com foto, o cartão mostra a foto no lugar das iniciais', async () => {
+    useAuth.setState({ user: { ...user, photo_url: 'https://petmotion.app/seed/gabriel.jpg' } });
+    await renderWithTheme(<ProfileScreen />);
+    expect(screen.getByLabelText('https://petmotion.app/seed/gabriel.jpg')).toBeOnTheScreen();
+    expect(screen.queryByText('GC')).toBeNull();
   });
 
   it('cachorro sem detalhes mostra a espécie; sem versão usa 1.0.0', async () => {
@@ -94,13 +100,15 @@ describe('Perfil', () => {
     api.logout.mockResolvedValue({} as never);
     usePets.setState({ pets: [], selectedId: null });
     useAuth.setState({ user: null });
-    const alert = jest.spyOn(Alert, 'alert');
     await renderWithTheme(<ProfileScreen />);
     await fireEvent(screen.getByLabelText('Lembrete de passeio'), 'valueChange', true);
     await waitFor(() => expect(Notifications.scheduleNotificationAsync).toHaveBeenCalledWith(expect.objectContaining({ content: expect.objectContaining({ body: 'Seu pet já está te esperando na porta.' }) })));
 
     await fireEvent.press(screen.getByRole('button', { name: 'Sair da conta' }));
-    await act(() => alert.mock.calls[0][2]![1].onPress!());
+    await answerConfirm(false);
+    expect(useAuth.getState().status).not.toBe('signedOut');
+    await fireEvent.press(screen.getByRole('button', { name: 'Sair da conta' }));
+    await answerConfirm(true);
     await waitFor(() => expect(useAuth.getState().status).toBe('signedOut'));
   });
 });
@@ -251,17 +259,20 @@ describe('Cadastro de pet', () => {
 
   it('remove o pet depois de confirmar, com aviso se falhar', async () => {
     jest.mocked(useLocalSearchParams).mockReturnValue({ id: '2' });
-    const alert = jest.spyOn(Alert, 'alert');
     await renderWithTheme(<PetFormScreen />);
 
     await fireEvent.press(screen.getByRole('button', { name: 'Remover Mel' }));
+    await answerConfirm(false);
+    expect(api.deletePet).not.toHaveBeenCalled();
+
+    await fireEvent.press(screen.getByRole('button', { name: 'Remover Mel' }));
     api.deletePet.mockRejectedValueOnce(new Error('x'));
-    await act(() => alert.mock.calls[0][2]![1].onPress!());
+    await answerConfirm(true);
     expect(useToastStore.getState().current?.type).toBe('danger');
 
     await fireEvent.press(screen.getByRole('button', { name: 'Remover Mel' }));
     api.deletePet.mockResolvedValueOnce({} as never);
-    await act(() => alert.mock.calls[1][2]![1].onPress!());
+    await answerConfirm(true);
     expect(usePets.getState().pets.map((p) => p.id)).toEqual([1]);
     expect(global.__router.back).toHaveBeenCalled();
     await fireEvent.press(screen.getByLabelText('Voltar'));

@@ -1,6 +1,5 @@
 import * as Notifications from 'expo-notifications';
-import { Alert } from 'react-native';
-import { act, fireEvent, pullToRefresh, renderWithTheme, screen, waitFor } from '../../../test/render';
+import { act, answerConfirm, fireEvent, pullToRefresh, renderWithTheme, screen, waitFor } from '../../../test/render';
 import { makeHealth, makePet } from '../../../test/fixtures';
 import * as apiModule from '@/services/api';
 import { usePets } from '@/store/pets';
@@ -53,18 +52,21 @@ describe('Saúde', () => {
 
   it('segurar exclui com confirmação e desfaz se a API falhar', async () => {
     api.health.mockResolvedValue([records[6], records[1]]);
-    const alert = jest.spyOn(Alert, 'alert');
     await renderWithTheme(<HealthScreen />);
 
     await fireEvent(await screen.findByLabelText(/Consulta: Check-up/), 'longPress');
+    await answerConfirm(false);
+    expect(api.deleteHealth).not.toHaveBeenCalled();
+
+    await fireEvent(screen.getByLabelText(/Consulta: Check-up/), 'longPress');
     api.deleteHealth.mockResolvedValueOnce({} as never);
-    await act(() => alert.mock.calls[0][2]![1].onPress!());
+    await answerConfirm(true);
     expect(screen.queryByLabelText(/Consulta: Check-up/)).toBeNull();
     expect(useToastStore.getState().current?.message).toBe('Registro excluído.');
 
     await fireEvent(screen.getByLabelText(/Vacina: V10/), 'longPress');
     api.deleteHealth.mockRejectedValueOnce(new Error('x'));
-    await act(() => alert.mock.calls[1][2]![1].onPress!());
+    await answerConfirm(true);
     expect(screen.getByLabelText(/Vacina: V10/)).toBeOnTheScreen();
     expect(useToastStore.getState().current?.type).toBe('danger');
   });
@@ -72,14 +74,13 @@ describe('Saúde', () => {
   it('trocar de pet com a confirmação aberta não quebra a exclusão', async () => {
     usePets.setState({ pets: [makePet(), makePet({ id: 2, name: 'Mel' })], selectedId: 1 });
     api.health.mockResolvedValueOnce([records[1]]);
-    const alert = jest.spyOn(Alert, 'alert');
     await renderWithTheme(<HealthScreen />);
     await fireEvent(await screen.findByLabelText(/Vacina: V10/), 'longPress');
 
     api.health.mockReturnValueOnce(new Promise(() => undefined)); // Mel ainda carregando
     await act(() => usePets.getState().select(2));
     api.deleteHealth.mockResolvedValueOnce({} as never);
-    await act(() => alert.mock.calls[0][2]![1].onPress!());
+    await answerConfirm(true);
     expect(api.deleteHealth).toHaveBeenCalledWith(2);
   });
 
@@ -104,11 +105,10 @@ describe('Saúde', () => {
 
   it('exclusão de registro de outro pet some mesmo se a lista ainda não carregou', async () => {
     api.health.mockResolvedValue([records[1]]);
-    const alert = jest.spyOn(Alert, 'alert');
     await renderWithTheme(<HealthScreen />);
     await fireEvent(await screen.findByLabelText(/Vacina: V10/), 'longPress');
     api.deleteHealth.mockResolvedValueOnce({} as never);
-    await act(() => alert.mock.calls[0][2]![1].onPress!());
+    await answerConfirm(true);
     expect(await screen.findByText('Carteirinha vazia')).toBeOnTheScreen();
   });
 });

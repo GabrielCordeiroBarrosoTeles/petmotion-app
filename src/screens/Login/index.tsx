@@ -63,9 +63,9 @@ export function LoginScreen() {
 
         <Sheet
           $bottom={insets.bottom}
-          from={{ translateY: 80, opacity: 0 }}
-          animate={{ translateY: 0, opacity: 1 }}
-          transition={spring({ damping: 18, delay: 120 })}
+          from={{ translateY: 120 }}
+          animate={{ translateY: 0 }}
+          transition={spring({ damping: 22, stiffness: 170, delay: 120 })}
         >
           <Title>Entrar</Title>
           <Subtitle>Os passeios do seu pet estão te esperando.</Subtitle>

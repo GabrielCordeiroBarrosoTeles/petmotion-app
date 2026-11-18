@@ -41,6 +41,21 @@ describe('RootLayout', () => {
     expect(global.__router.replace).not.toHaveBeenCalled();
   });
 
+  it('fontes prontas e sessão carregando: a abertura animada assume, sem rotas; depois sai', async () => {
+    jest.useFakeTimers();
+    await renderWithTheme(<RootLayout />);
+    expect(SplashScreen.hideAsync).toHaveBeenCalled();
+    expect(screen.getByTestId('splash')).toBeOnTheScreen();
+    expect(screen.queryByText('screen:walk')).toBeNull();
+
+    await act(() => useAuth.setState({ status: 'signedOut' } as never));
+    expect(screen.getByText('screen:walk')).toBeOnTheScreen();
+    await act(() => jest.advanceTimersByTime(2000));
+    await act(() => jest.advanceTimersByTime(800));
+    expect(screen.queryByTestId('splash')).toBeNull();
+    jest.useRealTimers();
+  });
+
   it('deslogado fora do login vai para o login e limpa os pets', async () => {
     usePets.setState({ pets: [makePet()], selectedId: 1, loaded: true });
     useAuth.setState({ status: 'signedOut' } as never);

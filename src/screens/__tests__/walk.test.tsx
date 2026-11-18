@@ -129,6 +129,17 @@ describe('Passeio: em andamento', () => {
     await waitFor(() => expect(useWalk.getState().status).toBe('running'));
   });
 
+  it('várias marcações seguidas não repetem chave entre a onda e o contador', async () => {
+    const walk = await startWalking();
+    await walk(-23.5, -46.6);
+    const error = jest.spyOn(console, 'error');
+    for (let i = 0; i < 3; i += 1) await fireEvent.press(screen.getByLabelText(`Marcar Cocô. ${i} até agora`));
+    expect(screen.getByLabelText('Marcar Cocô. 3 até agora')).toBeOnTheScreen();
+    expect(error).not.toHaveBeenCalledWith(expect.stringContaining('same key'), expect.anything(), expect.anything());
+    expect(error.mock.calls.flat().join(' ')).not.toContain('same key');
+    error.mockRestore();
+  });
+
   it('atualiza a notificação fixa a cada 15 segundos', async () => {
     jest.mocked(Notifications.getPermissionsAsync).mockRejectedValueOnce(new Error('sem permissão')); // não impede o passeio
     await startWalking();
@@ -144,6 +155,16 @@ describe('Passeio: em andamento', () => {
     await fireEvent(screen.getByLabelText('Segure para finalizar'), 'pressIn');
     expect(useToastStore.getState().current?.message).toMatch(/muito curto/);
     await waitFor(() => expect(useWalk.getState().status).toBe('running'));
+    expect(api.createWalk).not.toHaveBeenCalled();
+  });
+
+  it('dois pontos, mas menos de 30 m (ficou parado): também não salva', async () => {
+    const walk = await startWalking();
+    await walk(-23.5, -46.6);
+    await walk(-23.5001, -46.6); // ~11 m
+    expect(useWalk.getState().points).toHaveLength(2);
+    await fireEvent(screen.getByLabelText('Segure para finalizar'), 'pressIn');
+    expect(useToastStore.getState().current?.message).toMatch(/muito curto/);
     expect(api.createWalk).not.toHaveBeenCalled();
   });
 

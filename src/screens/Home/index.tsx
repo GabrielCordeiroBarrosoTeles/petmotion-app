@@ -11,6 +11,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { PackBadge } from '@/components/PackBadge';
 import { PetSwitcher } from '@/components/PetSwitcher';
 import { ProgressRing } from '@/components/ProgressRing';
+import { StatusBarScrim } from '@/components/StatusBarScrim';
 import { StatTile } from '@/components/StatTile';
 import { BAR_HEIGHT, FAB_SIZE } from '@/components/TabBar/styles';
 import { WeatherBanner } from '@/components/WeatherBanner';
@@ -196,6 +197,7 @@ export function HomeScreen() {
           </Body>
         ) : null}
       </Scroll>
+      <StatusBarScrim tone="ink" />
     </Screen>
   );
 }

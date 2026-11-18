@@ -16,7 +16,7 @@ import { api, errorMessage } from '@/services/api';
 import type { WalkEventType } from '@/services/types';
 import { useSelectedPet } from '@/store/pets';
 import { useSettings } from '@/store/settings';
-import { useWalk } from '@/store/walk';
+import { MIN_WALK_M, useWalk } from '@/store/walk';
 import { spring, timing } from '@/theme/motion';
 import { duration, km, pace, thousands } from '@/utils/format';
 import { clearWalkNotification, ensureNotificationPermission, showWalkNotification } from '@/utils/notifications';
@@ -101,7 +101,7 @@ export function WalkScreen() {
   const finish = async () => {
     const payload = useWalk.getState().finish();
     if (!payload) return;
-    if (payload.points.length < 2) {
+    if (payload.points.length < 2 || payload.distance_meters < MIN_WALK_M) {
       customToast('Passeio muito curto para salvar. Ande mais um pouquinho!', 'warning');
       useWalk.getState().resume();
       return;
