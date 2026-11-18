@@ -20,9 +20,9 @@ import { customToast } from '@/utils/toast';
 import { LiveWalkSkeleton } from './SkeletonLoader';
 import {
   Caption, Center, CountDot, Distance, DistanceValue, HeadMain, HeadRow, LiveDot, LiveRow, MapArea, Pills, RoundButton,
-  Screen, Sheet, StatLabel, StatPill, StatValue, Timer, Title, TopBar,
+  Screen, Sheet, Stale, StatLabel, StatPill, StatValue, Timer, Title, TopBar,
 } from './styles';
-import type { LiveCountProps, LiveWalkParams } from './types';
+import type { LiveClock, LiveCountProps, LiveWalkParams } from './types';
 
 const COUNTS = [
   { type: 'pee' as const, label: 'xixi', icon: Droplet },
@@ -42,8 +42,14 @@ function LiveCount({ type, label, icon: Icon, count }: LiveCountProps) {
   );
 }
 
-/** Tempo do passeio: o último valor do servidor + o que passou desde então (se ainda está andando). */
-function useLiveSeconds(live: LiveWalk | undefined): number {
+/** Sem notícia de quem passeia há mais que isso, o relógio para de andar sozinho. */
+const STALE_MS = 30000;
+
+/**
+ * Tempo do passeio: o último valor do servidor + o que passou desde então (se ainda está andando),
+ * no máximo 30 s além da última atualização. `staleMs` = há quanto tempo não chega nada (0 se em dia).
+ */
+function useLiveClock(live: LiveWalk | undefined): LiveClock {
   const running = live?.status === 'running';
   const [now, setNow] = useState(Date.now);
 
@@ -54,9 +60,17 @@ function useLiveSeconds(live: LiveWalk | undefined): number {
     return () => clearInterval(id);
   }, [running]);
 
-  if (!live) return 0;
+  if (!live) return { seconds: 0, staleMs: 0 };
   const since = running ? Math.max(0, now - Date.parse(live.at)) : 0;
-  return Math.floor((live.elapsed_ms + since) / 1000);
+  return {
+    seconds: Math.floor((live.elapsed_ms + Math.min(since, STALE_MS)) / 1000),
+    staleMs: since > STALE_MS ? since : 0,
+  };
+}
+
+function staleText(ms: number): string {
+  const minutes = Math.floor(ms / 60000);
+  return `Sem atualização há ${minutes < 1 ? 'instantes' : `${minutes} min`}`;
 }
 
 /** Pai/mãe de pet acompanhando o passeio de agora (`/live/{petId}`). */
@@ -69,7 +83,7 @@ export function LiveWalkScreen() {
   const petName = usePets((s) => s.pets.find((p) => p.id === petId)?.name);
   const live = useLive((s) => s.byPet[petId]);
   const [loading, setLoading] = useState(true);
-  const seconds = useLiveSeconds(live);
+  const { seconds, staleMs } = useLiveClock(live);
 
   // o GET traz a rota inteira; daí em diante os eventos do socket chegam pelo useOwnerLive
   const load = useCallback(async () => {
@@ -93,10 +107,12 @@ export function LiveWalkScreen() {
     return () => sub.remove();
   }, [load]);
 
-  // o evento só levou os últimos pontos: busca a rota completa
+  // o evento só levou os últimos pontos: busca a rota completa. A chave é o `at` do evento cortado,
+  // para dois cortados seguidos buscarem duas vezes (a flag sozinha não muda entre eles).
+  const truncatedAt = live?.truncated ? live.at : null;
   useEffect(() => {
-    if (live?.truncated) load();
-  }, [live?.truncated, load]);
+    if (truncatedAt) load();
+  }, [truncatedAt, load]);
 
   const close = (
     <TopBar $top={insets.top}>
@@ -158,6 +174,7 @@ export function LiveWalkScreen() {
             ) : (
               <Timer accessibilityLabel={`Tempo de passeio ${duration(seconds)}`}>{duration(seconds)}</Timer>
             )}
+            {staleMs ? <Stale accessibilityLiveRegion="polite">{staleText(staleMs)}</Stale> : null}
             <LiveRow>
               {live.status === 'running' ? (
                 <LiveDot from={{ opacity: 1 }} animate={{ opacity: 0.25 }} transition={timing({ duration: 800, loop: true, repeatReverse: true })} />

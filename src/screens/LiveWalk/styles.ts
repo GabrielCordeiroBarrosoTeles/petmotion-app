@@ -17,7 +17,7 @@ export const MapArea = styled.View`
 
 export const TopBar = styled.View<{ $top: number }>`
   position: absolute;
-  top: ${({ $top }) => $top + 8}px;
+  top: ${({ theme, $top }) => $top + theme.spacing.xs}px;
   left: ${({ theme }) => theme.spacing.medium}px;
   right: ${({ theme }) => theme.spacing.medium}px;
   flex-direction: row;
@@ -45,7 +45,7 @@ export const Sheet = styled(MotiView)<{ $bottom: number }>`
   border-top-left-radius: ${({ theme }) => theme.radii.large}px;
   border-top-right-radius: ${({ theme }) => theme.radii.large}px;
   padding: ${({ theme }) => theme.spacing.large}px;
-  padding-bottom: ${({ $bottom }) => $bottom + 16}px;
+  padding-bottom: ${({ theme, $bottom }) => $bottom + theme.spacing.medium}px;
   gap: ${({ theme }) => theme.spacing.medium}px;
 `;
 
@@ -67,6 +67,13 @@ export const Timer = styled.Text`
   letter-spacing: -2px;
   color: ${({ theme }) => theme.colors.onInk};
   font-variant: tabular-nums;
+`;
+
+/** Aviso de alerta leve (sol) quando quem passeia some: o relógio parou de andar. */
+export const Stale = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.bodyBold};
+  font-size: ${({ theme }) => RFValue(theme.fontSizes.small)}px;
+  color: ${({ theme }) => theme.colors.sun};
 `;
 
 export const Title = styled.Text`

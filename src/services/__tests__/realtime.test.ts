@@ -21,8 +21,8 @@ class FakeSocket {
   emit(message: object | string) {
     this.onmessage?.({ data: typeof message === 'string' ? message : JSON.stringify(message) });
   }
-  established(socketId = '123.456') {
-    this.emit({ event: 'pusher:connection_established', data: JSON.stringify({ socket_id: socketId }) });
+  established(socketId = '123.456', extra: object = {}) {
+    this.emit({ event: 'pusher:connection_established', data: JSON.stringify({ socket_id: socketId, ...extra }) });
   }
   drop() {
     this.onclose?.();
@@ -33,6 +33,7 @@ const last = () => FakeSocket.instances[FakeSocket.instances.length - 1];
 const flush = () => jest.advanceTimersByTimeAsync(0);
 
 let authorize: jest.Mock;
+let warn: jest.SpyInstance;
 const make = (url = 'wss://x.test/') => createRealtime({ url, key: 'k', authorize });
 
 beforeEach(() => {
@@ -40,11 +41,15 @@ beforeEach(() => {
   FakeSocket.instances = [];
   (global as any).WebSocket = FakeSocket;
   authorize = jest.fn(async (socketId: string, channel: string) => `k:${socketId}:${channel}`);
+  warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 });
 
 afterEach(() => {
   jest.useRealTimers();
+  warn.mockRestore();
 });
+
+const pings = (ws: FakeSocket) => ws.sent.filter((m) => m.event === 'pusher:ping').length;
 
 describe('createRealtime', () => {
   it('conecta no endpoint do Reverb com o protocolo 7', () => {
@@ -241,6 +246,119 @@ describe('createRealtime', () => {
       off();
       rt.close();
     }).not.toThrow();
+  });
+});
+
+describe('socket morto', () => {
+  it('manda ping depois do activity_timeout do servidor sem mensagem nenhuma', async () => {
+    make();
+    const ws = last();
+    ws.established('1.1', { activity_timeout: 30 });
+    await jest.advanceTimersByTimeAsync(29999);
+    expect(pings(ws)).toBe(0);
+    await jest.advanceTimersByTimeAsync(1);
+    expect(ws.sent[ws.sent.length - 1]).toEqual({ event: 'pusher:ping', data: {} });
+
+    // o pong chegou: a conexão vive, nada de fechar; o próximo ping vem 30 s depois
+    ws.emit({ event: 'pusher:pong' });
+    await jest.advanceTimersByTimeAsync(29999);
+    expect(ws.closed).toBe(false);
+    expect(pings(ws)).toBe(1);
+    await jest.advanceTimersByTimeAsync(1);
+    expect(pings(ws)).toBe(2);
+  });
+
+  it('sem activity_timeout espera 120 s, e qualquer mensagem adia o ping', async () => {
+    make();
+    const ws = last();
+    ws.established();
+    await jest.advanceTimersByTimeAsync(100000);
+    ws.emit({ event: 'live.updated', channel: 'private-pet.1', data: '{}' });
+    await jest.advanceTimersByTimeAsync(119999);
+    expect(pings(ws)).toBe(0);
+    await jest.advanceTimersByTimeAsync(1);
+    expect(pings(ws)).toBe(1);
+  });
+
+  it('sem resposta em 30 s larga a conexão e reconecta reassinando', async () => {
+    const rt = make();
+    const cb = jest.fn();
+    rt.subscribe('private-pet.1', 'live.updated', cb);
+    const dead = last();
+    dead.established('1.1', { activity_timeout: 30 });
+    await flush();
+    await jest.advanceTimersByTimeAsync(30000 + 29999);
+    expect(dead.closed).toBe(false);
+    await jest.advanceTimersByTimeAsync(1);
+    expect(dead.closed).toBe(true);
+
+    // a espera da reconexão é a mesma (conectou antes: 1 s)
+    expect(FakeSocket.instances).toHaveLength(1);
+    await jest.advanceTimersByTimeAsync(1000);
+    expect(FakeSocket.instances).toHaveLength(2);
+    last().established('2.2');
+    await flush();
+    expect(last().sent[0].data).toEqual({ channel: 'private-pet.1', auth: 'k:2.2:private-pet.1' });
+
+    // a conexão abandonada não entrega mais nada nem dispara outra reconexão
+    dead.emit({ event: 'live.updated', channel: 'private-pet.1', data: '{}' });
+    dead.drop();
+    await jest.advanceTimersByTimeAsync(60000);
+    expect(cb).not.toHaveBeenCalled();
+    expect(FakeSocket.instances).toHaveLength(2);
+  });
+
+  it('antes de conectar não manda ping', async () => {
+    make();
+    last().emit('lixo');
+    await jest.advanceTimersByTimeAsync(300000);
+    expect(last().sent).toEqual([]);
+  });
+
+  it('close para o ping', async () => {
+    const rt = make();
+    const ws = last();
+    ws.established('1.1', { activity_timeout: 30 });
+    rt.close();
+    await jest.advanceTimersByTimeAsync(120000);
+    expect(pings(ws)).toBe(0);
+    expect(FakeSocket.instances).toHaveLength(1);
+  });
+});
+
+describe('aviso sem chave', () => {
+  const fresh = (): typeof import('../realtime') => {
+    let mod!: typeof import('../realtime');
+    jest.isolateModules(() => {
+      mod = require('../realtime');
+    });
+    return mod;
+  };
+
+  it('em desenvolvimento avisa uma vez só que o ao vivo está desligado', () => {
+    const { createRealtime: create } = fresh();
+    create({ url: 'wss://x.test', key: '', authorize });
+    create({ url: 'wss://x.test', key: '', authorize });
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn.mock.calls[0][0]).toMatch(/EXPO_PUBLIC_REVERB_KEY/);
+    expect(warn.mock.calls[0][0]).toMatch(/ao vivo/);
+  });
+
+  it('com chave não avisa', () => {
+    fresh().createRealtime({ url: 'wss://x.test', key: 'k', authorize });
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  it('fora do desenvolvimento não avisa', () => {
+    const g = global as unknown as { __DEV__: boolean };
+    const dev = g.__DEV__;
+    g.__DEV__ = false;
+    try {
+      fresh().createRealtime({ url: 'wss://x.test', key: '', authorize });
+      expect(warn).not.toHaveBeenCalled();
+    } finally {
+      g.__DEV__ = dev;
+    }
   });
 });
 

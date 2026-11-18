@@ -153,6 +153,56 @@ describe('Ler convite', () => {
     expect(request).toHaveBeenCalled();
   });
 
+  const type = async (text: string) => {
+    await fireEvent.changeText(screen.getByLabelText('Ou digite o código'), text);
+  };
+
+  it('digitar o código abre o convite (minúsculo e com espaços vira o código certo)', async () => {
+    await renderWithTheme(<ScanInviteScreen />);
+    await type('  k7m2qx9a ');
+    await fireEvent.press(screen.getByRole('button', { name: 'Abrir convite' }));
+    expect(global.__router.replace).toHaveBeenCalledWith('/convite/K7M2QX9A');
+  });
+
+  it('colar o link inteiro também funciona, e o "ir" do teclado abre', async () => {
+    await renderWithTheme(<ScanInviteScreen />);
+    await type('https://petmotion.tolembrado.com.br/convite/K7M2QX9A');
+    await fireEvent(screen.getByLabelText('Ou digite o código'), 'submitEditing');
+    expect(global.__router.replace).toHaveBeenCalledWith('/convite/K7M2QX9A');
+  });
+
+  it('código errado mostra o erro no campo e não navega; digitar de novo limpa o erro', async () => {
+    await renderWithTheme(<ScanInviteScreen />);
+    await type('K7M2');
+    await fireEvent.press(screen.getByRole('button', { name: 'Abrir convite' }));
+    expect(screen.getByText('Esse código não parece certo. Confira as 8 letras e números.')).toBeTruthy();
+    expect(global.__router.replace).not.toHaveBeenCalled();
+    await type('K7M2Q');
+    expect(screen.queryByText('Esse código não parece certo. Confira as 8 letras e números.')).toBeNull();
+  });
+
+  it('sem nada digitado pede o código', async () => {
+    await renderWithTheme(<ScanInviteScreen />);
+    await fireEvent.press(screen.getByRole('button', { name: 'Abrir convite' }));
+    expect(screen.getByText('Digite o código do convite.')).toBeTruthy();
+    expect(global.__router.replace).not.toHaveBeenCalled();
+  });
+
+  it('com a câmera negada ainda dá para digitar o código', async () => {
+    // a tela renderiza de novo a cada letra: a permissão negada precisa valer em todos os renders
+    jest.mocked(useCameraPermissions).mockReturnValue([{ granted: false }, jest.fn()] as never);
+    try {
+      await renderWithTheme(<ScanInviteScreen />);
+      expect(screen.getByRole('button', { name: 'Permitir câmera' })).toBeTruthy();
+      expect(screen.queryByTestId('camera-view')).toBeNull();
+      await type('K7M2QX9A');
+      await fireEvent.press(screen.getByRole('button', { name: 'Abrir convite' }));
+      expect(global.__router.replace).toHaveBeenCalledWith('/convite/K7M2QX9A');
+    } finally {
+      jest.mocked(useCameraPermissions).mockReturnValue([{ granted: true }, jest.fn()] as never);
+    }
+  });
+
   it('enquanto a permissão carrega não mostra nada e o voltar funciona', async () => {
     jest.mocked(useCameraPermissions).mockReturnValueOnce([null, jest.fn()] as never);
     await renderWithTheme(<ScanInviteScreen />);

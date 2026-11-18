@@ -70,12 +70,14 @@ export function WalkScreen() {
       return current.includes(id) ? current.filter((x) => x !== id) : [...current, id];
     });
 
+  // só antes de começar: no meio do passeio o pet pode sumir da lista (o pai/mãe de pet tirou o
+  // passeador) e o passeio em andamento ainda é salvo pela API
   useEffect(() => {
-    if (!pet) {
+    if (!pet && phase === 'ready') {
       customToast('Cadastre um pet antes de passear.', 'warning');
       router.replace('/pet-form');
     }
-  }, [pet]);
+  }, [pet, phase]);
 
   // Notificação fixa com o andamento do passeio
   useEffect(() => {

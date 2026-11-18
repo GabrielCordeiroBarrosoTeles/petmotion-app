@@ -81,6 +81,43 @@ describe('Passeio ao vivo (pai/mãe de pet)', () => {
     await waitFor(() => expect(routeData()).toHaveLength(4));
   });
 
+  it('sem atualização por mais de 30 s: o relógio para e avisa há quanto tempo', async () => {
+    api.live.mockResolvedValue(liveState());
+    await renderWithTheme(<LiveWalkScreen />);
+    await screen.findByText('01:10');
+    expect(screen.queryByText(/Sem atualização/)).toBeNull();
+
+    await act(() => jest.advanceTimersByTime(20000)); // 30 s desde o último evento: ainda em dia
+    expect(screen.getByText('01:30')).toBeOnTheScreen();
+    expect(screen.queryByText(/Sem atualização/)).toBeNull();
+
+    await act(() => jest.advanceTimersByTime(5000));
+    expect(screen.getByText('01:30')).toBeOnTheScreen(); // não passa de at + 30 s
+    expect(screen.getByText('Sem atualização há instantes')).toBeOnTheScreen();
+
+    await act(() => jest.advanceTimersByTime(60000));
+    expect(screen.getByText('01:30')).toBeOnTheScreen();
+    expect(screen.getByText('Sem atualização há 1 min')).toBeOnTheScreen();
+
+    // chegou notícia: o aviso some e o relógio volta a andar
+    await act(() => useLive.getState().apply(1, liveState({ elapsed_ms: 150000, at: '2026-11-17T18:02:35Z' })));
+    expect(screen.getByText('02:30')).toBeOnTheScreen();
+    expect(screen.queryByText(/Sem atualização/)).toBeNull();
+  });
+
+  it('dois eventos cortados seguidos buscam a rota completa duas vezes', async () => {
+    api.live.mockResolvedValueOnce(liveState());
+    await renderWithTheme(<LiveWalkScreen />);
+    await screen.findByText('01:10');
+
+    // o GET volta mais velho que o evento (o evento ganha), então a flag `truncated` continua ligada
+    api.live.mockResolvedValue(liveState({ at: '2026-11-17T18:00:30Z' }));
+    await act(() => useLive.getState().apply(1, liveState({ at: '2026-11-17T18:01:05Z', new_points: [[0, 3]], truncated: true })));
+    await waitFor(() => expect(api.live).toHaveBeenCalledTimes(2));
+    await act(() => useLive.getState().apply(1, liveState({ at: '2026-11-17T18:01:08Z', new_points: [[0, 4]], truncated: true })));
+    await waitFor(() => expect(api.live).toHaveBeenCalledTimes(3));
+  });
+
   it('nenhum passeio agora', async () => {
     useLive.getState().set(1, liveState()); // estado velho some quando o servidor diz que não há passeio
     api.live.mockResolvedValue(null);

@@ -9,3 +9,10 @@ export interface LiveCountProps {
   icon: LucideIcon;
   count: number;
 }
+
+export interface LiveClock {
+  /** Tempo de passeio a mostrar. */
+  seconds: number;
+  /** Há quanto tempo não chega atualização, quando passa de 30 s (senão 0). */
+  staleMs: number;
+}

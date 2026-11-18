@@ -4,6 +4,10 @@ import { http, siteUrl } from './api';
  * Cliente mínimo do protocolo Pusher 7 (Laravel Reverb), escrito em cima do WebSocket global
  * para não depender de biblioteca. Assina canais privados, responde ping, e reconecta com
  * espera crescente (1 s, 2 s, 4 s… até 30 s) reassinando tudo.
+ *
+ * Socket morto (rede trocou, celular dormiu) nem sempre dispara `onclose`. Como o pusher-js:
+ * depois de `activity_timeout` segundos sem mensagem nenhuma, manda `pusher:ping`; se nada
+ * chegar em 30 s, larga essa conexão e reconecta.
  */
 
 export interface RealtimeClient {
@@ -27,6 +31,21 @@ interface Listener {
 }
 
 const MAX_DELAY = 30000;
+/** Segundos sem mensagem antes do ping, se o servidor não disser outro valor. */
+const DEFAULT_ACTIVITY_TIMEOUT = 120;
+const PONG_TIMEOUT = 30000;
+
+let warnedMissingKey = false;
+
+/** Em desenvolvimento, avisa (uma vez) por que o ao vivo não atualiza sozinho. */
+function warnMissingKey() {
+  if (!__DEV__ || warnedMissingKey) return;
+  warnedMissingKey = true;
+  console.warn(
+    '[realtime] EXPO_PUBLIC_REVERB_KEY está vazio: o passeio ao vivo não vai atualizar sozinho. ' +
+      'Preencha EXPO_PUBLIC_REVERB_URL e EXPO_PUBLIC_REVERB_KEY no .env (veja o .env.example).',
+  );
+}
 
 /** Cliente "mudo": sem chave do Reverb não há como conectar, então nada acontece. */
 const inertClient: RealtimeClient = { subscribe: () => () => {}, close: () => {} };
@@ -41,7 +60,10 @@ function parse(raw: unknown): unknown {
 }
 
 export function createRealtime({ url, key, authorize }: RealtimeOptions): RealtimeClient {
-  if (!key) return inertClient;
+  if (!key) {
+    warnMissingKey();
+    return inertClient;
+  }
 
   const endpoint = `${url.replace(/\/$/, '')}/app/${key}?protocol=7&client=js&version=8.4.0&flash=false`;
   let listeners: Listener[] = [];
@@ -50,6 +72,9 @@ export function createRealtime({ url, key, authorize }: RealtimeOptions): Realti
   let attempt = 0;
   let closed = false;
   let timer: ReturnType<typeof setTimeout> | null = null;
+  let activityMs = DEFAULT_ACTIVITY_TIMEOUT * 1000;
+  let activityTimer: ReturnType<typeof setTimeout> | undefined;
+  let pongTimer: ReturnType<typeof setTimeout> | undefined;
 
   const send = (event: string, data: unknown) => socket?.send(JSON.stringify({ event, data }));
   const hasChannel = (channel: string) => listeners.some((l) => l.channel === channel);
@@ -71,7 +96,9 @@ export function createRealtime({ url, key, authorize }: RealtimeOptions): Realti
     if (!message) return;
 
     if (message.event === 'pusher:connection_established') {
-      socketId = (parse(message.data) as { socket_id: string }).socket_id;
+      const info = parse(message.data) as { socket_id: string; activity_timeout?: number };
+      socketId = info.socket_id;
+      activityMs = (info.activity_timeout || DEFAULT_ACTIVITY_TIMEOUT) * 1000;
       attempt = 0;
       [...new Set(listeners.map((l) => l.channel))].forEach(subscribeChannel);
     } else if (message.event === 'pusher:ping') {
@@ -84,18 +111,46 @@ export function createRealtime({ url, key, authorize }: RealtimeOptions): Realti
     }
   }
 
+  function stopWatching() {
+    clearTimeout(activityTimer);
+    clearTimeout(pongTimer);
+  }
+
+  /** Qualquer mensagem prova que a conexão vive: recomeça a contagem até o próximo ping. */
+  function watch(ws: WebSocket) {
+    stopWatching();
+    activityTimer = setTimeout(() => {
+      send('pusher:ping', {});
+      pongTimer = setTimeout(() => abandon(ws), PONG_TIMEOUT);
+    }, activityMs);
+  }
+
+  function lost() {
+    stopWatching();
+    socket = null;
+    socketId = null;
+    if (closed) return;
+    const delay = Math.min(1000 * 2 ** attempt, MAX_DELAY);
+    attempt += 1;
+    timer = setTimeout(connect, delay);
+  }
+
+  /** Conexão que parou de responder: o `onclose` pode demorar ou nunca vir, então não espera por ele. */
+  function abandon(ws: WebSocket) {
+    ws.onmessage = null;
+    ws.onclose = null;
+    ws.close();
+    lost();
+  }
+
   function connect() {
     const ws = new WebSocket(endpoint);
     socket = ws;
-    ws.onmessage = (e) => handle(e.data);
-    ws.onclose = () => {
-      socket = null;
-      socketId = null;
-      if (closed) return;
-      const delay = Math.min(1000 * 2 ** attempt, MAX_DELAY);
-      attempt += 1;
-      timer = setTimeout(connect, delay);
+    ws.onmessage = (e) => {
+      handle(e.data);
+      if (socketId) watch(ws);
     };
+    ws.onclose = lost;
   }
 
   connect();
@@ -114,6 +169,7 @@ export function createRealtime({ url, key, authorize }: RealtimeOptions): Realti
     },
     close() {
       closed = true;
+      stopWatching();
       if (timer) clearTimeout(timer);
       socket?.close();
     },

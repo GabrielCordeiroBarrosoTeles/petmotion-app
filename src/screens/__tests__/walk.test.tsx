@@ -258,6 +258,8 @@ describe('Passeio: em andamento', () => {
     await act(() => jest.advanceTimersByTime(15_000));
     expect(screen.getByText('Passeando com')).toBeOnTheScreen();
     expect(Notifications.scheduleNotificationAsync).not.toHaveBeenCalled();
+    // o passeador foi removido no meio do passeio: nada de mandar cadastrar pet, o passeio segue
+    expect(global.__router.replace).not.toHaveBeenCalledWith('/pet-form');
   });
 
   it('abrir com um passeio já rodando vai direto para o rastreio', async () => {
