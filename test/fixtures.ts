@@ -8,7 +8,7 @@ export const member: User = { ...user, is_premium: true, premium_until: '2026-12
 
 export const makePet = (overrides: Partial<Pet> = {}): Pet => ({
   id: 1, name: 'Thor', species: 'dog', breed: 'Golden', birth_date: '2022-01-10', weight_kg: 32.4,
-  daily_goal_minutes: 40, photo_url: null, ...overrides,
+  daily_goal_minutes: 40, photo_url: null, role: 'owner', ...overrides,
 });
 
 export const makeWalk = (overrides: Partial<Walk> = {}): Walk => ({

@@ -161,3 +161,53 @@ describe('endpoints', () => {
     append.mockRestore();
   });
 });
+
+describe('passeador compartilhado', () => {
+  it('convites: cria, consulta, aceita', async () => {
+    await api.createInvite(3);
+    await api.invite('ABC');
+    await api.acceptInvite('ABC');
+    expect(calls.map((c) => [c.method, c.url])).toEqual([
+      ['post', '/pets/3/invites'],
+      ['get', '/invites/ABC'],
+      ['post', '/invites/ABC/accept'],
+    ]);
+  });
+
+  it('lista e remove passeadores', async () => {
+    reply = () => ({ data: [{ id: 2, name: 'Ana' }] });
+    expect(await api.walkers(3)).toEqual([{ id: 2, name: 'Ana' }]);
+    await api.removeWalker(3, 2);
+    expect(calls[1].method).toBe('delete');
+    expect(calls[1].url).toBe('/pets/3/walkers/2');
+  });
+
+  it('passeio ao vivo: start, progress, finish e cancel mandam o payload', async () => {
+    reply = () => ({ data: { session: 's1' } });
+    expect(await api.liveStart([1, 2])).toEqual({ session: 's1' });
+    const payload = {
+      pet_ids: [1], status: 'running' as const, elapsed_ms: 1, distance: 2, steps: 3,
+      points: [[1, 2]] as [number, number][], counts: { pee: 0, poop: 0, water: 0 },
+    };
+    await api.liveProgress('s1', payload);
+    await api.liveFinish('s1', [{ pet_id: 1, walk_id: 9 }]);
+    await api.liveCancel('s1', [1]);
+    expect(calls.map((c) => [c.url, JSON.parse(c.data)])).toEqual([
+      ['/live/start', { pet_ids: [1, 2] }],
+      ['/live/s1/progress', payload],
+      ['/live/s1/finish', { walks: [{ pet_id: 1, walk_id: 9 }] }],
+      ['/live/s1/cancel', { pet_ids: [1] }],
+    ]);
+  });
+
+  it('live returns the state on 200', async () => {
+    reply = () => ({ data: { session: 's1', status: 'running' } });
+    expect(await api.live(3)).toEqual({ session: 's1', status: 'running' });
+    expect(calls[0].url).toBe('/pets/3/live');
+  });
+
+  it('live returns null on 204', async () => {
+    reply = () => ({ status: 204, data: '' });
+    expect(await api.live(3)).toBeNull();
+  });
+});

@@ -7,7 +7,7 @@ jest.mock('@/services/api', () => ({ api: { pets: jest.fn() } }));
 const { api } = jest.mocked(apiModule);
 
 const pet = (id: number, name = `Pet ${id}`): Pet => ({
-  id, name, species: 'dog', breed: null, birth_date: null, weight_kg: null, daily_goal_minutes: 30, photo_url: null,
+  id, name, species: 'dog', breed: null, birth_date: null, weight_kg: null, daily_goal_minutes: 30, photo_url: null, role: 'owner',
 });
 
 beforeEach(() => usePets.getState().reset());

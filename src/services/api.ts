@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import Constants from 'expo-constants';
 import type {
-  AuthResponse, HealthRecord, NewWalkPayload, Paginated, Pet, PetFormPayload, PetStats, User, Walk, Weather,
+  AuthResponse, HealthRecord, Invite, InvitePreview, LiveProgressPayload, LiveWalk, NewWalkPayload, Paginated, Pet, PetFormPayload, PetStats, User, Walk, Walker, Weather,
 } from './types';
 
 /**
@@ -97,6 +97,22 @@ export const api = {
   createHealth: (petId: number, payload: Omit<HealthRecord, 'id' | 'pet_id'>) =>
     http.post<HealthRecord>(`/pets/${petId}/health-records`, payload).then((r) => r.data),
   deleteHealth: (id: number) => http.delete(`/health-records/${id}`),
+
+  createInvite: (petId: number) => http.post<Invite>(`/pets/${petId}/invites`).then((r) => r.data),
+  invite: (code: string) => http.get<InvitePreview>(`/invites/${code}`).then((r) => r.data),
+  acceptInvite: (code: string) => http.post<Pet>(`/invites/${code}/accept`).then((r) => r.data),
+  walkers: (petId: number) => http.get<Walker[]>(`/pets/${petId}/walkers`).then((r) => r.data),
+  removeWalker: (petId: number, userId: number) => http.delete(`/pets/${petId}/walkers/${userId}`),
+
+  liveStart: (petIds: number[]) =>
+    http.post<{ session: string }>('/live/start', { pet_ids: petIds }).then((r) => r.data),
+  liveProgress: (session: string, payload: LiveProgressPayload) => http.post(`/live/${session}/progress`, payload),
+  liveFinish: (session: string, walks: { pet_id: number; walk_id: number }[]) =>
+    http.post(`/live/${session}/finish`, { walks }),
+  liveCancel: (session: string, petIds: number[]) => http.post(`/live/${session}/cancel`, { pet_ids: petIds }),
+  /** 204 = ninguém passeando agora. */
+  live: (petId: number) =>
+    http.get<LiveWalk | ''>(`/pets/${petId}/live`).then((r) => (r.status === 204 ? null : (r.data as LiveWalk))),
 
   weather: (lat: number, lng: number) => http.get<Weather>('/weather', { params: { lat, lng } }).then((r) => r.data),
 };

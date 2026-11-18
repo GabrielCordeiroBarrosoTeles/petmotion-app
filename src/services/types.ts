@@ -15,6 +15,8 @@ export interface User {
   photo_url?: string | null;
 }
 
+export type PetRole = 'owner' | 'walker';
+
 export interface Pet {
   id: number;
   name: string;
@@ -24,6 +26,10 @@ export interface Pet {
   weight_kg: number | null;
   daily_goal_minutes: number;
   photo_url: string | null;
+  /** Dono do pet ou passeador convidado. */
+  role: PetRole;
+  /** Primeiro nome do dono (só quando role = 'walker'). */
+  owner_name?: string;
 }
 
 export interface WalkEvent {
@@ -46,6 +52,8 @@ export interface Walk {
   points: LatLng[];
   events: WalkEvent[];
   pet?: Pick<Pet, 'id' | 'name' | 'species' | 'photo_url'>;
+  /** Quem passeou (pode ser o dono ou um passeador). */
+  walker?: { id: number; name: string };
 }
 
 export interface NewWalkPayload extends Omit<Walk, 'id' | 'pet'> {}
@@ -114,4 +122,57 @@ export interface PetFormPayload {
   weight_kg?: string;
   daily_goal_minutes?: number;
   photoUri?: string | null;
+}
+
+export interface Invite {
+  code: string;
+  url: string;
+  expires_at: string;
+}
+
+export interface InvitePreview {
+  code: string;
+  expires_at: string;
+  pet: Pick<Pet, 'id' | 'name' | 'species' | 'photo_url'>;
+  owner: { name: string };
+}
+
+export interface Walker {
+  id: number;
+  name: string;
+}
+
+export type LiveStatus = 'running' | 'paused' | 'finished' | 'cancelled';
+export type LiveCounts = Record<WalkEventType, number>;
+
+/** Estado do passeio ao vivo (GET /pets/{id}/live e evento `live.updated`). */
+export interface LiveWalk {
+  session: string;
+  status: LiveStatus;
+  walker: Walker;
+  pet_id: number;
+  pet_names: string[];
+  started_at: string;
+  elapsed_ms: number;
+  at: string;
+  distance: number;
+  steps: number;
+  /** Rota inteira (só no GET). */
+  points?: LatLng[];
+  /** Pontos novos desde o último evento (só no socket, até 200). */
+  new_points?: LatLng[];
+  truncated?: true;
+  counts: LiveCounts;
+  walk_id?: number;
+}
+
+export interface LiveProgressPayload {
+  pet_ids: number[];
+  status: 'running' | 'paused';
+  elapsed_ms: number;
+  distance: number;
+  steps: number;
+  /** Só os pontos NOVOS desde o último envio. */
+  points: LatLng[];
+  counts: LiveCounts;
 }

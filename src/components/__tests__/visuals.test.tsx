@@ -20,7 +20,7 @@ import { WeatherBanner } from '../WeatherBanner';
 import { WeekBars } from '../WeekBars';
 
 const pet = (id: number, extra: Partial<Pet> = {}): Pet => ({
-  id, name: `Pet${id}`, species: 'dog', breed: null, birth_date: null, weight_kg: null, daily_goal_minutes: 30, photo_url: null, ...extra,
+  id, name: `Pet${id}`, species: 'dog', breed: null, birth_date: null, weight_kg: null, daily_goal_minutes: 30, photo_url: null, role: 'owner', ...extra,
 });
 
 afterEach(() => {
