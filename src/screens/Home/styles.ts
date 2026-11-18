@@ -184,3 +184,33 @@ export const OwnerNote = styled.Text`
   font-size: ${({ theme }) => RFValue(theme.fontSizes.caption)}px;
   color: ${({ theme }) => theme.colors.primary};
 `;
+
+/** "Thor está passeando com João · Ver ao vivo". */
+export const LiveBanner = styled(MotiView)`
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.xs}px;
+  padding: ${({ theme }) => theme.spacing.small}px ${({ theme }) => theme.spacing.medium}px;
+  border-radius: ${({ theme }) => theme.radii.pill}px;
+  background-color: ${({ theme }) => theme.colors.primary};
+`;
+
+export const LiveBannerDot = styled(MotiView)`
+  width: ${RFValue(8)}px;
+  height: ${RFValue(8)}px;
+  border-radius: ${({ theme }) => theme.radii.pill}px;
+  background-color: ${({ theme }) => theme.colors.ink};
+`;
+
+export const LiveBannerText = styled.Text`
+  flex: 1;
+  font-family: ${({ theme }) => theme.fonts.bodyBold};
+  font-size: ${({ theme }) => RFValue(theme.fontSizes.small)}px;
+  color: ${({ theme }) => theme.colors.ink};
+`;
+
+export const LiveBannerAction = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.bodyHeavy};
+  font-size: ${({ theme }) => RFValue(theme.fontSizes.small)}px;
+  color: ${({ theme }) => theme.colors.ink};
+`;

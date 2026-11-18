@@ -30,6 +30,7 @@ const routes: Array<[string, unknown]> = [
   ['walk-photo', Screens.WalkPhotoScreen],
   ['convite/[code]', Screens.InviteScreen],
   ['scan-invite', Screens.ScanInviteScreen],
+  ['live/[id]', Screens.LiveWalkScreen],
 ];
 
 describe('rotas', () => {

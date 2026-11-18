@@ -16,3 +16,4 @@ export { PremiumScreen } from '@/screens/Premium';
 export { WalkPhotoScreen } from '@/screens/WalkPhoto';
 export { InviteScreen } from '@/screens/Invite';
 export { ScanInviteScreen } from '@/screens/ScanInvite';
+export { LiveWalkScreen } from '@/screens/LiveWalk';

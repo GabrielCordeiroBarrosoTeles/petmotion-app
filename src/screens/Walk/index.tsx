@@ -10,6 +10,7 @@ import { HoldToConfirm } from '@/components/HoldToConfirm';
 import { PressableScale } from '@/components/PressableScale';
 import { RouteMap } from '@/components/RouteMap';
 import { useElapsed } from '@/hooks/useElapsed';
+import { useLiveBroadcast } from '@/hooks/useLiveBroadcast';
 import { useStatusBar } from '@/hooks/useStatusBar';
 import { useWeather } from '@/hooks/useWeather';
 import { api, errorMessage } from '@/services/api';
@@ -49,6 +50,7 @@ export function WalkScreen() {
   const { weather, coords } = useWeather();
   const walk = useWalk();
   const { elapsedSeconds } = useElapsed();
+  const live = useLiveBroadcast();
   const [phase, setPhase] = useState<WalkPhase>(walk.status === 'idle' ? 'ready' : 'tracking');
   const [saving, setSaving] = useState(false);
   const unlockedBefore = useRef<string[]>([]);
@@ -110,6 +112,8 @@ export function WalkScreen() {
     setPhase('tracking');
     try {
       await useWalk.getState().start({ petIds: crewIds, demo: demoMode, temperature: weather?.air_c ?? null });
+      // pets de passeio: o pai/mãe de cada um acompanha ao vivo
+      live.start(crewIds);
     } catch (e) {
       customToast('Não foi possível iniciar o GPS. Tente o modo apresentação no Perfil.', 'danger');
       useWalk.getState().reset();
@@ -129,6 +133,7 @@ export function WalkScreen() {
     setSaving(true);
     try {
       const saved = await api.createWalk(payload);
+      live.finish(saved, payload);
       await clearWalkNotification();
       useWalk.getState().reset();
       router.replace({ pathname: '/walk-summary', params: { id: String(saved.id), before: unlockedBefore.current.join(',') } });
@@ -147,6 +152,7 @@ export function WalkScreen() {
       icon: Trash2,
     });
     if (!ok) return;
+    live.cancel();
     useWalk.getState().reset();
     await clearWalkNotification();
     customToast('Passeio descartado.', 'warning');

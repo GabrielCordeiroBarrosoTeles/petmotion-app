@@ -9,6 +9,7 @@ import { AnimatedCounter } from '@/components/AnimatedCounter';
 import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
 import { PackBadge } from '@/components/PackBadge';
+import { PressableScale } from '@/components/PressableScale';
 import { PetSwitcher } from '@/components/PetSwitcher';
 import { ProgressRing } from '@/components/ProgressRing';
 import { StatusBarScrim } from '@/components/StatusBarScrim';
@@ -21,14 +22,15 @@ import { useStatusBar } from '@/hooks/useStatusBar';
 import { useWeather } from '@/hooks/useWeather';
 import { api, errorMessage } from '@/services/api';
 import { useAuth } from '@/store/auth';
+import { isLiveActive, useLive } from '@/store/live';
 import { usePets, useSelectedPet } from '@/store/pets';
-import { spring } from '@/theme/motion';
+import { spring, timing } from '@/theme/motion';
 import { daysUntil, firstName, greeting, km, relativeDay, thousands } from '@/utils/format';
 import { HEALTH_META } from '@/utils/health';
 import { customToast } from '@/utils/toast';
 import { HomeSkeleton } from './SkeletonLoader';
 import {
-  Badges, Body, Card, NameBlock, OwnerNote, GoalBody, GoalTitle, Greeting, GreetingName, Header, Refresh, RingCaption, RingCenter, RingRow,
+  Badges, Body, Card, LiveBanner, LiveBannerAction, LiveBannerDot, LiveBannerText, NameBlock, OwnerNote, GoalBody, GoalTitle, Greeting, GreetingName, Header, Refresh, RingCaption, RingCenter, RingRow,
   RingSide, Screen, Scroll, SectionHeader, SectionMeta, SectionTitle, StreakChip, StreakText, TileRow, TopRow,
   UpcomingIcon, UpcomingRow, UpcomingTexts, UpcomingTitle, UpcomingWhen,
 } from './styles';
@@ -62,6 +64,8 @@ export function HomeScreen() {
   const { pets, loaded, selectedId, load, select } = usePets();
   const pet = useSelectedPet();
   const { weather } = useWeather();
+  // só o pai/mãe de pet recebe o estado ao vivo (useOwnerLive)
+  const live = useLive((s) => (selectedId ? s.byPet[selectedId] : undefined));
 
   useEffect(() => {
     load().catch((e) => customToast(errorMessage(e), 'danger'));
@@ -117,6 +121,16 @@ export function HomeScreen() {
 
           {pets.length > 0 ? (
             <PetSwitcher pets={pets} selectedId={selectedId} onSelect={select} onAdd={() => router.push('/pet-form')} />
+          ) : null}
+
+          {pet && isLiveActive(live) ? (
+            <PressableScale onPress={() => router.push(`/live/${pet.id}`)} accessibilityRole="button" accessibilityLabel={`${pet.name} está passeando com ${live.walker.name}. Ver ao vivo`}>
+              <LiveBanner from={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={spring({ damping: 14 })}>
+                <LiveBannerDot from={{ opacity: 1 }} animate={{ opacity: 0.25 }} transition={timing({ duration: 800, loop: true, repeatReverse: true })} />
+                <LiveBannerText numberOfLines={1}>{pet.name} está passeando com {live.walker.name}</LiveBannerText>
+                <LiveBannerAction>Ver ao vivo</LiveBannerAction>
+              </LiveBanner>
+            </PressableScale>
           ) : null}
 
           {pet ? (

@@ -2,6 +2,7 @@ import { fireEvent, pullToRefresh, renderWithTheme, screen, waitFor } from '../.
 import { makeHealth, makePet, makeStats, member, user, weather } from '../../../test/fixtures';
 import * as apiModule from '@/services/api';
 import { useAuth } from '@/store/auth';
+import { useLive } from '@/store/live';
 import { usePets } from '@/store/pets';
 import { useToastStore } from '@/store/toast';
 import { HomeScreen } from '../Home';
@@ -22,6 +23,37 @@ beforeEach(() => {
   api.weather.mockResolvedValue(weather);
 });
 afterEach(() => jest.useRealTimers());
+
+describe('Início: passeio ao vivo', () => {
+  const live = (status: 'running' | 'paused' | 'finished') => ({
+    session: 'S1', status, walker: { id: 9, name: 'João' }, pet_id: 1, pet_names: ['Thor'], started_at: '2026-11-17T14:00:00Z',
+    elapsed_ms: 0, at: '2026-11-17T14:00:00Z', distance: 0, steps: 0, points: [], counts: { pee: 0, poop: 0, water: 0 },
+  });
+  afterEach(() => useLive.getState().reset());
+
+  it('pet saiu com o passeador: mostra o aviso e abre o ao vivo', async () => {
+    useLive.getState().set(1, live('paused'));
+    api.pets.mockResolvedValue([makePet(), makePet({ id: 2, name: 'Mel' })]);
+    api.stats.mockResolvedValue(makeStats());
+    await renderWithTheme(<HomeScreen />);
+    expect(await screen.findByText('Thor está passeando com João')).toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole('button', { name: 'Thor está passeando com João. Ver ao vivo' }));
+    expect(global.__router.push).toHaveBeenCalledWith('/live/1');
+
+    // outro pet selecionado: o aviso é só do pet que está passeando
+    await fireEvent.press(screen.getByLabelText('Selecionar Mel'));
+    await waitFor(() => expect(screen.queryByText('Ver ao vivo')).toBeNull());
+  });
+
+  it('passeio já concluído não mostra o aviso', async () => {
+    useLive.getState().set(1, live('finished'));
+    api.pets.mockResolvedValue([makePet()]);
+    api.stats.mockResolvedValue(makeStats());
+    await renderWithTheme(<HomeScreen />);
+    await screen.findByText('Sua semana');
+    expect(screen.queryByText('Ver ao vivo')).toBeNull();
+  });
+});
 
 describe('Início: pet de passeio', () => {
   it('mostra de quem é o pet', async () => {

@@ -73,3 +73,17 @@ export async function setDailyWalkReminder(enabled: boolean, petName: string) {
     trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: 18, minute: 0, channelId: 'reminders' },
   });
 }
+
+/** Aviso imediato do passeio ao vivo; tocar abre `url` no app. */
+export async function notifyLive(title: string, body: string, url: string) {
+  if (!(await ensureNotificationPermission().catch(() => false))) return;
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title,
+      body,
+      data: { url },
+      ...(Platform.OS === 'android' ? { channelId: 'reminders' } : {}),
+    } as Notifications.NotificationContentInput,
+    trigger: null,
+  }).catch(() => undefined);
+}

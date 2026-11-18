@@ -5,7 +5,7 @@ import { useToastStore } from '@/store/toast';
 import { HEALTH_META } from '../health';
 import { celebrate, select, tap, thump } from '../haptics';
 import {
-  clearWalkNotification, ensureNotificationPermission, scheduleHealthReminder, setDailyWalkReminder, showWalkNotification,
+  clearWalkNotification, ensureNotificationPermission, notifyLive, scheduleHealthReminder, setDailyWalkReminder, showWalkNotification,
 } from '../notifications';
 import { customToast } from '../toast';
 
@@ -113,5 +113,28 @@ describe('notifications', () => {
 
     jest.mocked(Notifications.cancelScheduledNotificationAsync).mockRejectedValueOnce(new Error('x'));
     await expect(setDailyWalkReminder(false, 'Thor')).resolves.toBeUndefined();
+  });
+
+  it('aviso do passeio ao vivo: imediato, com o link da tela (canal de lembretes no Android)', async () => {
+    await notifyLive('Thor saiu', 'Toque para ver', '/live/1');
+    const first = jest.mocked(Notifications.scheduleNotificationAsync).mock.calls[0][0];
+    expect(first).toMatchObject({ content: { title: 'Thor saiu', body: 'Toque para ver', data: { url: '/live/1' } }, trigger: null });
+    expect(first.content).not.toHaveProperty('channelId');
+
+    setOS('android');
+    await notifyLive('Thor saiu', 'x', '/live/1');
+    expect(jest.mocked(Notifications.scheduleNotificationAsync).mock.calls[1][0].content).toMatchObject({ channelId: 'reminders' });
+
+    jest.mocked(Notifications.scheduleNotificationAsync).mockRejectedValueOnce(new Error('x'));
+    await expect(notifyLive('Thor saiu', 'x', '/live/1')).resolves.toBeUndefined();
+  });
+
+  it('sem permissão (negada ou com erro ao perguntar), o aviso ao vivo não é agendado', async () => {
+    jest.mocked(Notifications.getPermissionsAsync).mockResolvedValueOnce({ granted: false } as never);
+    jest.mocked(Notifications.requestPermissionsAsync).mockResolvedValueOnce({ granted: false } as never);
+    await notifyLive('Thor saiu', 'x', '/live/1');
+    jest.mocked(Notifications.getPermissionsAsync).mockRejectedValueOnce(new Error('x'));
+    await notifyLive('Thor saiu', 'x', '/live/1');
+    expect(Notifications.scheduleNotificationAsync).not.toHaveBeenCalled();
   });
 });

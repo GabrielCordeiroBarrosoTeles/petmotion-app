@@ -14,6 +14,8 @@ import { ThemeProvider } from 'styled-components/native';
 import { ConfirmHost } from '@/components/ConfirmSheet';
 import { SplashIntro } from '@/components/SplashIntro';
 import { ToastHost } from '@/components/ToastHost';
+import { useNotificationLinks } from '@/hooks/useNotificationLinks';
+import { useOwnerLive } from '@/hooks/useOwnerLive';
 import { useWearSync } from '@/hooks/useWearSync';
 import { useAuth } from '@/store/auth';
 import { usePets } from '@/store/pets';
@@ -62,6 +64,8 @@ export function RootLayout() {
 
   useAuthGate();
   useWearSync();
+  useOwnerLive();
+  useNotificationLinks();
 
   if (!fontsLoaded) return null;
 
@@ -84,6 +88,7 @@ export function RootLayout() {
                   <Stack.Screen name="premium" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }} />
                   <Stack.Screen name="walk-photo" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }} />
                   <Stack.Screen name="convite/[code]" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="live/[id]" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }} />
                   <Stack.Screen name="scan-invite" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }} />
                 </Stack>
                 <ToastHost />

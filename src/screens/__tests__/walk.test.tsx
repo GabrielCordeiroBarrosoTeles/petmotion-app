@@ -12,7 +12,7 @@ import { WalkScreen } from '../Walk';
 
 jest.mock('@/services/api', () => ({
   ...jest.requireActual('@/services/api'),
-  api: { stats: jest.fn(), createWalk: jest.fn(), weather: jest.fn() },
+  api: { stats: jest.fn(), createWalk: jest.fn(), weather: jest.fn(), liveStart: jest.fn(), liveProgress: jest.fn(), liveFinish: jest.fn(), liveCancel: jest.fn(), walks: jest.fn() },
 }));
 const { api } = jest.mocked(apiModule);
 // respostas "Once" não podem vazar de um teste para o outro
@@ -344,6 +344,35 @@ describe('Passeio em grupo', () => {
     api.createWalk.mockResolvedValueOnce({ id: 90 } as never);
     await fireEvent(screen.getByLabelText('Segure para finalizar'), 'pressIn');
     await waitFor(() => expect(api.createWalk).toHaveBeenCalledWith(expect.objectContaining({ pet_id: 1, companion_ids: [2, 3] })));
+  });
+
+  it('com pet de passeio: transmite ao vivo e fecha a transmissão com o passeio salvo', async () => {
+    usePets.setState({ pets: [makePet({ id: 3, name: 'Bidu', ...ana })], selectedId: 3, loaded: true });
+    api.liveStart.mockResolvedValue({ session: 'S1' });
+    api.liveFinish.mockResolvedValue({} as never);
+    const walk = fakeGps();
+    await renderWithTheme(<WalkScreen />);
+    await fireEvent.press(screen.getByLabelText('Começar passeio'));
+    await runCountdown();
+    await waitFor(() => expect(api.liveStart).toHaveBeenCalledWith([3]));
+    await walk(-23.5, -46.6);
+    await walk(-23.5, -46.601);
+    api.createWalk.mockResolvedValueOnce({ id: 90, pet_id: 3 } as never);
+    await fireEvent(screen.getByLabelText('Segure para finalizar'), 'pressIn');
+    await waitFor(() => expect(api.liveFinish).toHaveBeenCalledWith('S1', [{ pet_id: 3, walk_id: 90 }]));
+  });
+
+  it('com pet de passeio: descartar avisa o pai/mãe de pet', async () => {
+    usePets.setState({ pets: [makePet({ id: 3, name: 'Bidu', ...ana })], selectedId: 3, loaded: true });
+    api.liveStart.mockResolvedValue({ session: 'S1' });
+    api.liveCancel.mockResolvedValue({} as never);
+    await renderWithTheme(<WalkScreen />);
+    await fireEvent.press(screen.getByLabelText('Começar passeio'));
+    await runCountdown();
+    await waitFor(() => expect(api.liveStart).toHaveBeenCalled());
+    await fireEvent.press(screen.getByLabelText('Descartar passeio'));
+    await answerConfirm(true);
+    expect(api.liveCancel).toHaveBeenCalledWith('S1', [3]);
   });
 
   it('se um pet marcado sumir durante a contagem, segue só com quem sobrou', async () => {
