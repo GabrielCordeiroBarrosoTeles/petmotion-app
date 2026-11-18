@@ -11,6 +11,7 @@ import { api, errorMessage } from '@/services/api';
 import type { InvitePreview } from '@/services/types';
 import { usePets } from '@/store/pets';
 import { celebrate } from '@/utils/haptics';
+import { parseInviteCode } from '@/utils/invite';
 import { customToast } from '@/utils/toast';
 import { InviteSkeleton } from './SkeletonLoader';
 import { Actions, Card, Message, Screen, Title } from './styles';
@@ -19,27 +20,37 @@ import type { InviteParams, InviteStatus } from './types';
 export function InviteScreen() {
   const insets = useSafeInsets();
   const modalTop = useModalTopInset();
-  const { code } = useLocalSearchParams<InviteParams>();
+  const { code: raw } = useLocalSearchParams<InviteParams>();
+  const code = parseInviteCode(raw ?? '');
   const adopt = usePets((s) => s.adopt);
   const [status, setStatus] = useState<InviteStatus>('loading');
   const [preview, setPreview] = useState<InvitePreview | null>(null);
   const [accepting, setAccepting] = useState(false);
 
   useEffect(() => {
+    if (!code) {
+      setStatus('invalid');
+      return;
+    }
+    let active = true;
     setStatus('loading');
     api
       .invite(code)
       .then((data) => {
+        if (!active) return;
         setPreview(data);
         setStatus('ready');
       })
-      .catch((e) => setStatus(e?.response?.data?.error === 'own_pet' ? 'own' : 'invalid'));
+      .catch((e) => active && setStatus(e?.response?.data?.error === 'own_pet' ? 'own' : 'invalid'));
+    return () => {
+      active = false;
+    };
   }, [code]);
 
-  const accept = async () => {
+  const accept = async (inviteCode: string) => {
     setAccepting(true);
     try {
-      const pet = await adopt(code);
+      const pet = await adopt(inviteCode);
       celebrate();
       customToast(`Pronto! Agora você passeia com o ${pet.name}.`, 'success');
       router.replace('/home');
@@ -74,7 +85,7 @@ export function InviteScreen() {
           <Title>{`${preview.owner.name} quer que você passeie com o ${preview.pet.name}`}</Title>
           <Message>Você vê os passeios dele e pode sair para passear. O pet continua sendo de quem convidou.</Message>
           <Actions>
-            <Button title="Aceitar e passear" onPress={accept} loading={accepting} />
+            <Button title="Aceitar e passear" onPress={() => accept(preview.code)} loading={accepting} />
             <Button title="Agora não" variant="ghost" onPress={close} />
           </Actions>
         </Card>

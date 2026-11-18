@@ -64,6 +64,40 @@ describe('Convite', () => {
     expect(global.__router.back).toHaveBeenCalled();
   });
 
+  it('código minúsculo na rota vai para a API em maiúsculas', async () => {
+    jest.mocked(useLocalSearchParams).mockReturnValue({ code: 'k7m2qx9a' });
+    api.invite.mockResolvedValueOnce(preview);
+    api.acceptInvite.mockResolvedValueOnce(makePet({ id: 9, name: 'Thor', role: 'walker' }));
+    api.pets.mockResolvedValueOnce([makePet({ id: 9, name: 'Thor', role: 'walker' })]);
+    await renderWithTheme(<InviteScreen />);
+    await fireEvent.press(await screen.findByRole('button', { name: 'Aceitar e passear' }));
+    expect(api.invite).toHaveBeenCalledWith('K7M2QX9A');
+    await waitFor(() => expect(api.acceptInvite).toHaveBeenCalledWith('K7M2QX9A'));
+  });
+
+  it('código lixo na rota mostra o estado inválido sem chamar a API', async () => {
+    jest.mocked(useLocalSearchParams).mockReturnValue({ code: 'lixo!' });
+    await renderWithTheme(<InviteScreen />);
+    expect(await screen.findByText('Esse convite não vale mais')).toBeOnTheScreen();
+    expect(api.invite).not.toHaveBeenCalled();
+    jest.mocked(useLocalSearchParams).mockReturnValue({});
+    await renderWithTheme(<InviteScreen />);
+    expect(api.invite).not.toHaveBeenCalled();
+  });
+
+  it('resposta atrasada de um código antigo não sobrescreve o novo', async () => {
+    let releaseOld: (p: typeof preview) => void = () => undefined;
+    api.invite.mockReturnValueOnce(new Promise((resolve) => { releaseOld = resolve; }));
+    api.invite.mockResolvedValueOnce({ ...preview, owner: { name: 'Bia' } });
+    const { rerender } = await renderWithTheme(<InviteScreen />);
+    jest.mocked(useLocalSearchParams).mockReturnValue({ code: 'ZZZZZZZZ' });
+    await rerender(<InviteScreen />);
+    expect(await screen.findByText('Bia quer que você passeie com o Thor')).toBeOnTheScreen();
+    await act(async () => releaseOld(preview));
+    expect(screen.queryByText(/^Ana quer/)).toBeNull();
+    expect(screen.getByText('Bia quer que você passeie com o Thor')).toBeOnTheScreen();
+  });
+
   it('convite inválido mostra "Esse convite não vale mais"', async () => {
     api.invite.mockRejectedValueOnce(httpError(404, { message: 'Not found' }));
     await renderWithTheme(<InviteScreen />);
