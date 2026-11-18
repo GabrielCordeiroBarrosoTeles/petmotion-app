@@ -75,7 +75,8 @@
           "color": "#C9F24B"
         }
       ],
-      "./plugins/withWear"
+      "./plugins/withWear",
+      "@maplibre/maplibre-react-native"
     ],
     "scheme": "petmotion",
     "backgroundColor": "#EEF2EC",

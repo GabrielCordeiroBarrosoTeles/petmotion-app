@@ -1,9 +1,9 @@
-import MapView from 'react-native-maps';
+import { Map as MapLibreMap } from '@maplibre/maplibre-react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
 import type { WalkEventType } from '@/services/types';
 
-export const Map = styled(MapView)`
+export const Map = styled(MapLibreMap)`
   flex: 1;
 `;
 

@@ -1,4 +1,4 @@
-import { haversine, projectRoute, regionFor, toCoord } from '../geo';
+import { boundsFor, haversine, projectRoute, toLngLat } from '../geo';
 
 describe('geo', () => {
   it('mede a distância entre dois pontos em metros', () => {
@@ -6,19 +6,16 @@ describe('geo', () => {
     expect(Math.round(haversine([0, 0], [0, 0.001]))).toBe(111);
   });
 
-  it('usa a região padrão sem pontos', () => {
-    expect(regionFor([])).toEqual({ latitude: -23.5874, longitude: -46.6576, latitudeDelta: 0.01, longitudeDelta: 0.01 });
+  it('sem pontos não há caixa para enquadrar', () => {
+    expect(boundsFor([])).toBeNull();
   });
 
-  it('enquadra os pontos com margem e zoom mínimo', () => {
-    const region = regionFor([[0, 0], [0.1, 0.2]]);
-    expect(region.latitude).toBeCloseTo(0.05);
-    expect(region.longitudeDelta).toBeCloseTo(0.3);
-    expect(regionFor([[1, 1]]).latitudeDelta).toBe(0.004);
+  it('caixa [oeste, sul, leste, norte] em volta dos pontos', () => {
+    expect(boundsFor([[0, 0], [0.1, 0.2], [-0.05, 0.1]])).toEqual([0, -0.05, 0.2, 0.1]);
   });
 
-  it('converte para coordenada do mapa', () => {
-    expect(toCoord([1, 2])).toEqual({ latitude: 1, longitude: 2 });
+  it('converte [lat, lng] para [lng, lat] do mapa', () => {
+    expect(toLngLat([1, 2])).toEqual([2, 1]);
   });
 
   it('projeta a rota num caminho SVG', () => {

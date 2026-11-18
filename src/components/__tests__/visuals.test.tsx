@@ -211,8 +211,8 @@ describe('WalkShareCard', () => {
   it('com map, mostra o mapa de verdade (estático) no lugar do desenho', async () => {
     await renderWithTheme(<WalkShareCard walk={walk} pet={pet(1, { name: 'Thor' })} map />);
     const map = screen.getByTestId('map');
-    expect(map.props.liteMode).toBe(true);
-    expect(map.props.scrollEnabled).toBe(false);
+    expect(map.props.dragPan).toBe(false); // parado: é para virar imagem no compartilhamento
+    expect(map.props.attribution).toBe(false);
   });
 });
 
@@ -223,29 +223,42 @@ describe('RouteMap', () => {
     { type: 'water' as const, lat: 0, lng: 0, occurred_at: 'c' },
   ];
 
-  it('rota completa: enquadra os pontos e mostra marcações', async () => {
+  it('rota completa: enquadra os pontos, desenha contorno + traço e mostra marcações', async () => {
     await renderWithTheme(<RouteMap points={walk.points} events={events} interactive={false} />);
-    expect(global.__map.fitToCoordinates).toHaveBeenCalledWith(expect.any(Array), expect.objectContaining({ edgePadding: { top: 40, right: 40, bottom: 40, left: 40 } }));
-    expect(screen.getAllByTestId('polyline')).toHaveLength(2);
+    const view = screen.getByTestId('camera').props.initialViewState;
+    expect(view.bounds).toHaveLength(4);
+    expect(view.padding).toEqual({ top: 40, right: 40, bottom: 40, left: 40 });
+    expect(screen.getAllByTestId('layer')).toHaveLength(2);
+    expect(screen.getByTestId('route-source').props.data.geometry.coordinates).toHaveLength(walk.points.length);
     expect(screen.getAllByTestId('marker')).toHaveLength(4); // início + 3 eventos
+    expect(screen.getByTestId('map').props.dragPan).toBe(false);
   });
 
-  it('respeita a margem informada', async () => {
+  it('respeita a margem informada; mexível quando interativo', async () => {
     await renderWithTheme(<RouteMap points={walk.points} edgePadding={{ top: 1, right: 2, bottom: 3, left: 4 }} />);
-    expect(global.__map.fitToCoordinates).toHaveBeenCalledWith(expect.any(Array), expect.objectContaining({ edgePadding: { top: 1, right: 2, bottom: 3, left: 4 } }));
+    expect(screen.getByTestId('camera').props.initialViewState.padding).toEqual({ top: 1, right: 2, bottom: 3, left: 4 });
+    expect(screen.getByTestId('map').props.dragPan).toBe(true);
   });
 
   it('ao vivo segue o último ponto e mostra a posição atual', async () => {
     await renderWithTheme(<RouteMap points={walk.points} follow />);
-    expect(global.__map.animateCamera).toHaveBeenCalled();
-    expect(global.__map.fitToCoordinates).not.toHaveBeenCalled();
+    const last = walk.points[walk.points.length - 1];
+    expect(screen.getByTestId('camera').props.center).toEqual([last[1], last[0]]);
     expect(screen.getAllByTestId('marker')).toHaveLength(2); // início + eu
+  });
+
+  it('um ponto só: centraliza nele, sem rota', async () => {
+    await renderWithTheme(<RouteMap points={[[-23.5, -46.6]]} />);
+    expect(screen.getByTestId('camera').props.initialViewState).toEqual({ center: [-46.6, -23.5], zoom: 15 });
+    expect(screen.queryByTestId('route-source')).toBeNull();
   });
 
   it('sem pontos não desenha nada', async () => {
     await renderWithTheme(<RouteMap points={[]} follow />);
-    expect(screen.queryByTestId('polyline')).toBeNull();
-    expect(global.__map.animateCamera).not.toHaveBeenCalled();
+    expect(screen.queryByTestId('route-source')).toBeNull();
+    expect(screen.queryByTestId('marker')).toBeNull();
+    // sem posição ainda: abre no centro padrão em vez de seguir
+    expect(screen.getByTestId('camera').props.initialViewState).toEqual({ center: [-46.6576, -23.5874], zoom: 15 });
   });
 });
 

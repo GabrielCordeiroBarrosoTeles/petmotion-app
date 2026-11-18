@@ -25,19 +25,19 @@ jest.mock('lucide-react-native', () => {
   );
 });
 
-jest.mock('react-native-maps', () => {
-  const React = require('react');
+// MapLibre: cada peça vira uma View com as props que os testes conferem
+jest.mock('@maplibre/maplibre-react-native', () => {
   const { View } = require('react-native');
-  const MapView = React.forwardRef((props: any, ref: any) => {
-    React.useImperativeHandle(ref, () => ({ animateCamera: global.__map.animateCamera, fitToCoordinates: global.__map.fitToCoordinates }));
-    React.useEffect(() => {
-      props.onMapReady?.();
-    }, []);
-    return <View testID="map" liteMode={props.liteMode} scrollEnabled={props.scrollEnabled}>{props.children}</View>;
-  });
-  const Marker = (p: any) => <View testID="marker">{p.children}</View>;
-  const Polyline = () => <View testID="polyline" />;
-  return { __esModule: true, default: MapView, Marker, Polyline };
+  const Map = (p: any) => (
+    <View testID="map" accessibilityLabel={p.accessibilityLabel} dragPan={p.dragPan} touchZoom={p.touchZoom} attribution={p.attribution}>
+      {p.children}
+    </View>
+  );
+  const Camera = (p: any) => <View testID="camera" initialViewState={p.initialViewState} center={p.center} zoom={p.zoom} />;
+  const GeoJSONSource = (p: any) => <View testID="route-source" data={p.data}>{p.children}</View>;
+  const Layer = (p: any) => <View testID="layer" paint={p.paint} />;
+  const Marker = (p: any) => <View testID="marker" lngLat={p.lngLat}>{p.children}</View>;
+  return { Map, Camera, GeoJSONSource, Layer, Marker };
 });
 
 jest.mock('expo-image', () => {
@@ -165,11 +165,9 @@ jest.mock('expo-router', () => {
   };
 });
 
-global.__map = { animateCamera: jest.fn(), fitToCoordinates: jest.fn() };
 
 declare global {
   // eslint-disable-next-line no-var
-  var __map: { animateCamera: jest.Mock; fitToCoordinates: jest.Mock };
   // eslint-disable-next-line no-var
   var __router: { push: jest.Mock; replace: jest.Mock; back: jest.Mock; navigate: jest.Mock };
   // eslint-disable-next-line no-var

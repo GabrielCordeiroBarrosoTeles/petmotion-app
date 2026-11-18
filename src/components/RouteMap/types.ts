@@ -6,7 +6,7 @@ export interface RouteMapProps {
   /** Segue o último ponto (passeio ao vivo). */
   follow?: boolean;
   interactive?: boolean;
-  /** Mapa estático (Android: vira imagem, dá para capturar no card de compartilhar). */
+  /** Mapa parado (card de compartilhar): sem gestos e sem créditos na tela. */
   lite?: boolean;
   /** Espaço reservado por overlays (para o fitToCoordinates). */
   edgePadding?: { top: number; right: number; bottom: number; left: number };

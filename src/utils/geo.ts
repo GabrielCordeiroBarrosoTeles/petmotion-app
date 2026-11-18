@@ -10,25 +10,19 @@ export function haversine([lat1, lng1]: LatLng, [lat2, lng2]: LatLng): number {
   return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-export function regionFor(points: LatLng[], padding = 1.5) {
-  if (!points.length) {
-    return { latitude: -23.5874, longitude: -46.6576, latitudeDelta: 0.01, longitudeDelta: 0.01 };
-  }
+/** Centro padrão (Parque Ibirapuera, SP) quando ainda não há posição. */
+export const DEFAULT_CENTER: [number, number] = [-46.6576, -23.5874];
+
+/** [lat, lng] do app → [lng, lat] do MapLibre (GeoJSON). */
+export const toLngLat = ([lat, lng]: LatLng): [number, number] => [lng, lat];
+
+/** Caixa [oeste, sul, leste, norte] que contém os pontos (null sem pontos). */
+export function boundsFor(points: LatLng[]): [number, number, number, number] | null {
+  if (!points.length) return null;
   const lats = points.map((p) => p[0]);
   const lngs = points.map((p) => p[1]);
-  const minLat = Math.min(...lats);
-  const maxLat = Math.max(...lats);
-  const minLng = Math.min(...lngs);
-  const maxLng = Math.max(...lngs);
-  return {
-    latitude: (minLat + maxLat) / 2,
-    longitude: (minLng + maxLng) / 2,
-    latitudeDelta: Math.max(0.004, (maxLat - minLat) * padding),
-    longitudeDelta: Math.max(0.004, (maxLng - minLng) * padding),
-  };
+  return [Math.min(...lngs), Math.min(...lats), Math.max(...lngs), Math.max(...lats)];
 }
-
-export const toCoord = ([latitude, longitude]: LatLng) => ({ latitude, longitude });
 
 /** Projeta a rota num quadro WxH (para desenhar o trajeto em SVG, ex.: card de compartilhar). */
 export function projectRoute(points: LatLng[], width: number, height: number, pad = 12): string {
