@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { fullDateLabel, km, minutesLabel, thousands, timeLabel } from '@/utils/format';
+import { fullDateLabel, joinNames, km, minutesLabel, thousands, timeLabel } from '@/utils/format';
 import { MiniRoute } from '../MiniRoute';
 import { RouteMap } from '../RouteMap';
 import { PackBadge } from '../PackBadge';
 import { PetAvatar } from '../PetAvatar';
 import {
-  Big, Brand, BrandDot, BrandText, Card, Header, HeaderTexts, Number, Numbers, PetName, RouteBox, Small, When,
+  Big, Brand, BrandDot, BrandText, Card, Header, Overlap, HeaderTexts, Number, Numbers, PetName, RouteBox, Small, When,
 } from './styles';
 import type { WalkShareCardProps } from './types';
 
@@ -17,13 +17,19 @@ const MAP_PADDING = { top: 28, right: 28, bottom: 28, left: 28 };
 export function WalkShareCard({ walk, pet, animated, premium, map = false }: WalkShareCardProps) {
   const [width, setWidth] = useState(0);
   const routeHeight = RFValue(170);
+  const companions = walk.companions ?? [];
+  const crew = [pet, ...companions];
 
   return (
     <Card>
       <Header>
-        <PetAvatar pet={pet} size={RFValue(46)} ring />
+        {crew.slice(0, 3).map((p, i) => (
+          <Overlap key={i} $first={i === 0}>
+            <PetAvatar pet={p} size={RFValue(46)} ring={i === 0} />
+          </Overlap>
+        ))}
         <HeaderTexts>
-          <PetName>Passeio do {pet.name}</PetName>
+          <PetName>{companions.length ? `Passeio de ${joinNames(crew.map((p) => p.name))}` : `Passeio do ${pet.name}`}</PetName>
           <When>{fullDateLabel(walk.started_at)} · {timeLabel(walk.started_at)}</When>
         </HeaderTexts>
       </Header>

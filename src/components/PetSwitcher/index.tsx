@@ -4,7 +4,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { useTheme } from 'styled-components/native';
 import { PetAvatar } from '../PetAvatar';
 import { PressableScale } from '../PressableScale';
-import { AddCircle, Item, Name, Row } from './styles';
+import { AddCircle, Badge, BadgeText, Item, Name, Row } from './styles';
 import type { PetSwitcherProps } from './types';
 import { spring } from '@/theme/motion';
 
@@ -28,6 +28,11 @@ export function PetSwitcher({ pets, selectedId, onSelect, onAdd }: PetSwitcherPr
                 <PetAvatar pet={pet} size={RFValue(56)} ring={active} />
               </MotiView>
               <Name $active={active} numberOfLines={1}>{pet.name}</Name>
+              {pet.role === 'walker' ? (
+                <Badge>
+                  <BadgeText>Passeio</BadgeText>
+                </Badge>
+              ) : null}
             </Item>
           </PressableScale>
         );

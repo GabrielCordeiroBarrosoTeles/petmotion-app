@@ -28,7 +28,7 @@ import { HEALTH_META } from '@/utils/health';
 import { customToast } from '@/utils/toast';
 import { HomeSkeleton } from './SkeletonLoader';
 import {
-  Badges, Body, Card, NameBlock, GoalBody, GoalTitle, Greeting, GreetingName, Header, Refresh, RingCaption, RingCenter, RingRow,
+  Badges, Body, Card, NameBlock, OwnerNote, GoalBody, GoalTitle, Greeting, GreetingName, Header, Refresh, RingCaption, RingCenter, RingRow,
   RingSide, Screen, Scroll, SectionHeader, SectionMeta, SectionTitle, StreakChip, StreakText, TileRow, TopRow,
   UpcomingIcon, UpcomingRow, UpcomingTexts, UpcomingTitle, UpcomingWhen,
 } from './styles';
@@ -100,6 +100,7 @@ export function HomeScreen() {
                 <GreetingName>{firstName(user?.name)}</GreetingName>
               </Greeting>
               {user?.is_premium ? <PackBadge tone="onInk" /> : null}
+              {pet?.role === 'walker' ? <OwnerNote>Pet da {pet.owner_name}</OwnerNote> : null}
             </NameBlock>
             {stats && stats.streak_days > 0 ? (
               <StreakChip

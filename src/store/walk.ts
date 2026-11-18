@@ -8,7 +8,7 @@ type Status = 'idle' | 'running' | 'paused';
 
 interface WalkState {
   status: Status;
-  petId: number | null;
+  petIds: number[];
   startedAt: string | null;
   accumulatedMs: number;
   resumedAt: number | null;
@@ -18,7 +18,7 @@ interface WalkState {
   events: WalkEvent[];
   temperature: number | null;
   gpsReady: boolean;
-  start: (opts: { petId: number; demo: boolean; temperature: number | null }) => Promise<void>;
+  start: (opts: { petIds: number[]; demo: boolean; temperature: number | null }) => Promise<void>;
   pause: () => void;
   resume: () => Promise<void>;
   addEvent: (type: WalkEventType) => boolean;
@@ -97,7 +97,7 @@ export const useWalk = create<WalkState>((set, get) => {
 
   return {
     status: 'idle',
-    petId: null,
+    petIds: [],
     startedAt: null,
     accumulatedMs: 0,
     resumedAt: null,
@@ -108,11 +108,11 @@ export const useWalk = create<WalkState>((set, get) => {
     temperature: null,
     gpsReady: false,
 
-    start: async ({ petId, demo, temperature }) => {
+    start: async ({ petIds, demo, temperature }) => {
       stopSensors();
       demoMode = demo;
       set({
-        status: 'running', petId, temperature, startedAt: new Date().toISOString(),
+        status: 'running', petIds, temperature, startedAt: new Date().toISOString(),
         accumulatedMs: 0, resumedAt: Date.now(), points: [], distance: 0, steps: 0, events: [], gpsReady: demo,
       });
       await startSensors();
@@ -139,11 +139,12 @@ export const useWalk = create<WalkState>((set, get) => {
     finish: () => {
       stopSensors();
       const s = get();
-      if (!s.petId || !s.startedAt) return null;
+      if (!s.petIds.length || !s.startedAt) return null;
       const ms = elapsedMs(s);
       set({ status: 'paused', accumulatedMs: ms, resumedAt: null });
       return {
-        pet_id: s.petId,
+        pet_id: s.petIds[0],
+        ...(s.petIds.length > 1 ? { companion_ids: s.petIds.slice(1) } : {}),
         started_at: s.startedAt,
         ended_at: new Date().toISOString(),
         duration_seconds: Math.max(1, Math.round(ms / 1000)),
@@ -158,7 +159,7 @@ export const useWalk = create<WalkState>((set, get) => {
     reset: () => {
       stopSensors();
       set({
-        status: 'idle', petId: null, startedAt: null, accumulatedMs: 0, resumedAt: null,
+        status: 'idle', petIds: [], startedAt: null, accumulatedMs: 0, resumedAt: null,
         points: [], distance: 0, steps: 0, events: [], temperature: null, gpsReady: false,
       });
     },

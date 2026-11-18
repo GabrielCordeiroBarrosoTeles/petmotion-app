@@ -31,3 +31,16 @@ export const AddCircle = styled.View`
   align-items: center;
   justify-content: center;
 `;
+
+/** Selo nos pets de quem me convidou para passear. */
+export const Badge = styled.View`
+  padding: 0 ${({ theme }) => theme.spacing.xs}px;
+  border-radius: ${({ theme }) => theme.radii.pill}px;
+  background-color: ${({ theme }) => theme.colors.inkSoft};
+`;
+
+export const BadgeText = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.bodyHeavy};
+  font-size: ${({ theme }) => RFValue(theme.fontSizes.caption - 2)}px;
+  color: ${({ theme }) => theme.colors.primary};
+`;

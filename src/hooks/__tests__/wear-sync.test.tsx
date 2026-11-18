@@ -25,7 +25,7 @@ const mockedWear = wear as typeof wear & { publish: jest.Mock; __emit: (a: Watch
 
 const walking = (status: 'running' | 'paused' = 'running') =>
   useWalk.setState({
-    status, petId: 1, accumulatedMs: 60_000, resumedAt: null, distance: 812.4, steps: 900, points: [[-23.5, -46.6]],
+    status, petIds: [1], accumulatedMs: 60_000, resumedAt: null, distance: 812.4, steps: 900, points: [[-23.5, -46.6]],
     events: [
       { type: 'pee', lat: 0, lng: 0, occurred_at: 'x' },
       { type: 'pee', lat: 0, lng: 0, occurred_at: 'y' },

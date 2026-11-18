@@ -177,3 +177,10 @@ export const Refresh = styled.RefreshControl.attrs(({ theme }) => ({
   colors: [theme.colors.ink],
   progressBackgroundColor: theme.colors.primary,
 }))``;
+
+/** "Pet da Ana": o pet selecionado é de passeio. */
+export const OwnerNote = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.bodyBold};
+  font-size: ${({ theme }) => RFValue(theme.fontSizes.caption)}px;
+  color: ${({ theme }) => theme.colors.primary};
+`;

@@ -12,7 +12,7 @@ import { useAuth } from '@/store/auth';
 import { useSelectedPet } from '@/store/pets';
 import { spring } from '@/theme/motion';
 import { celebrate } from '@/utils/haptics';
-import { km } from '@/utils/format';
+import { joinNames, km } from '@/utils/format';
 import { customToast } from '@/utils/toast';
 import { NewAchievement } from './NewAchievement';
 import { WalkSummarySkeleton } from './SkeletonLoader';
@@ -46,6 +46,8 @@ export function WalkSummaryScreen() {
   const unlockedBefore = new Set((before ?? '').split(',').filter(Boolean));
   const fresh = before !== undefined && data ? data.stats.achievements.filter((a) => a.unlocked && !unlockedBefore.has(a.code)) : [];
   const petForCard = data?.walk.pet ?? pet;
+  const companions = data?.walk.companions ?? [];
+  const namesWith = (main: string) => joinNames([main, ...companions.map((c) => c.name)]);
   const goalHit = data ? data.stats.today.goal_progress >= 1 : false;
 
   return (
@@ -58,7 +60,7 @@ export function WalkSummaryScreen() {
             <Heading from={{ opacity: 0, translateY: 16 }} animate={{ opacity: 1, translateY: 0 }} transition={spring({ damping: 14 })}>
               <Title>{goalHit ? 'Meta do dia\nbatida!' : 'Que passeio!'}</Title>
               <Subtitle>
-                {petForCard.name} andou {km(data.walk.distance_meters)} km
+                {namesWith(petForCard.name)} {companions.length ? 'andaram' : 'andou'} {km(data.walk.distance_meters)} km
                 {data.stats.streak_days > 1 ? ` e manteve a sequência de ${data.stats.streak_days} dias.` : '.'}
               </Subtitle>
             </Heading>
@@ -75,7 +77,7 @@ export function WalkSummaryScreen() {
 
             <Buttons>
               <Button title="Criar foto do passeio" icon={Camera} onPress={() => router.push({ pathname: '/walk-photo', params: { id: String(data.walk.id) } })} />
-              <Button title="Compartilhar card" icon={Share2} variant="ink" onPress={() => share(`Passeio do ${petForCard.name}`)} loading={sharing} />
+              <Button title="Compartilhar card" icon={Share2} variant="ink" onPress={() => share(companions.length ? `Passeio de ${namesWith(petForCard.name)}` : `Passeio do ${petForCard.name}`)} loading={sharing} />
               <Button title="Concluir" icon={Check} variant="ghost" onPress={() => router.replace('/home')} />
             </Buttons>
           </Content>

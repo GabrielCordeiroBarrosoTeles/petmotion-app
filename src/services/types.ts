@@ -54,9 +54,14 @@ export interface Walk {
   pet?: Pick<Pet, 'id' | 'name' | 'species' | 'photo_url'>;
   /** Quem passeou (pode ser o dono ou um passeador). */
   walker?: { id: number; name: string };
+  /** Outros pets do mesmo passeio em grupo (só os que o usuário pode ver). */
+  companions?: Pick<Pet, 'id' | 'name' | 'species' | 'photo_url'>[];
 }
 
-export interface NewWalkPayload extends Omit<Walk, 'id' | 'pet'> {}
+export interface NewWalkPayload extends Omit<Walk, 'id' | 'pet' | 'walker' | 'companions'> {
+  /** Demais pets do passeio em grupo (pet_id é o primeiro). */
+  companion_ids?: number[];
+}
 
 export interface Paginated<T> {
   data: T[];

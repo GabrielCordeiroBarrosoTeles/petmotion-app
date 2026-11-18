@@ -14,15 +14,16 @@ import { useStatusBar } from '@/hooks/useStatusBar';
 import { useWeather } from '@/hooks/useWeather';
 import { api, errorMessage } from '@/services/api';
 import type { WalkEventType } from '@/services/types';
-import { useSelectedPet } from '@/store/pets';
+import { usePets, useSelectedPet } from '@/store/pets';
 import { useSettings } from '@/store/settings';
 import { MIN_WALK_M, useWalk } from '@/store/walk';
 import { useWearCommand } from '@/store/wearCommand';
 import { spring, timing } from '@/theme/motion';
-import { duration, km, pace, thousands } from '@/utils/format';
+import { duration, joinNames, km, pace, thousands } from '@/utils/format';
 import { clearWalkNotification, ensureNotificationPermission, showWalkNotification } from '@/utils/notifications';
 import { confirmAction } from '@/utils/confirm';
 import { customToast } from '@/utils/toast';
+import { CrewPicker } from './CrewPicker';
 import { QuickAction } from './QuickAction';
 import {
   Actions, Chip, ChipText, ControlFlex, Controls, Distance, DistanceValue, Grabber, HeadMain, HeadRow, LiveDot, LiveRow,
@@ -43,6 +44,7 @@ export function WalkScreen() {
   useStatusBar('dark');
 
   const pet = useSelectedPet();
+  const pets = usePets((s) => s.pets);
   const demoMode = useSettings((s) => s.demoMode);
   const { weather, coords } = useWeather();
   const walk = useWalk();
@@ -50,6 +52,19 @@ export function WalkScreen() {
   const [phase, setPhase] = useState<WalkPhase>(walk.status === 'idle' ? 'ready' : 'tracking');
   const [saving, setSaving] = useState(false);
   const unlockedBefore = useRef<string[]>([]);
+  // quem vai junto: começa só com o pet selecionado; some da lista quem saiu da conta
+  const [picked, setPicked] = useState<number[] | null>(null);
+  const idsToPets = (ids: number[]) => ids.flatMap((id) => pets.find((p) => p.id === id) ?? []);
+  // na ordem da lista, não na do toque: o nome do passeio fica sempre igual
+  const pickedIds = picked ?? (pet ? [pet.id] : []);
+  const crew = pets.filter((p) => pickedIds.includes(p.id));
+  const crewIds = crew.map((p) => p.id);
+  const walkingNames = joinNames((phase === 'tracking' ? idsToPets(walk.petIds) : crew).map((p) => p.name));
+  const toggleCrew = (id: number) =>
+    setPicked((prev) => {
+      const current = prev ?? crewIds;
+      return current.includes(id) ? current.filter((x) => x !== id) : [...current, id];
+    });
 
   useEffect(() => {
     if (!pet) {
@@ -60,10 +75,10 @@ export function WalkScreen() {
 
   // Notificação fixa com o andamento do passeio
   useEffect(() => {
-    if (walk.status !== 'running' || !pet) return;
+    if (walk.status !== 'running' || !walkingNames) return;
     const body = `${duration(elapsedSeconds)} · ${km(walk.distance)} km · ${thousands(walk.steps)} passos`;
-    if (elapsedSeconds % 15 === 0) showWalkNotification(pet.name, body);
-  }, [elapsedSeconds, walk.status, walk.distance, walk.steps, pet]);
+    if (elapsedSeconds % 15 === 0) showWalkNotification(walkingNames, body);
+  }, [elapsedSeconds, walk.status, walk.distance, walk.steps, walkingNames]);
 
   const requestStart = async () => {
     if (!pet) return;
@@ -85,20 +100,21 @@ export function WalkScreen() {
   };
 
   const startTracking = useCallback(async () => {
-    // o pet pode ter sido removido durante a contagem: volta para o início em vez de travar no "Vai!"
-    if (!pet) {
+    // os pets podem ter sido removidos durante a contagem: segue só com quem sobrou ou volta para o início
+    if (!crewIds.length) {
       setPhase('ready');
       return;
     }
     setPhase('tracking');
     try {
-      await useWalk.getState().start({ petId: pet.id, demo: demoMode, temperature: weather?.air_c ?? null });
+      await useWalk.getState().start({ petIds: crewIds, demo: demoMode, temperature: weather?.air_c ?? null });
     } catch (e) {
       customToast('Não foi possível iniciar o GPS. Tente o modo apresentação no Perfil.', 'danger');
       useWalk.getState().reset();
       setPhase('ready');
     }
-  }, [pet, demoMode, weather]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [crewIds.join(','), demoMode, weather]);
 
   const finish = async () => {
     const payload = useWalk.getState().finish();
@@ -201,7 +217,7 @@ export function WalkScreen() {
                   {walk.status === 'running' ? (
                     <LiveDot from={{ opacity: 1 }} animate={{ opacity: 0.25 }} transition={timing({ duration: 800, loop: true, repeatReverse: true })} />
                   ) : null}
-                  <TimerCaption>{walk.status === 'paused' ? 'Pausado' : `Passeando com ${pet?.name ?? ''}`}</TimerCaption>
+                  <TimerCaption>{walk.status === 'paused' ? 'Pausado' : `Passeando com ${walkingNames}`}</TimerCaption>
                 </LiveRow>
               </HeadMain>
               <Distance>
@@ -244,11 +260,12 @@ export function WalkScreen() {
           </>
         ) : (
           <>
-            <ReadyTitle>Pronto pra sair{'\n'}com {pet?.name}?</ReadyTitle>
+            <ReadyTitle>Pronto pra sair{'\n'}com {walkingNames}?</ReadyTitle>
             <ReadyBody>
               {weather ? `${weather.message} ` : ''}
               Durante o passeio, toque em Xixi, Cocô ou Água para marcar no mapa.
             </ReadyBody>
+            {pets.length > 1 ? <CrewPicker pets={pets} checkedIds={crewIds} onToggle={toggleCrew} /> : null}
             <StartRow>
               <PressableScale scaleTo={0.9} haptic="none" onPress={requestStart} accessibilityLabel="Começar passeio" disabled={phase === 'countdown'}>
                 <StartBall

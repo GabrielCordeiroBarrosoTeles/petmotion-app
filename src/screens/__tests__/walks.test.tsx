@@ -2,8 +2,9 @@ import * as Sharing from 'expo-sharing';
 import { useLocalSearchParams } from 'expo-router';
 import { act, answerConfirm, fireEvent, pullToRefresh, renderWithTheme, screen, scrollToEnd, waitFor } from '../../../test/render';
 import { useConfirmStore } from '@/store/confirm';
-import { makePet, makeStats, makeWalk } from '../../../test/fixtures';
+import { makePet, makeStats, makeWalk, user } from '../../../test/fixtures';
 import * as apiModule from '@/services/api';
+import { useAuth } from '@/store/auth';
 import { usePets } from '@/store/pets';
 import { useToastStore } from '@/store/toast';
 import { HistoryScreen } from '../History';
@@ -29,6 +30,25 @@ beforeEach(() => {
 afterEach(() => jest.useRealTimers());
 
 describe('Resumo do passeio', () => {
+  it('passeio em grupo: título com todos os nomes e avatares sobrepostos', async () => {
+    params.mockReturnValue({ id: '10' });
+    api.walk.mockResolvedValue(
+      makeWalk({
+        companions: [
+          { id: 2, name: 'Mel', species: 'cat', photo_url: null },
+          { id: 3, name: 'Bidu', species: 'dog', photo_url: null },
+        ],
+      }),
+    );
+    api.stats.mockResolvedValue(makeStats());
+    await renderWithTheme(<WalkSummaryScreen />);
+    expect(await screen.findByText('Passeio de Thor, Mel e Bidu')).toBeOnTheScreen();
+    expect(screen.getByText(/Thor, Mel e Bidu andaram 3,42 km/)).toBeOnTheScreen();
+    expect(screen.getAllByLabelText(/^Foto de /)).toHaveLength(3);
+    await fireEvent.press(screen.getByRole('button', { name: 'Compartilhar card' }));
+    await waitFor(() => expect(Sharing.shareAsync).toHaveBeenCalled());
+  });
+
   it('comemora, mostra o card e as conquistas novas', async () => {
     params.mockReturnValue({ id: '10', before: 'first_walk' });
     api.walk.mockResolvedValue(makeWalk());
@@ -70,6 +90,22 @@ describe('Resumo do passeio', () => {
     await renderWithTheme(<WalkSummaryScreen />);
     await waitFor(() => expect(useToastStore.getState().current?.type).toBe('danger'));
     expect(screen.getByLabelText('Carregando resumo')).toBeOnTheScreen();
+  });
+});
+
+describe('Histórico: quem passeou', () => {
+  it('mostra "com Carlos" só quando quem passeou não sou eu', async () => {
+    useAuth.setState({ status: 'signedIn', user });
+    api.walks.mockResolvedValue(
+      page([
+        makeWalk({ id: 10, walker: { id: 9, name: 'Carlos' } }),
+        makeWalk({ id: 11, walker: { id: user.id, name: 'Gabriel' } }),
+        makeWalk({ id: 12 }),
+      ]),
+    );
+    await renderWithTheme(<HistoryScreen />);
+    expect(await screen.findByText('com Carlos')).toBeOnTheScreen();
+    expect(screen.queryByText('com Gabriel')).toBeNull();
   });
 });
 

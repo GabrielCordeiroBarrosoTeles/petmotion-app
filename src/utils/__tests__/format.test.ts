@@ -1,5 +1,5 @@
 import {
-  dayMonthLabel, daysUntil, duration, firstName, fromIsoDate, fullDateLabel, greeting, km, localIso, maskDate,
+  dayMonthLabel, daysUntil, duration, firstName, joinNames, fromIsoDate, fullDateLabel, greeting, km, localIso, maskDate,
   minutesLabel, pace, parseDate, petAge, relativeDay, thousands, timeLabel, toIsoDate, weekdayShort,
 } from '../format';
 
@@ -103,5 +103,14 @@ describe('format', () => {
   it('gera a data local mesmo à noite (sem virar o dia pelo UTC)', () => {
     expect(localIso(new Date(2026, 10, 17, 23, 30))).toBe('2026-11-17');
     expect(localIso()).toBe('2026-11-17');
+  });
+});
+
+describe('joinNames', () => {
+  it('junta 0, 1, 2 e 3 nomes', () => {
+    expect(joinNames([])).toBe('');
+    expect(joinNames(['Thor'])).toBe('Thor');
+    expect(joinNames(['Thor', 'Mel'])).toBe('Thor e Mel');
+    expect(joinNames(['Thor', 'Mel', 'Bidu'])).toBe('Thor, Mel e Bidu');
   });
 });

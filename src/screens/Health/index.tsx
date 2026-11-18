@@ -24,8 +24,11 @@ export function HealthScreen() {
   const insets = useSafeInsets();
   const pet = useSelectedPet();
 
+  // a carteirinha fica com o pai/mãe do pet: a API nem responde para quem só passeia
+  const walkerPet = pet?.role === 'walker';
+
   const { data, loading, refreshing, refetch, setData } = useFetch(() => api.health(pet!.id), {
-    enabled: !!pet,
+    enabled: !!pet && !walkerPet,
     deps: [pet?.id],
   });
 
@@ -65,9 +68,11 @@ export function HealthScreen() {
       <ScreenHeader
         title="Saúde"
         subtitle={pet ? `Cuidados do ${pet.name}` : undefined}
-        action={pet ? { icon: Plus, label: 'Adicionar cuidado', onPress: () => router.push('/health-form') } : undefined}
+        action={pet && !walkerPet ? { icon: Plus, label: 'Adicionar cuidado', onPress: () => router.push('/health-form') } : undefined}
       />
-      {loading ? (
+      {walkerPet ? (
+        <EmptyState icon={HeartPulse} title={`A saúde do ${pet.name} fica com a ${pet.owner_name}.`} message="Vacinas e consultas são com quem cuida dele. Você cuida dos passeios." />
+      ) : loading ? (
         <HealthSkeleton />
       ) : (
         <Scroll

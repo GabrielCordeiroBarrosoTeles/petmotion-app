@@ -36,8 +36,8 @@ describe('walk store com GPS real', () => {
       return { remove: jest.fn() };
     });
 
-    await useWalk.getState().start({ petId: 1, demo: false, temperature: 24 });
-    expect(useWalk.getState()).toMatchObject({ status: 'running', petId: 1, gpsReady: false, temperature: 24 });
+    await useWalk.getState().start({ petIds: [1], demo: false, temperature: 24 });
+    expect(useWalk.getState()).toMatchObject({ status: 'running', petIds: [1], gpsReady: false, temperature: 24 });
 
     gps.emit(-23.5, -46.6);
     gps.emit(-23.6, -46.7, 80); // impreciso: ignorado
@@ -54,7 +54,7 @@ describe('walk store com GPS real', () => {
 
   it('parado, o tremido do GPS dentro da margem de erro não vira trajeto', async () => {
     const gps = captureGps();
-    await useWalk.getState().start({ petId: 1, demo: false, temperature: null });
+    await useWalk.getState().start({ petIds: [1], demo: false, temperature: null });
     gps.emit(-23.5, -46.6, 20);
     gps.emit(-23.50012, -46.6, 20); // ~13 m, mas a leitura erra até 20 m: ignorado
     gps.emit(-23.5, -46.60014, 18); // ~14 m: ignorado
@@ -67,7 +67,7 @@ describe('walk store com GPS real', () => {
 
   it('ignora leituras sem precisão informada', async () => {
     const gps = captureGps();
-    await useWalk.getState().start({ petId: 1, demo: false, temperature: null });
+    await useWalk.getState().start({ petIds: [1], demo: false, temperature: null });
     gps.emit(-23.5, -46.6, undefined as never);
     expect(useWalk.getState().points).toHaveLength(1);
     // accuracy nula vira 99 → ignorada
@@ -77,17 +77,17 @@ describe('walk store com GPS real', () => {
 
   it('funciona sem pedômetro ou sem permissão dele', async () => {
     jest.mocked(Pedometer.isAvailableAsync).mockResolvedValueOnce(false);
-    await useWalk.getState().start({ petId: 1, demo: false, temperature: null });
+    await useWalk.getState().start({ petIds: [1], demo: false, temperature: null });
     expect(Pedometer.watchStepCount).not.toHaveBeenCalled();
 
     jest.mocked(Pedometer.isAvailableAsync).mockRejectedValueOnce(new Error('x'));
-    await useWalk.getState().start({ petId: 1, demo: false, temperature: null });
+    await useWalk.getState().start({ petIds: [1], demo: false, temperature: null });
 
     jest.mocked(Pedometer.requestPermissionsAsync).mockResolvedValueOnce({ granted: false } as never);
-    await useWalk.getState().start({ petId: 1, demo: false, temperature: null });
+    await useWalk.getState().start({ petIds: [1], demo: false, temperature: null });
 
     jest.mocked(Pedometer.requestPermissionsAsync).mockRejectedValueOnce(new Error('x'));
-    await useWalk.getState().start({ petId: 1, demo: false, temperature: null });
+    await useWalk.getState().start({ petIds: [1], demo: false, temperature: null });
     expect(Pedometer.watchStepCount).not.toHaveBeenCalled();
   });
 
@@ -97,7 +97,7 @@ describe('walk store com GPS real', () => {
       steps.push(cb as never);
       return { remove: jest.fn() };
     });
-    await useWalk.getState().start({ petId: 1, demo: false, temperature: null });
+    await useWalk.getState().start({ petIds: [1], demo: false, temperature: null });
     steps[0]({ steps: 50 });
     jest.advanceTimersByTime(60_000);
     useWalk.getState().pause();
@@ -114,7 +114,7 @@ describe('walk store com GPS real', () => {
 
   it('marca eventos só depois do primeiro ponto de GPS', async () => {
     const gps = captureGps();
-    await useWalk.getState().start({ petId: 1, demo: false, temperature: null });
+    await useWalk.getState().start({ petIds: [1], demo: false, temperature: null });
     expect(useWalk.getState().addEvent('pee')).toBe(false);
     gps.emit(-23.5, -46.6);
     expect(useWalk.getState().addEvent('water')).toBe(true);
@@ -123,7 +123,7 @@ describe('walk store com GPS real', () => {
 
   it('finaliza devolvendo o payload e parando os sensores', async () => {
     const gps = captureGps();
-    await useWalk.getState().start({ petId: 3, demo: false, temperature: 20 });
+    await useWalk.getState().start({ petIds: [3], demo: false, temperature: 20 });
     gps.emit(-23.5, -46.6);
     gps.emit(-23.5, -46.601);
     jest.advanceTimersByTime(90_400);
@@ -135,16 +135,29 @@ describe('walk store com GPS real', () => {
     expect(useWalk.getState().status).toBe('paused');
   });
 
+  it('passeio em grupo: pet_id é o primeiro e companion_ids são os outros', async () => {
+    await useWalk.getState().start({ petIds: [3, 5, 8], demo: false, temperature: null });
+    expect(useWalk.getState().finish()).toMatchObject({ pet_id: 3, companion_ids: [5, 8] });
+    expect(useWalk.getState().finish()).toBeTruthy();
+    useWalk.getState().reset();
+    expect(useWalk.getState().petIds).toEqual([]);
+  });
+
+  it('passeio de um pet só não manda companion_ids', async () => {
+    await useWalk.getState().start({ petIds: [3], demo: false, temperature: null });
+    expect(useWalk.getState().finish()).not.toHaveProperty('companion_ids');
+  });
+
   it('finish sem passeio iniciado devolve null e a duração mínima é 1s', async () => {
     expect(useWalk.getState().finish()).toBeNull();
-    await useWalk.getState().start({ petId: 1, demo: false, temperature: null });
+    await useWalk.getState().start({ petIds: [1], demo: false, temperature: null });
     expect(useWalk.getState().finish()!.duration_seconds).toBe(1);
   });
 });
 
 describe('walk store no modo apresentação', () => {
   it('simula o passeio a partir da posição atual', async () => {
-    await useWalk.getState().start({ petId: 1, demo: true, temperature: null });
+    await useWalk.getState().start({ petIds: [1], demo: true, temperature: null });
     expect(useWalk.getState().gpsReady).toBe(true);
     expect(Location.watchPositionAsync).not.toHaveBeenCalled();
 
@@ -157,19 +170,19 @@ describe('walk store no modo apresentação', () => {
 
   it('usa a posição atual se não houver última conhecida, e um ponto padrão se tudo falhar', async () => {
     jest.mocked(Location.getLastKnownPositionAsync).mockResolvedValueOnce(null);
-    await useWalk.getState().start({ petId: 1, demo: true, temperature: null });
+    await useWalk.getState().start({ petIds: [1], demo: true, temperature: null });
     jest.advanceTimersByTime(1000);
     expectNear(useWalk.getState().points[0], [-23.5, -46.6]);
     expect(Location.getCurrentPositionAsync).toHaveBeenCalled();
 
     jest.mocked(Location.getLastKnownPositionAsync).mockRejectedValueOnce(new Error('sem gps'));
-    await useWalk.getState().start({ petId: 1, demo: true, temperature: null });
+    await useWalk.getState().start({ petIds: [1], demo: true, temperature: null });
     jest.advanceTimersByTime(1000);
     expectNear(useWalk.getState().points[0], [-23.5874, -46.6576]);
   });
 
   it('ao retomar, continua do primeiro ponto do passeio', async () => {
-    await useWalk.getState().start({ petId: 1, demo: true, temperature: null });
+    await useWalk.getState().start({ petIds: [1], demo: true, temperature: null });
     jest.advanceTimersByTime(3000);
     const first = useWalk.getState().points[0];
     useWalk.getState().pause();

@@ -77,6 +77,15 @@ describe('Perfil', () => {
     await view.unmount();
   });
 
+  it('pet de passeio não tem edição: mostra o dono e o toque não faz nada', async () => {
+    usePets.setState({ pets: [makePet({ id: 7, name: 'Bidu', role: 'walker', owner_name: 'Ana' })], selectedId: 7, loaded: true });
+    await renderWithTheme(<ProfileScreen />);
+    expect(screen.getByText('Da Ana')).toBeOnTheScreen();
+    expect(screen.queryByLabelText('Editar Bidu')).toBeNull();
+    await fireEvent.press(screen.getByLabelText('Bidu'));
+    expect(global.__router.push).not.toHaveBeenCalledWith(expect.objectContaining({ pathname: '/pet-form' }));
+  });
+
   it('liga o modo apresentação e o lembrete diário', async () => {
     await renderWithTheme(<ProfileScreen />);
     await fireEvent(screen.getByLabelText('Modo apresentação'), 'valueChange', true);

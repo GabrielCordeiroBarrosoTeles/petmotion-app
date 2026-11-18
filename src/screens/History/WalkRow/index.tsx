@@ -4,6 +4,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { useTheme } from 'styled-components/native';
 import { MiniRoute } from '@/components/MiniRoute';
 import { PressableScale } from '@/components/PressableScale';
+import { useAuth } from '@/store/auth';
 import { spring } from '@/theme/motion';
 import { km, minutesLabel, relativeDay, thousands, timeLabel } from '@/utils/format';
 import { Card, Distance, Info, Mark, Marks, MarkText, Meta, ROUTE_SIZE, RouteTile, When } from './styles';
@@ -11,6 +12,7 @@ import type { WalkRowProps } from './types';
 
 function WalkRowBase({ walk, index, onPress }: WalkRowProps) {
   const theme = useTheme();
+  const me = useAuth((s) => s.user?.id);
   const count = (type: string) => walk.events.filter((e) => e.type === type).length;
   const marks = [
     { type: 'pee', icon: Droplet, color: theme.colors.sunSoft },
@@ -33,6 +35,7 @@ function WalkRowBase({ walk, index, onPress }: WalkRowProps) {
           <When>{relativeDay(walk.started_at)} · {timeLabel(walk.started_at)}</When>
           <Distance>{km(walk.distance_meters)} km</Distance>
           <Meta>{minutesLabel(minutes)} · {thousands(walk.steps)} passos</Meta>
+          {walk.walker && walk.walker.id !== me ? <Meta>com {walk.walker.name}</Meta> : null}
           {marks.length ? (
             <Marks>
               {marks.map(({ type, icon: Icon, color }) => (

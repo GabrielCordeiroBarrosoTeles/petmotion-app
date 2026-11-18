@@ -23,6 +23,16 @@ beforeEach(() => {
 });
 afterEach(() => jest.useRealTimers());
 
+describe('Início: pet de passeio', () => {
+  it('mostra de quem é o pet', async () => {
+    api.pets.mockResolvedValue([makePet({ id: 7, name: 'Bidu', role: 'walker', owner_name: 'Ana' })]);
+    api.stats.mockResolvedValue(makeStats());
+    await renderWithTheme(<HomeScreen />);
+    expect(await screen.findByText('Pet da Ana')).toBeOnTheScreen();
+    expect(screen.getByText('Passeio')).toBeOnTheScreen();
+  });
+});
+
 describe('Início', () => {
   it('mostra anel, sequência, clima, semana, cuidados e conquistas', async () => {
     api.pets.mockResolvedValue([makePet(), makePet({ id: 2, name: 'Mel' })]);

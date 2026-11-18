@@ -60,6 +60,13 @@ describe('PetSwitcher', () => {
   });
 });
 
+describe('PetSwitcher: pet de passeio', () => {
+  it('só os pets de quem convidou ganham o selo "Passeio"', async () => {
+    await renderWithTheme(<PetSwitcher pets={[pet(1), pet(2, { role: 'walker', owner_name: 'Ana' })]} selectedId={1} onSelect={jest.fn()} onAdd={jest.fn()} />);
+    expect(screen.getAllByText('Passeio')).toHaveLength(1);
+  });
+});
+
 describe('WeekBars', () => {
   it('destaca meta batida e hoje', async () => {
     const days = ['2026-11-11', '2026-11-12', '2026-11-13', '2026-11-14', '2026-11-15', '2026-11-16', '2026-11-17'].map((date, i) => ({

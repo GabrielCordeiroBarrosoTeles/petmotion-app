@@ -15,6 +15,11 @@ export const Header = styled.View`
   gap: ${({ theme }) => theme.spacing.small}px;
 `;
 
+/** Avatares sobrepostos do passeio em grupo. */
+export const Overlap = styled.View<{ $first: boolean }>`
+  margin-left: ${({ $first, theme }) => ($first ? 0 : -theme.spacing.small - theme.spacing.xs)}px;
+`;
+
 export const HeaderTexts = styled.View`
   flex: 1;
 `;

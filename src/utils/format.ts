@@ -108,3 +108,9 @@ export function localIso(date: Date = new Date()): string {
   const pad = (n: number) => String(n).padStart(2, '0');
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
+
+/** "Thor", "Thor e Mel", "Thor, Mel e Bidu". */
+export function joinNames(names: string[]): string {
+  if (names.length < 2) return names[0] ?? '';
+  return `${names.slice(0, -1).join(', ')} e ${names[names.length - 1]}`;
+}

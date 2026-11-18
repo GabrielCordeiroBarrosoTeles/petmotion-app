@@ -233,7 +233,7 @@ describe('Passeio: em andamento', () => {
 
   it('finalizar sem passeio ativo não faz nada; minimizar volta', async () => {
     await startWalking();
-    await act(() => useWalk.setState({ petId: null }));
+    await act(() => useWalk.setState({ petIds: [] }));
     await fireEvent(screen.getByLabelText('Segure para finalizar'), 'pressIn');
     expect(api.createWalk).not.toHaveBeenCalled();
     await fireEvent.press(screen.getByLabelText('Minimizar passeio'));
@@ -252,7 +252,7 @@ describe('Passeio: em andamento', () => {
 
   it('passeio rodando sem pet não notifica nem quebra a legenda', async () => {
     usePets.setState({ pets: [], selectedId: null });
-    useWalk.setState({ status: 'running', petId: 1, startedAt: new Date().toISOString(), resumedAt: Date.now() });
+    useWalk.setState({ status: 'running', petIds: [1], startedAt: new Date().toISOString(), resumedAt: Date.now() });
     await renderWithTheme(<WalkScreen />);
     jest.mocked(Notifications.scheduleNotificationAsync).mockClear();
     await act(() => jest.advanceTimersByTime(15_000));
@@ -261,10 +261,84 @@ describe('Passeio: em andamento', () => {
   });
 
   it('abrir com um passeio já rodando vai direto para o rastreio', async () => {
-    useWalk.setState({ status: 'paused', petId: 1, startedAt: new Date().toISOString(), accumulatedMs: 61_000 });
+    useWalk.setState({ status: 'paused', petIds: [1], startedAt: new Date().toISOString(), accumulatedMs: 61_000 });
     await renderWithTheme(<WalkScreen />);
     expect(screen.getByText('01:01')).toBeOnTheScreen();
     expect(screen.getByText('Pausado')).toBeOnTheScreen();
     await fireEvent.press(screen.getByLabelText('Minimizar passeio'));
   });
 });
+
+describe('Passeio em grupo', () => {
+  const ana = { role: 'walker' as const, owner_name: 'Ana' };
+  const threePets = () =>
+    usePets.setState({
+      pets: [makePet(), makePet({ id: 2, name: 'Mel' }), makePet({ id: 3, name: 'Bidu', ...ana }), makePet({ id: 4, name: 'Nina', ...ana })],
+      selectedId: 1,
+      loaded: true,
+    });
+
+  it('com um pet só, não pergunta quem vai junto', async () => {
+    await renderWithTheme(<WalkScreen />);
+    expect(await screen.findByText('Pronto pra sair com Thor?')).toBeOnTheScreen();
+    expect(screen.queryByText('Quem vai junto?')).toBeNull();
+  });
+
+  it('só com pets de passeio, não mostra "Seus pets" e junta os do mesmo dono', async () => {
+    usePets.setState({
+      pets: [makePet({ id: 3, name: 'Bidu', ...ana }), makePet({ id: 4, name: 'Nina', ...ana }), makePet({ id: 5, name: 'Rex', role: 'walker', owner_name: 'Carlos' })],
+      selectedId: 3,
+    });
+    await renderWithTheme(<WalkScreen />);
+    expect(screen.queryByText('Seus pets')).toBeNull();
+    expect(screen.getByText('Da Ana')).toBeOnTheScreen();
+    expect(screen.getByText('Da Carlos')).toBeOnTheScreen();
+  });
+
+  it('agrupa por dono, marca o selecionado e nunca deixa desmarcar o último', async () => {
+    threePets();
+    await renderWithTheme(<WalkScreen />);
+    expect(screen.getByText('Quem vai junto?')).toBeOnTheScreen();
+    expect(screen.getByText('Seus pets')).toBeOnTheScreen();
+    expect(screen.getAllByText('Da Ana')).toHaveLength(1);
+    expect(screen.getByRole('checkbox', { name: 'Thor', checked: true })).toBeOnTheScreen();
+    expect(screen.getByRole('checkbox', { name: 'Mel', checked: false })).toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByRole('checkbox', { name: 'Thor' })); // último marcado: nada acontece
+    expect(screen.getByRole('checkbox', { name: 'Thor', checked: true })).toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByRole('checkbox', { name: 'Bidu' }));
+    await fireEvent.press(screen.getByRole('checkbox', { name: 'Mel' }));
+    expect(screen.getByText(/Pronto pra sair\s+com Thor, Mel e Bidu\?/)).toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole('checkbox', { name: 'Thor' })); // agora dá para desmarcar
+    expect(screen.getByText(/com Mel e Bidu\?/)).toBeOnTheScreen();
+  });
+
+  it('começa com todos marcados e manda companion_ids ao salvar', async () => {
+    threePets();
+    const walk = fakeGps();
+    await renderWithTheme(<WalkScreen />);
+    await fireEvent.press(screen.getByRole('checkbox', { name: 'Mel' }));
+    await fireEvent.press(screen.getByRole('checkbox', { name: 'Bidu' }));
+    await fireEvent.press(screen.getByLabelText('Começar passeio'));
+    await runCountdown();
+    await waitFor(() => expect(useWalk.getState().petIds).toEqual([1, 2, 3]));
+    expect(screen.getByText('Passeando com Thor, Mel e Bidu')).toBeOnTheScreen();
+    await walk(-23.5, -46.6);
+    await walk(-23.5, -46.601);
+    api.createWalk.mockResolvedValueOnce({ id: 90 } as never);
+    await fireEvent(screen.getByLabelText('Segure para finalizar'), 'pressIn');
+    await waitFor(() => expect(api.createWalk).toHaveBeenCalledWith(expect.objectContaining({ pet_id: 1, companion_ids: [2, 3] })));
+  });
+
+  it('se um pet marcado sumir durante a contagem, segue só com quem sobrou', async () => {
+    threePets();
+    await renderWithTheme(<WalkScreen />);
+    await fireEvent.press(screen.getByRole('checkbox', { name: 'Mel' }));
+    await fireEvent.press(screen.getByLabelText('Começar passeio'));
+    await act(() => usePets.getState().remove(2));
+    await runCountdown();
+    await waitFor(() => expect(useWalk.getState().petIds).toEqual([1]));
+  });
+});
+
