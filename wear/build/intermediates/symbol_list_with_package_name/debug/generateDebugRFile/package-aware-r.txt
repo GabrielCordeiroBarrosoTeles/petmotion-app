@@ -1,4 +1,0 @@
-app.petmotion.wear
-color ink
-drawable ic_ball
-mipmap ic_launcher

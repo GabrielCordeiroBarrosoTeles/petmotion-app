@@ -1,9 +1,0 @@
-app.petmotion.wearbridge.wear-bridge-pngs-0 /Users/gabrielcordeiro/projects/app/petmotion-app/modules/wear-bridge/android/build/generated/res/pngs/release
-app.petmotion.wearbridge.wear-bridge-updated_navigation_xml-1 /Users/gabrielcordeiro/projects/app/petmotion-app/modules/wear-bridge/android/build/generated/updated_navigation_xml/release
-app.petmotion.wearbridge.wear-bridge-mergeReleaseResources-2 /Users/gabrielcordeiro/projects/app/petmotion-app/modules/wear-bridge/android/build/intermediates/incremental/release/mergeReleaseResources/merged.dir
-app.petmotion.wearbridge.wear-bridge-mergeReleaseResources-3 /Users/gabrielcordeiro/projects/app/petmotion-app/modules/wear-bridge/android/build/intermediates/incremental/release/mergeReleaseResources/stripped.dir
-app.petmotion.wearbridge.wear-bridge-release-4 /Users/gabrielcordeiro/projects/app/petmotion-app/modules/wear-bridge/android/build/intermediates/merged_res/release/mergeReleaseResources
-app.petmotion.wearbridge.wear-bridge-release-5 /Users/gabrielcordeiro/projects/app/petmotion-app/modules/wear-bridge/android/build/intermediates/packaged_res/release/packageReleaseResources
-app.petmotion.wearbridge.wear-bridge-main-6 /Users/gabrielcordeiro/projects/app/petmotion-app/modules/wear-bridge/android/src/main/res
-app.petmotion.wearbridge.wear-bridge-release-7 /Users/gabrielcordeiro/projects/app/petmotion-app/modules/wear-bridge/android/src/release/res
-gradleHome-0 /Users/gabrielcordeiro/.gradle

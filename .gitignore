@@ -48,3 +48,8 @@ graphify-out/
 
 # relatório de cobertura dos testes
 coverage/
+
+# builds nativos (relógio e ponte) e workspace do SDD
+/wear/build/
+/modules/*/android/build/
+/.superpowers/

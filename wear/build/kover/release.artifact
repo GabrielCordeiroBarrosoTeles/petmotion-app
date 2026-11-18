@@ -1,9 +1,0 @@
-:wear
-../wear/src/release/kotlin
-../wear/src/release/java
-../wear/src/main/kotlin
-../wear/src/main/java
-
-../wear/build/tmp/kotlin-classes/release
-../wear/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes
-

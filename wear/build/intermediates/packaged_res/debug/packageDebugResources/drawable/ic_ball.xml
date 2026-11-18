@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Bola de tênis da marca: primeiro plano do ícone adaptativo -->
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-  android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
-  <path android:fillColor="#C9F24B" android:pathData="M54,30a24,24 0,1 1,0 48a24,24 0,1 1,0 -48z" />
-  <path android:strokeColor="#FFFFFF" android:strokeWidth="3" android:fillColor="#00000000" android:pathData="M37,37c8,10 8,24 0,34" />
-  <path android:strokeColor="#FFFFFF" android:strokeWidth="3" android:fillColor="#00000000" android:pathData="M71,37c-8,10 -8,24 0,34" />
-</vector>
